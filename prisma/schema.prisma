@@ -1,0 +1,104 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("POSTGRES_URL")
+}
+
+model AppData {
+  id                  Int             @id @default(autoincrement())
+  nama                String?     
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  admin               Admin[]
+  halaman             Halaman[]
+  setting             Setting?
+} 
+
+model Setting {
+  id                  Int             @id @default(autoincrement())
+  appId               Int             @unique
+  provId              Int?
+  kotaId              Int?
+  bgUtama             String?     
+  bgLogin             String?     
+  jumlahSuara         Int             @default(0)     
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)
+  prov                Wilayah?         @relation("prov", fields: [provId], references: [id])
+  kota                Wilayah?         @relation("kota", fields: [kotaId], references: [id])
+} 
+
+model FirebaseToken {
+  id                  Int             @id @default(autoincrement())
+  token               String
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+}
+
+model Admin {
+  id                  Int             @id @default(autoincrement())
+  appId               Int
+  nama                String     
+  email               String?
+  hp                  String          @unique
+  wa                  String?
+  password            String
+  role                String          @default("Admin")
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)
+}  
+
+model Wilayah {
+  id                  Int             @id @default(autoincrement())
+  kode                String                   
+  nama                String?
+  provinsi            String?
+  kabupaten           String?
+  kecamatan           String?
+  kelurahan           String?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  prov                Setting[]       @relation("prov")
+  kota                Setting[]       @relation("kota")
+}
+
+model User {
+  id                  Int             @id @default(autoincrement())
+  nama                String?     
+  email               String?         
+  hp                  String?         
+  password            String?           
+  foto                String?
+  token               String?
+  os                  String          @default("ANDROID")
+  appVersion          Int             @default(0)
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  notifikasi          Notifikasi[]
+}   
+
+model Notifikasi {
+  id                Int               @id @default(autoincrement())
+  userId            Int   
+  judul             String
+  deskripsi         String
+  baca              Int               @default(0)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Halaman {
+  id                  Int             @id @default(autoincrement())
+  appId               Int
+  nama                String     
+  deskripsi           String?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)
+}  

@@ -82,7 +82,6 @@ async function Get(appId: Number) {
 async function GetProv() {
   const result =
     await prisma.$queryRaw`SELECT * FROM "public"."Wilayah" WHERE LENGTH(kode) = 2 ORDER BY nama ASC`;
-  console.log(result);
   return result;
 }
 
@@ -106,7 +105,6 @@ async function GetKota(provId: Number) {
     });
   }
 
-  console.log(x);
   return x;
 }
 
@@ -144,7 +142,6 @@ async function PostJumlah(data: any, appId: Number) {
 }
 
 async function PostWilayah(data: any, appId: Number) {
-  console.log(data);
   await prisma.setting.update({
     where: { appId: Number(appId) },
     data: {

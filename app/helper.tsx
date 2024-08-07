@@ -90,6 +90,13 @@ export function tglJamIndoMap(tanggal: String) {
   };
 }
 
+export function titleHalaman(jenis: String) {
+  if (jenis == "profil") return "Profil Pasangan Calon";
+  if (jenis == "visi-misi") return "Visi dan Misi";
+  if (jenis == "syarat-ketentuan") return "Syarat dan Ketentuan";
+  return "";
+}
+
 export function modifiHP(hp: String) {
   let hp1 = `+62${hp}`;
   let hp2 = hp1.replaceAll("+620", "+62");

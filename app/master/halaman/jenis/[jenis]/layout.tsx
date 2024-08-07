@@ -1,4 +1,4 @@
-import { ucwords } from "@/app/helper";
+import { titleHalaman, ucwords } from "@/app/helper";
 
 export async function generateMetadata({
   params,
@@ -8,7 +8,7 @@ export async function generateMetadata({
   const jenis = params.jenis;
 
   return {
-    title: `Halaman ${ucwords(jenis)}`,
+    title: titleHalaman(jenis),
   };
 }
 function UserLayout({ children }: { children: React.ReactNode }) {

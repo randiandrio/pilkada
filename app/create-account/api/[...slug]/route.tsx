@@ -52,7 +52,7 @@ async function PostApp(data: any) {
             nama: "visi-misi",
           },
           {
-            nama: "syarat-dan-ketentuan",
+            nama: "syarat-ketentuan",
           },
         ],
       },

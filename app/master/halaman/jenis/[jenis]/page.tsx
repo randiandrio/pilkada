@@ -1,5 +1,6 @@
 "use client";
-import { tinymceKey, ucwords } from "@/app/helper";
+import { tinymceKey, titleHalaman, ucwords } from "@/app/helper";
+import { Halaman } from "@prisma/client";
 import { Editor } from "@tinymce/tinymce-react";
 import axios from "axios";
 import { AdminLogin, resData } from "next-auth";
@@ -42,13 +43,13 @@ export default function HalamanPage({ params }: { params: { jenis: string } }) {
 
     setPost(true);
     const formData = new FormData();
-    formData.append("jenis", String(params.jenis));
+    formData.append("halaman", String(params.jenis));
     formData.append("deskripsi", String(deskripsi));
-    await axios.patch("/syarat/api/post_syarat", formData);
+    await axios.patch("/master/halaman/api/post", formData);
     setPost(false);
     Swal.fire({
       title: "Success!",
-      text: `Syarat dan ketentuan ${params.jenis} telah diperbarui`,
+      text: `Halaman telah diperbarui`,
       icon: "success",
       showConfirmButton: false,
       timer: 1500,
@@ -64,9 +65,7 @@ export default function HalamanPage({ params }: { params: { jenis: string } }) {
           <form onSubmit={handleSubmit}>
             <div className="card">
               <div className="card-header flex-wrap" id="default-tab">
-                <h4 className="card-title">
-                  Syarat dan ketentuan {ucwords(params.jenis)}
-                </h4>
+                <h4 className="card-title">{titleHalaman(params.jenis)}</h4>
               </div>
               <Editor
                 onEditorChange={(newValue, editor) => {
@@ -87,11 +86,9 @@ export default function HalamanPage({ params }: { params: { jenis: string } }) {
               />
             </div>
 
-            {akun.role == "Super Admin" && (
-              <button type="submit" className="btn btn-primary light">
-                Perbarui
-              </button>
-            )}
+            <button type="submit" className="btn btn-primary light">
+              Perbarui
+            </button>
           </form>
         </div>
       </div>

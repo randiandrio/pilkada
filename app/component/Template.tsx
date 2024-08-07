@@ -7,7 +7,6 @@ import Header from "./Header";
 import Swal from "sweetalert2";
 import Link from "next/link";
 import Image from "next/image";
-import moment from "moment";
 
 export default function Template({ children }: { children: React.ReactNode }) {
   const logout = async () => {
@@ -77,17 +76,187 @@ export default function Template({ children }: { children: React.ReactNode }) {
                     <Link href="/master/setting">Setting</Link>
                   </li>
                   <li>
-                    <Link href="/master/profil">Profil Calon</Link>
+                    <Link href="/master/halaman/jenis/profil">
+                      Profil Calon
+                    </Link>
                   </li>
                   <li>
-                    <Link href="/master/visi-misi">Visi & Misi</Link>
+                    <Link href="/master/halaman/jenis/visi-misi">
+                      Visi & Misi
+                    </Link>
                   </li>
                   <li>
-                    <Link href="/master/syarat-ketentuan">
+                    <Link href="/master/halaman/jenis/syarat-ketentuan">
                       Syarat & Ketentuan
                     </Link>
                   </li>
+                  <li>
+                    <Link href="/master/tps">Data TPS</Link>
+                  </li>
+                  <li>
+                    <Link href="/master/all-paslon">All Paslon</Link>
+                  </li>
                 </ul>
+              </li>
+
+              <li>
+                <a
+                  className="has-arrow "
+                  href="javascript:void(0);"
+                  aria-expanded="false"
+                >
+                  <div className="menu-icon">
+                    <Image
+                      src="/template/content.png"
+                      width={25}
+                      height={25}
+                      alt="database"
+                    />
+                  </div>
+                  <span className="nav-text">Konten</span>
+                </a>
+
+                <ul>
+                  <li className="mini-dashboard">Konten</li>
+
+                  <li>
+                    <Link href="/konten/pengumuman">Pengumuman</Link>
+                  </li>
+                  <li>
+                    <Link href="/konten/notifikasi">Notifikasi</Link>
+                  </li>
+                  <li>
+                    <Link href="/konten/notifikasi">Berita</Link>
+                  </li>
+                </ul>
+              </li>
+
+              <li>
+                <a
+                  className="has-arrow "
+                  href="javascript:void(0);"
+                  aria-expanded="false"
+                >
+                  <div className="menu-icon">
+                    <Image
+                      src="/template/team.png"
+                      width={25}
+                      height={25}
+                      alt="database"
+                    />
+                  </div>
+                  <span className="nav-text">Konstituen</span>
+                </a>
+
+                <ul>
+                  <li className="mini-dashboard">Konstituen</li>
+
+                  <li>
+                    <Link href="/konstituen/simpatisan">Simpatisan</Link>
+                  </li>
+                  <li>
+                    <Link href="/konstituen/saksi">Saksi</Link>
+                  </li>
+                  <li>
+                    <Link href="/konstituen/timses">Timses</Link>
+                  </li>
+                  <li>
+                    <Link href="/konstituen/paslon">Paslon</Link>
+                  </li>
+                </ul>
+              </li>
+
+              <li>
+                <Link href={`/tugas`} className="" aria-expanded="false">
+                  <div className="menu-icon">
+                    <Image
+                      src="/template/work.png"
+                      width={25}
+                      height={25}
+                      alt="xxx"
+                    />
+                  </div>
+                  <span className="nav-text">Tugas</span>
+                </Link>
+              </li>
+
+              <li>
+                <a
+                  className="has-arrow "
+                  href="javascript:void(0);"
+                  aria-expanded="false"
+                >
+                  <div className="menu-icon">
+                    <Image
+                      src="/template/report.png"
+                      width={25}
+                      height={25}
+                      alt="database"
+                    />
+                  </div>
+                  <span className="nav-text">Laporan</span>
+                </a>
+
+                <ul>
+                  <li className="mini-dashboard">Laporan</li>
+
+                  <li>
+                    <Link href="/laporan/konstituen">Konstituen</Link>
+                  </li>
+                  <li>
+                    <Link href="/laporan/tugas">Tugas</Link>
+                  </li>
+                  <li>
+                    <Link href="/laporan/keuangan">Keuangan</Link>
+                  </li>
+                </ul>
+              </li>
+
+              <li>
+                <a
+                  className="has-arrow "
+                  href="javascript:void(0);"
+                  aria-expanded="false"
+                >
+                  <div className="menu-icon">
+                    <Image
+                      src="/template/voting.png"
+                      width={25}
+                      height={25}
+                      alt="database"
+                    />
+                  </div>
+                  <span className="nav-text">Suara</span>
+                </a>
+
+                <ul>
+                  <li className="mini-dashboard">Suara</li>
+
+                  <li>
+                    <Link href="/suara/proyeksi">Proyeksi</Link>
+                  </li>
+                  <li>
+                    <Link href="/suara/real-count">Real Count</Link>
+                  </li>
+                </ul>
+              </li>
+
+              <li>
+                <Link
+                  href={`/ruang-diskusi`}
+                  className=""
+                  aria-expanded="false"
+                >
+                  <div className="menu-icon">
+                    <Image
+                      src="/template/diskusi.png"
+                      width={25}
+                      height={25}
+                      alt="xxx"
+                    />
+                  </div>
+                  <span className="nav-text">Ruang Diskusi</span>
+                </Link>
               </li>
 
               <li>

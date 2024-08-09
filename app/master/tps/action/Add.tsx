@@ -17,7 +17,7 @@ function GenerateTPS({
   defKec: any[];
 }) {
   const [kecs, setKecs] = useState<any>([]);
-  const [jumlah, setJumlah] = useState(0);
+  const [jumlah, setJumlah] = useState<any[]>([]);
   const [selectedKota, setSelectedKota] = useState();
   const [show, setShow] = useState(false);
   const handleClose = () => {
@@ -26,7 +26,21 @@ function GenerateTPS({
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleShow = () => setShow(true);
+  const handleShow = () => {
+    if (defKec.length > 0) {
+      setJumlah([]);
+      let arr: any = [];
+      for (let i = 0; i < defKec.length; i++) {
+        arr.push({
+          kotaId: Number(listKota[0].value),
+          kecId: Number(defKec[i].value),
+          jumlah: 0,
+        });
+      }
+      setJumlah(arr);
+    }
+    setShow(true);
+  };
 
   const [isPost, setPost] = useState(false);
 
@@ -34,21 +48,24 @@ function GenerateTPS({
     tampilLoading();
   }
 
+  const onChangeJumlah = async (index: Number, jml: Number) => {
+    let arr = jumlah;
+    arr[Number(index)].jumlah = jml;
+    setJumlah(arr);
+  };
+
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
     setPost(true);
-
+    const dataTPS = JSON.stringify(jumlah);
     const formData = new FormData();
-    formData.append("method", "add");
-
-    const x = await axios.patch("/master/cs/api/post", formData);
+    formData.append("data", dataTPS);
+    const x = await axios.patch("/master/tps/api/generate_tps", formData);
     const pesan = (await x.data) as resData;
-
     if (!pesan.error) {
       handleClose();
       reload();
     }
-
     setPost(false);
     Swal.fire({
       title: "Success",
@@ -63,27 +80,34 @@ function GenerateTPS({
     setSelectedKota(data);
     setIsLoading(true);
     setKecs([]);
+
     fetch(`/master/tps/api/load_kec_tps/${data.value}`)
       .then((res) => res.json())
       .then((x) => {
+        let arr: any = [];
         var a = x.map(function (item: any) {
+          arr.push({
+            kotaId: Number(data.value),
+            kecId: Number(item.id),
+            jumlah: 0,
+          });
           return {
             value: item.id,
             label: item.nama,
           };
         });
+        setJumlah(arr);
         setKecs(a);
-        console.log(a);
         setIsLoading(false);
       });
   };
 
   return (
-    <div>
+    <>
       <button
         onClick={handleShow}
         type="button"
-        className="btn btn-primary light"
+        className="btn me-2 btn-primary light"
       >
         Generate TPS
       </button>
@@ -135,7 +159,9 @@ function GenerateTPS({
                       <input
                         type="number"
                         className="form-control"
-                        onChange={(e) => setJumlah(Number(e.target.value))}
+                        onChange={(e) =>
+                          onChangeJumlah(Number(index), Number(e.target.value))
+                        }
                         required
                       />
                     </div>
@@ -157,7 +183,9 @@ function GenerateTPS({
                       <input
                         type="number"
                         className="form-control"
-                        onChange={(e) => setJumlah(Number(e.target.value))}
+                        onChange={(e) =>
+                          onChangeJumlah(Number(index), Number(e.target.value))
+                        }
                         required
                       />
                     </div>
@@ -179,7 +207,7 @@ function GenerateTPS({
           </Modal.Footer>
         </form>
       </Modal>
-    </div>
+    </>
   );
 }
 

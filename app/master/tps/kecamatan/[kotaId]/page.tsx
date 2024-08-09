@@ -1,10 +1,9 @@
 "use client";
 import { useEffect } from "react";
 import { useState } from "react";
-import GenerateTPS from "./action/Add";
 import DataTable, { TableColumn } from "react-data-table-component";
 import Link from "next/link";
-import Reset from "./action/Delete";
+
 const customStyles = {
   headCells: {
     style: {
@@ -15,62 +14,37 @@ const customStyles = {
   },
 };
 
-const TpsPage = () => {
+export default function TpsKec({ params }: { params: { kotaId: string } }) {
   const [isLoading, setLoading] = useState(true);
-  const [listKota, setListKota] = useState([]);
-  const [listKec, setListKec] = useState([]);
   const [datas, setDatas] = useState([]);
+  const [namaKota, setNamaKota] = useState("");
+  const [page, setPage] = useState(1);
+  const [perPage, setPerpage] = useState(10);
 
   useEffect(() => {
-    loadKota();
     reload();
   }, []);
 
-  const loadKota = async () => {
-    fetch(`/master/tps/api/load_kota_tps`)
-      .then((res) => res.json())
-      .then((x) => {
-        var a = x.kota.map(function (item: any) {
-          return {
-            value: item.id,
-            label: item.nama,
-          };
-        });
-        setListKota(a);
-
-        if (x.kec.length > 0) {
-          var b = x.kec.map(function (item: any) {
-            return {
-              value: item.id,
-              label: item.nama,
-            };
-          });
-          setListKec(b);
-        }
-
-        setLoading(false);
-      });
-  };
-
   const reload = async () => {
-    fetch(`/master/tps/api/load_data_kota`)
+    fetch(`/master/tps/api/load_data_kec/${params.kotaId}`)
       .then((res) => res.json())
       .then((x) => {
-        setDatas(x);
+        setDatas(x.data);
+        setNamaKota(x.namaKota);
         setLoading(false);
       });
   };
 
   const columns: TableColumn<any>[] = [
     {
-      name: "#",
-      cell: (row, index) => index + 1,
-      width: "50px",
-      grow: 0,
+      name: "No.",
+      width: "60px",
+      center: true,
+      cell: (row, index) => (page - 1) * perPage + (index + 1),
     },
     {
-      name: "Kabupaten / Kota",
-      selector: (row) => String(row.namaKota),
+      name: "Kecamatan",
+      selector: (row) => String(row.namaKec),
       sortable: true,
     },
     {
@@ -83,7 +57,7 @@ const TpsPage = () => {
       width: "120px",
       cell: (row) => (
         <div>
-          <Link href={`/master/tps/kecamatan/${row.kotaId}`}>
+          <Link href={`/master/tps/saksi/${row.kecId}`}>
             <button
               type="button"
               className="btn btn-outline-success btn-xs light"
@@ -105,7 +79,7 @@ const TpsPage = () => {
           <div className="card">
             <div className="card-header flex-wrap" id="default-tab">
               <div>
-                <h4 className="card-title">Data TPS</h4>
+                <h4 className="card-title">Data TPS {namaKota}</h4>
               </div>
             </div>
 
@@ -116,19 +90,20 @@ const TpsPage = () => {
                 persistTableHead={true}
                 columns={columns}
                 data={datas}
+                pagination
                 customStyles={customStyles}
+                onChangePage={(page) => {
+                  setPage(page);
+                }}
+                onChangeRowsPerPage={(page) => {
+                  setPage(1);
+                  setPerpage(page);
+                }}
               />
             </div>
           </div>
         </div>
       </div>
-
-      <div>
-        <GenerateTPS listKota={listKota} defKec={listKec} reload={reload} />
-        <Reset reload={reload} />
-      </div>
     </div>
   );
-};
-
-export default TpsPage;
+}

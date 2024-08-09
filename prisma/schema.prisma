@@ -83,6 +83,7 @@ model User {
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
   notifikasi          Notifikasi[]
+  tpsSaksi            Tps?
 }   
 
 model Notifikasi {
@@ -112,10 +113,11 @@ model Tps {
   kotaId              Int
   kecId               Int     
   tpsNo               Int
-  saksiId             Int?
+  saksiId             Int?            @unique
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
   appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)
   kota                Wilayah?        @relation("tpsKota", fields: [kotaId], references: [id])
   kec                 Wilayah?        @relation("tpsKec", fields: [kecId], references: [id])
+  saksi               User?           @relation(fields: [saksiId], references: [id])
 }  

@@ -16,6 +16,9 @@ model AppData {
   halaman             Halaman[]
   setting             Setting?
   tps                 Tps[]
+  paslon              Paslon[]
+  pengumuman          Pengumuman[]
+  berita              Berita[]
 } 
 
 model Setting {
@@ -121,3 +124,36 @@ model Tps {
   kec                 Wilayah?        @relation("tpsKec", fields: [kecId], references: [id])
   saksi               User?           @relation(fields: [saksiId], references: [id])
 }  
+
+model Paslon {
+  id                  Int             @id @default(autoincrement())
+  appId               Int
+  noUrut              Int
+  calon               String     
+  wakil               String     
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)
+} 
+
+model Pengumuman {
+  id                  Int             @id @default(autoincrement())
+  appId               Int
+  judul               String
+  deskripsi           String?     
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)
+} 
+
+model Berita {
+  id                  Int             @id @default(autoincrement())
+  appId               Int
+  tanggal             String
+  judul               String
+  deskripsi           String?     
+  sumber              String?     
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)
+} 

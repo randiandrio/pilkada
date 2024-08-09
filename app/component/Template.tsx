@@ -122,11 +122,12 @@ export default function Template({ children }: { children: React.ReactNode }) {
                   <li>
                     <Link href="/konten/pengumuman">Pengumuman</Link>
                   </li>
+
                   <li>
-                    <Link href="/konten/notifikasi">Notifikasi</Link>
+                    <Link href="/konten/berita">Berita</Link>
                   </li>
                   <li>
-                    <Link href="/konten/notifikasi">Berita</Link>
+                    <Link href="/konten/notifikasi">Notifikasi</Link>
                   </li>
                 </ul>
               </li>

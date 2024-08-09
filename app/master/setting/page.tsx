@@ -30,7 +30,7 @@ const SettingPage = () => {
 
   const [selectedKota, setSelectedKota] = useState({
     value: 0,
-    label: "Pilih Kabupaten / Kota",
+    label: "Semua Kabupaten / Kota",
   });
 
   useEffect(() => {
@@ -215,7 +215,6 @@ const SettingPage = () => {
   };
 
   const handleSelectProv = async (data: any) => {
-    console.log(data);
     setSelectedProv(data);
     setFieldKota(false);
     loadKota(data.value);
@@ -223,7 +222,6 @@ const SettingPage = () => {
 
   const handleSelectKota = async (data: any) => {
     setSelectedKota(data);
-    console.log(data);
   };
 
   if (isLoading) return <p>Loading...</p>;
@@ -231,80 +229,6 @@ const SettingPage = () => {
   return (
     <div>
       <div className="row">
-        <div className="col-xl-8 col-lg-12">
-          <div className="row mx-1">
-            <div className="card px-0">
-              <div className="card-header">
-                <h4 className="card-title">Background Utama</h4>
-              </div>
-              <Image
-                src={fotoUtamaSelect}
-                alt=""
-                height={400}
-                width={300}
-                className="slide mb-2 w-100"
-              />
-              <div className="card-body">
-                <form onSubmit={handleSubmitUtama}>
-                  <input
-                    required
-                    type="file"
-                    className="form-control mb-3"
-                    onChange={previewGambarUtama}
-                  />
-
-                  <div
-                    className="toolbar toolbar-bottom"
-                    role="toolbar"
-                    style={{ textAlign: "right" }}
-                  >
-                    <button type="submit" className="btn btn-primary light">
-                      Update
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="col-xl-4 col-lg-12">
-          <div className="row mx-1">
-            <div className="card px-0">
-              <div className="card-header">
-                <h4 className="card-title">Background Halaman Login</h4>
-              </div>
-              <Image
-                src={fotoLoginSelect}
-                alt=""
-                height={400}
-                width={300}
-                className="slide mb-2 w-100"
-              />
-              <div className="card-body">
-                <form onSubmit={handleSubmitLogin}>
-                  <input
-                    required
-                    type="file"
-                    className="form-control mb-3"
-                    onChange={previewGambarLogin}
-                  />
-
-                  <div
-                    className="toolbar toolbar-bottom"
-                    role="toolbar"
-                    style={{ textAlign: "right" }}
-                  >
-                    <button type="submit" className="btn btn-primary light">
-                      Update
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-
         <div className="col-xl-4 col-lg-12">
           <div className="row mx-1">
             <div className="card px-0">
@@ -364,7 +288,7 @@ const SettingPage = () => {
                     <div className="col-sm-6 mb-3">
                       <Select
                         isDisabled={fieldKota}
-                        placeholder="Pilih Kabupaten / Kota"
+                        placeholder="Semua Kabupaten / Kota"
                         className="basic-single mt-1"
                         classNamePrefix="select"
                         isSearchable={true}
@@ -377,6 +301,80 @@ const SettingPage = () => {
                       />
                     </div>
                   </div>
+
+                  <div
+                    className="toolbar toolbar-bottom"
+                    role="toolbar"
+                    style={{ textAlign: "right" }}
+                  >
+                    <button type="submit" className="btn btn-primary light">
+                      Update
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-xl-8 col-lg-12">
+          <div className="row mx-1">
+            <div className="card px-0">
+              <div className="card-header">
+                <h4 className="card-title">Background Utama</h4>
+              </div>
+              <Image
+                src={fotoUtamaSelect}
+                alt=""
+                height={400}
+                width={300}
+                className="slide mb-2 w-100"
+              />
+              <div className="card-body">
+                <form onSubmit={handleSubmitUtama}>
+                  <input
+                    required
+                    type="file"
+                    className="form-control mb-3"
+                    onChange={previewGambarUtama}
+                  />
+
+                  <div
+                    className="toolbar toolbar-bottom"
+                    role="toolbar"
+                    style={{ textAlign: "right" }}
+                  >
+                    <button type="submit" className="btn btn-primary light">
+                      Update
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-xl-4 col-lg-12">
+          <div className="row mx-1">
+            <div className="card px-0">
+              <div className="card-header">
+                <h4 className="card-title">Background Halaman Login</h4>
+              </div>
+              <Image
+                src={fotoLoginSelect}
+                alt=""
+                height={400}
+                width={300}
+                className="slide mb-2 w-100"
+              />
+              <div className="card-body">
+                <form onSubmit={handleSubmitLogin}>
+                  <input
+                    required
+                    type="file"
+                    className="form-control mb-3"
+                    onChange={previewGambarLogin}
+                  />
 
                   <div
                     className="toolbar toolbar-bottom"

@@ -95,7 +95,7 @@ async function GetKota(provId: Number) {
   let x = [];
   x.push({
     value: 0,
-    nama: "Pilih Kabupaten / Kota",
+    nama: "Semua Kabupaten / Kota",
   });
 
   for (let i = 0; i < result.length; i++) {

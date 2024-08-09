@@ -15,6 +15,7 @@ model AppData {
   admin               Admin[]
   halaman             Halaman[]
   setting             Setting?
+  tps                 Tps[]
 } 
 
 model Setting {
@@ -65,6 +66,8 @@ model Wilayah {
   updatedAt           DateTime        @updatedAt
   prov                Setting[]       @relation("prov")
   kota                Setting[]       @relation("kota")
+  tpsKota             Tps[]           @relation("tpsKota")
+  tpsKec              Tps[]           @relation("tpsKec")
 }
 
 model User {
@@ -101,4 +104,18 @@ model Halaman {
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
   appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)
+}  
+
+model Tps {
+  id                  Int             @id @default(autoincrement())
+  appId               Int
+  kotaId              Int
+  kecId               Int     
+  tpsNo               Int
+  saksiId             Int?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)
+  kota                Wilayah?        @relation("tpsKota", fields: [kotaId], references: [id])
+  kec                 Wilayah?        @relation("tpsKec", fields: [kecId], references: [id])
 }  

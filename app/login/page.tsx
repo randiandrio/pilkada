@@ -5,7 +5,6 @@ import Swal from "sweetalert2";
 import ReCAPTCHA from "react-google-recaptcha";
 import { verifyCaptcha } from "../component/ServerActions";
 import Image from "next/image";
-import { appName, logoImg, logoLogin, tagline } from "../helperLocal";
 
 export default function LoginPage() {
   const recaptchaRef = useRef<ReCAPTCHA>(null);

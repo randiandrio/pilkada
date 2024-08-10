@@ -19,6 +19,7 @@ model AppData {
   paslon              Paslon[]
   pengumuman          Pengumuman[]
   berita              Berita[]
+  users                User[]
 } 
 
 model Setting {
@@ -75,6 +76,7 @@ model Wilayah {
 
 model User {
   id                  Int             @id @default(autoincrement())
+  appId               Int
   nama                String?     
   email               String?         
   hp                  String?         
@@ -87,6 +89,7 @@ model User {
   updatedAt           DateTime        @updatedAt
   notifikasi          Notifikasi[]
   tpsSaksi            Tps?
+  appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)
 }   
 
 model Notifikasi {

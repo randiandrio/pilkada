@@ -28,8 +28,7 @@ export const GET = async () => {
   //     SELECT kode
   //     FROM wilayah
   //     GROUP BY kode
-  //     HAVING COUNT(*) > 1
-  // )`;
+  //     HAVING COUNT(*) > 1)`;
 
   return NextResponse.json(true, { status: 200 });
 };

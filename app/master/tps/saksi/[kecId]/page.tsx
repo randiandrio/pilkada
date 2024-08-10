@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import Link from "next/link";
+import AddSaksi from "../../action/AddSaksi";
 
 const customStyles = {
   headCells: {
@@ -44,7 +45,7 @@ export default function TpsKec({ params }: { params: { kecId: string } }) {
     },
     {
       name: "Nama Saksi",
-      selector: (row) => row.saksi?.nama ?? "Belum ada saksi",
+      selector: (row) => row.saksi?.nama ?? "-",
       sortable: true,
     },
     {
@@ -52,14 +53,15 @@ export default function TpsKec({ params }: { params: { kecId: string } }) {
       width: "200px",
       cell: (row) => (
         <div>
-          <Link href={`#`}>
-            <button
-              type="button"
-              className="btn btn-outline-success btn-xs light"
-            >
-              Tambah / Ganti Saksi
-            </button>
-          </Link>
+          <AddSaksi
+            reload={reload}
+            tpsId={row.id}
+            usr={
+              row.saksi
+                ? { value: row.saksi.id, label: row.saksi.nama }
+                : { value: 0, label: "Pilih Saksi" }
+            }
+          />
         </div>
       ),
     },

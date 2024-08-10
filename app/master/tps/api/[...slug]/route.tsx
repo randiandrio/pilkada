@@ -40,6 +40,10 @@ export const GET = async (
     const result = await GetDataSaksi(adminLogin, params.slug[1]);
     return NextResponse.json(result, { status: 200 });
   }
+  if (params.slug[0] === "cari_user") {
+    const result = await CariUser(adminLogin, params.slug[1]);
+    return NextResponse.json(result, { status: 200 });
+  }
 
   return NextResponse.json(false);
 };
@@ -59,6 +63,11 @@ export const PATCH = async (
 
   if (params.slug[0] == "generate_tps") {
     const result = await GenerateTps(data, adminLogin);
+    return NextResponse.json(result, { status: 200 });
+  }
+
+  if (params.slug[0] == "post_saksi") {
+    const result = await PostSaksi(data, adminLogin);
     return NextResponse.json(result, { status: 200 });
   }
 };
@@ -219,9 +228,26 @@ async function GetDataSaksi(admin: AdminLogin, kecId: String) {
     include: {
       saksi: true,
     },
+    orderBy: {
+      tpsNo: "asc",
+    },
   });
 
   return { data: tps, namaKec: kec?.nama };
+}
+
+async function CariUser(admin: AdminLogin, cari: String) {
+  const users = await prisma.user.findMany({
+    where: {
+      appId: Number(admin.appId),
+      nama: {
+        contains: String(cari),
+        mode: "insensitive",
+      },
+    },
+  });
+
+  return users;
 }
 
 async function Reset(admin: AdminLogin) {
@@ -229,4 +255,17 @@ async function Reset(admin: AdminLogin) {
     where: { appId: Number(admin.appId) },
   });
   return true;
+}
+
+async function PostSaksi(data: any, admin: AdminLogin) {
+  const dt = JSON.parse(String(data.get("data")));
+
+  await prisma.tps.update({
+    where: { id: Number(data.get("tpsId")) },
+    data: {
+      saksiId: Number(data.get("saksiId")),
+    },
+  });
+
+  return { error: false, message: "Saksi berhasil di tambahkan" };
 }

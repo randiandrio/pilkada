@@ -1,10 +1,11 @@
 "use client";
 import { useEffect } from "react";
 import { useState } from "react";
-import GenerateTPS from "./action/Add";
 import DataTable, { TableColumn } from "react-data-table-component";
 import Link from "next/link";
-import Reset from "./action/Delete";
+import Reset from "./action/Reset";
+import GenerateTPS from "./action/GenerateTps";
+
 const customStyles = {
   headCells: {
     style: {
@@ -101,7 +102,7 @@ const TpsPage = () => {
   return (
     <div>
       <div className="row">
-        <div className="col-xl-6 col-lg-12">
+        <div className="col-xl-8 col-lg-12">
           <div className="card">
             <div className="card-header flex-wrap" id="default-tab">
               <div>

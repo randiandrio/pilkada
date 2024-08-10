@@ -140,6 +140,41 @@ export default function Template({ children }: { children: React.ReactNode }) {
                 >
                   <div className="menu-icon">
                     <Image
+                      src="/template/content.png"
+                      width={25}
+                      height={25}
+                      alt="database"
+                    />
+                  </div>
+                  <span className="nav-text">Koordinator</span>
+                </a>
+
+                <ul>
+                  <li className="mini-dashboard">Koordinator</li>
+
+                  <li>
+                    <Link href="/koordinator/provinsi">Provinsi</Link>
+                  </li>
+                  <li>
+                    <Link href="/koordinator/kabupaten">Kota / Kabupaten</Link>
+                  </li>
+                  <li>
+                    <Link href="/koordinator/kecamatan">Kecamatan</Link>
+                  </li>
+                  <li>
+                    <Link href="/koordinator/kelurahan">Kelurahan / Desa</Link>
+                  </li>
+                </ul>
+              </li>
+
+              <li>
+                <a
+                  className="has-arrow "
+                  href="javascript:void(0);"
+                  aria-expanded="false"
+                >
+                  <div className="menu-icon">
+                    <Image
                       src="/template/team.png"
                       width={25}
                       height={25}
@@ -240,24 +275,6 @@ export default function Template({ children }: { children: React.ReactNode }) {
                     <Link href="/suara/real-count">Real Count</Link>
                   </li>
                 </ul>
-              </li>
-
-              <li>
-                <Link
-                  href={`/ruang-diskusi`}
-                  className=""
-                  aria-expanded="false"
-                >
-                  <div className="menu-icon">
-                    <Image
-                      src="/template/diskusi.png"
-                      width={25}
-                      height={25}
-                      alt="xxx"
-                    />
-                  </div>
-                  <span className="nav-text">Ruang Diskusi</span>
-                </Link>
               </li>
 
               <li>

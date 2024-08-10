@@ -2,8 +2,10 @@
 import { useEffect } from "react";
 import { useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
-import Link from "next/link";
 import AddSaksi from "../../action/AddSaksi";
+import DeleteSaksi from "../../action/DeleteSaksi";
+import DeleteTps from "../../action/DeleteTps";
+import AddTps from "../../action/AddTps";
 
 const customStyles = {
   headCells: {
@@ -19,8 +21,6 @@ export default function TpsKec({ params }: { params: { kecId: string } }) {
   const [isLoading, setLoading] = useState(true);
   const [datas, setDatas] = useState([]);
   const [namaKec, setNamaKec] = useState("");
-  const [page, setPage] = useState(1);
-  const [perPage, setPerpage] = useState(10);
 
   useEffect(() => {
     reload();
@@ -50,9 +50,9 @@ export default function TpsKec({ params }: { params: { kecId: string } }) {
     },
     {
       name: "",
-      width: "200px",
+      width: "300px",
       cell: (row) => (
-        <div>
+        <div className="d-flex">
           <AddSaksi
             reload={reload}
             tpsId={row.id}
@@ -62,6 +62,10 @@ export default function TpsKec({ params }: { params: { kecId: string } }) {
                 : { value: 0, label: "Pilih Saksi" }
             }
           />
+          &nbsp;&nbsp;
+          {row.saksi && <DeleteSaksi tps={row} reload={reload} />}
+          &nbsp;&nbsp;
+          <DeleteTps tps={row} reload={reload} />
         </div>
       ),
     },
@@ -72,7 +76,7 @@ export default function TpsKec({ params }: { params: { kecId: string } }) {
   return (
     <div>
       <div className="row">
-        <div className="col-xl-6 col-lg-12">
+        <div className="col-xl-8 col-lg-12">
           <div className="card">
             <div className="card-header flex-wrap" id="default-tab">
               <div>
@@ -89,16 +93,10 @@ export default function TpsKec({ params }: { params: { kecId: string } }) {
                 data={datas}
                 pagination
                 customStyles={customStyles}
-                onChangePage={(page) => {
-                  setPage(page);
-                }}
-                onChangeRowsPerPage={(page) => {
-                  setPage(1);
-                  setPerpage(page);
-                }}
               />
             </div>
           </div>
+          <AddTps reload={reload} kecId={Number(params.kecId)} />
         </div>
       </div>
     </div>

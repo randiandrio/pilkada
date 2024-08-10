@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Tps } from "@prisma/client";
 import { getToken } from "next-auth/jwt";
 import { AdminLogin } from "next-auth";
 
@@ -67,7 +67,22 @@ export const PATCH = async (
   }
 
   if (params.slug[0] == "post_saksi") {
-    const result = await PostSaksi(data, adminLogin);
+    const result = await PostSaksi(data);
+    return NextResponse.json(result, { status: 200 });
+  }
+
+  if (params.slug[0] == "hapus_saksi") {
+    const result = await HapusSaksi(data);
+    return NextResponse.json(result, { status: 200 });
+  }
+
+  if (params.slug[0] == "hapus_tps") {
+    const result = await HapusTps(data);
+    return NextResponse.json(result, { status: 200 });
+  }
+
+  if (params.slug[0] == "post_tps") {
+    const result = await PostTps(data, adminLogin);
     return NextResponse.json(result, { status: 200 });
   }
 };
@@ -237,6 +252,14 @@ async function GetDataSaksi(admin: AdminLogin, kecId: String) {
 }
 
 async function CariUser(admin: AdminLogin, cari: String) {
+  const s = await prisma.tps.findMany({
+    where: { appId: Number(admin.appId) },
+  });
+
+  const arr: any[] = s.map(function (item: Tps) {
+    return item.saksiId ?? 0;
+  });
+
   const users = await prisma.user.findMany({
     where: {
       appId: Number(admin.appId),
@@ -244,6 +267,7 @@ async function CariUser(admin: AdminLogin, cari: String) {
         contains: String(cari),
         mode: "insensitive",
       },
+      id: { notIn: arr },
     },
   });
 
@@ -257,7 +281,7 @@ async function Reset(admin: AdminLogin) {
   return true;
 }
 
-async function PostSaksi(data: any, admin: AdminLogin) {
+async function PostSaksi(data: any) {
   const dt = JSON.parse(String(data.get("data")));
 
   await prisma.tps.update({
@@ -268,4 +292,46 @@ async function PostSaksi(data: any, admin: AdminLogin) {
   });
 
   return { error: false, message: "Saksi berhasil di tambahkan" };
+}
+
+async function PostTps(data: any, admin: AdminLogin) {
+  const wilayah = await prisma.wilayah.findUnique({
+    where: { id: Number(data.get("kecId")) },
+  });
+
+  const code = wilayah?.kode.slice(0, 5);
+
+  const kota = await prisma.wilayah.findFirst({
+    where: { kode: code },
+  });
+
+  await prisma.tps.create({
+    data: {
+      appId: Number(admin.appId),
+      tpsNo: Number(data.get("tpsNo")),
+      kotaId: Number(kota?.id),
+      kecId: Number(data.get("kecId")),
+    },
+  });
+
+  return { error: false, message: "TPS berhasil di tambahkan" };
+}
+
+async function HapusSaksi(data: any) {
+  await prisma.tps.update({
+    where: { id: Number(data.get("tpsId")) },
+    data: {
+      saksiId: null,
+    },
+  });
+
+  return { error: false, message: "Saksi berhasil di hapus" };
+}
+
+async function HapusTps(data: any) {
+  await prisma.tps.delete({
+    where: { id: Number(data.get("tpsId")) },
+  });
+
+  return { error: false, message: "TPS berhasil di hapus" };
 }

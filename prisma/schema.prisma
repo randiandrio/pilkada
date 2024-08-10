@@ -77,12 +77,23 @@ model Wilayah {
 model User {
   id                  Int             @id @default(autoincrement())
   appId               Int
-  nama                String?     
-  email               String?         
+  nama                String?         
   hp                  String?         
-  password            String?           
+  wa                  String?         
+  password            String?  
+
+  noKtp               String?
+  tempatLahir         String?
+  tanggalLahir        String?
+  jenisKelamin        String?
+  provId              Int?
+  kabId               Int?
+  kecId               Int?
+  kelId               Int?
+
   foto                String?
   token               String?
+  isTim               Int             @default(0)
   os                  String          @default("ANDROID")
   appVersion          Int             @default(0)
   createdAt           DateTime        @default(now())

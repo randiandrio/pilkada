@@ -6,6 +6,7 @@ import DataTable, { TableColumn } from "react-data-table-component";
 import Add from "./action/Add";
 import Update from "./action/update";
 import Delete from "./action/Delete";
+import { tglIndo } from "../helper";
 
 const customStyles = {
   headCells: {
@@ -24,8 +25,7 @@ const TugasPage = () => {
   const [datas, setDatas] = useState([]);
 
   useEffect(() => {
-    // reload();
-    setLoading(false);
+    reload();
   }, []);
 
   const reload = async () => {
@@ -37,7 +37,7 @@ const TugasPage = () => {
       });
   };
 
-  const columns: TableColumn<Paslon>[] = [
+  const columns: TableColumn<any>[] = [
     {
       name: "No.",
       width: "60px",
@@ -45,29 +45,29 @@ const TugasPage = () => {
       cell: (row, index) => (page - 1) * perPage + (index + 1),
     },
     {
-      name: "Nama Anggota",
+      name: "Nama",
       width: "150px",
-      selector: (row) => String(row.noUrut),
+      selector: (row) => String(row.user.nama),
       sortable: true,
     },
     {
-      name: "Jenis Tugas",
-      selector: (row) => String(row.calon),
+      name: "Judul Tugas",
+      selector: (row) => String(row.judul),
       sortable: true,
     },
     {
       name: "Jumlah",
-      selector: (row) => String(row.wakil),
+      selector: (row) => String(row.jumlah),
       sortable: true,
     },
     {
       name: "Progress",
-      selector: (row) => String(row.wakil),
+      selector: (row) => `${row.progress} %`,
       sortable: true,
     },
     {
       name: "Deadline",
-      selector: (row) => String(row.wakil),
+      selector: (row) => tglIndo(row.deadline),
       sortable: true,
     },
     {
@@ -75,8 +75,8 @@ const TugasPage = () => {
       width: "120px",
       cell: (row) => (
         <div className="d-flex">
-          <Update reload={reload} paslon={row} />
-          <Delete reload={reload} paslon={row} />
+          <Update reload={reload} data={row} />
+          <Delete reload={reload} data={row} />
         </div>
       ),
     },

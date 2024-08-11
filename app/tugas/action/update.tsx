@@ -4,12 +4,19 @@ import axios from "axios";
 import Modal from "react-bootstrap/Modal";
 import Swal from "sweetalert2";
 import { resData } from "next-auth";
-import { Paslon } from "@prisma/client";
+import Select from "react-select";
 
-function Update({ reload, paslon }: { reload: Function; paslon: Paslon }) {
-  const [noUrut, setNoUrut] = useState(paslon.noUrut);
-  const [calon, setCalon] = useState(paslon.calon);
-  const [wakil, setWakil] = useState(paslon.wakil);
+function Update({ reload, data }: { reload: Function; data: any }) {
+  const [listUser, setListUser] = useState<any[]>([]);
+  const [selectedUser, setSelectedUser] = useState({
+    value: data.user.id,
+    label: data.user.nama,
+  });
+
+  const [judul, setJudul] = useState(data.judul);
+  const [deskripsi, setDeskripsi] = useState(data.deskripsi);
+  const [jumlah, setJumlah] = useState(data.jumlah);
+  const [deadline, setDeadline] = useState(data.deadline);
 
   const [show, setShow] = useState(false);
   const handleClose = () => {
@@ -30,6 +37,25 @@ function Update({ reload, paslon }: { reload: Function; paslon: Paslon }) {
     });
   }
 
+  const loadUser = async (cari: String) => {
+    fetch(`/tugas/api/cari_user/${cari}`)
+      .then((res) => res.json())
+      .then((x) => {
+        console.log(x);
+        var a = x.map(function (item: any) {
+          return {
+            value: item.id,
+            label: item.nama,
+          };
+        });
+        setListUser(a);
+      });
+  };
+
+  const handleSelectUser = async (data: any) => {
+    setSelectedUser(data);
+  };
+
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
 
@@ -37,11 +63,13 @@ function Update({ reload, paslon }: { reload: Function; paslon: Paslon }) {
 
     const formData = new FormData();
     formData.append("mode", "update");
-    formData.append("id", String(paslon.id));
-    formData.append("noUrut", String(noUrut));
-    formData.append("calon", String(calon));
-    formData.append("wakil", String(wakil));
-    const x = await axios.patch("/master/all-paslon/api/post", formData);
+    formData.append("id", String(data.id));
+    formData.append("userId", String(selectedUser.value));
+    formData.append("judul", String(judul));
+    formData.append("deskripsi", String(deskripsi));
+    formData.append("jumlah", String(jumlah));
+    formData.append("deadline", String(deadline));
+    const x = await axios.patch("/tugas/api/post", formData);
     const pesan = (await x.data) as resData;
     if (!pesan.error) {
       handleClose();
@@ -67,7 +95,7 @@ function Update({ reload, paslon }: { reload: Function; paslon: Paslon }) {
       </span>
 
       <Modal
-        dialogClassName="modal-md"
+        dialogClassName="modal-lg"
         show={show}
         onHide={handleClose}
         backdrop="static"
@@ -75,42 +103,81 @@ function Update({ reload, paslon }: { reload: Function; paslon: Paslon }) {
       >
         <form onSubmit={handleSubmit}>
           <Modal.Header closeButton>
-            <Modal.Title>Tambah Paslon</Modal.Title>
+            <Modal.Title>Tambah Tugas</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <div className="mb-3 row">
-              <label className="col-sm-4 col-form-label">Nomor Urut</label>
+              <label className="col-sm-4 col-form-label">Pilih Anggota</label>
+              <div className="col-sm-8">
+                <Select
+                  required
+                  placeholder="Pilih member"
+                  className="basic-single mt-1"
+                  classNamePrefix="select"
+                  isSearchable={true}
+                  options={listUser}
+                  value={selectedUser}
+                  noOptionsMessage={(e) => {
+                    return e.inputValue.length > 2 && listUser.length == 0
+                      ? "User tidak ditemukan"
+                      : "Ketik min 3 huruf";
+                  }}
+                  onInputChange={(e) => {
+                    if (e.length > 2) {
+                      loadUser(String(e));
+                    } else {
+                      setListUser([]);
+                    }
+                  }}
+                  onChange={(e) => handleSelectUser(e!)}
+                />
+              </div>
+            </div>
+            <div className="mb-3 row">
+              <label className="col-sm-4 col-form-label">Judul Tugas</label>
+              <div className="col-sm-8">
+                <input
+                  required
+                  type="text"
+                  className="form-control"
+                  value={judul}
+                  onChange={(e) => setJudul(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="mb-3 row">
+              <label className="col-sm-4 col-form-label">Deskripsi Tugas</label>
+              <div className="col-sm-8">
+                <input
+                  required
+                  type="text"
+                  className="form-control"
+                  value={deskripsi}
+                  onChange={(e) => setDeskripsi(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="mb-3 row">
+              <label className="col-sm-4 col-form-label">Jumlah Tugas</label>
               <div className="col-sm-8">
                 <input
                   required
                   type="number"
                   className="form-control"
-                  value={noUrut}
-                  onChange={(e) => setNoUrut(Number(e.target.value))}
+                  value={jumlah}
+                  onChange={(e) => setJumlah(e.target.value)}
                 />
               </div>
             </div>
             <div className="mb-3 row">
-              <label className="col-sm-4 col-form-label">Nama Calon</label>
+              <label className="col-sm-4 col-form-label">Deadline Tugas</label>
               <div className="col-sm-8">
                 <input
                   required
-                  type="text"
+                  type="date"
                   className="form-control"
-                  value={calon}
-                  onChange={(e) => setCalon(e.target.value)}
-                />
-              </div>
-            </div>
-            <div className="mb-3 row">
-              <label className="col-sm-4 col-form-label">Nama Wakil</label>
-              <div className="col-sm-8">
-                <input
-                  required
-                  type="text"
-                  className="form-control"
-                  value={wakil}
-                  onChange={(e) => setWakil(e.target.value)}
+                  value={deadline}
+                  onChange={(e) => setDeadline(e.target.value)}
                 />
               </div>
             </div>
@@ -124,7 +191,7 @@ function Update({ reload, paslon }: { reload: Function; paslon: Paslon }) {
               Close
             </button>
             <button type="submit" className="btn btn-primary light">
-              Simpan
+              Perbarui
             </button>
           </Modal.Footer>
         </form>

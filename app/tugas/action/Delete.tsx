@@ -3,9 +3,9 @@ import { useState } from "react";
 import axios from "axios";
 import Modal from "react-bootstrap/Modal";
 import Swal from "sweetalert2";
-import { Paslon } from "@prisma/client";
+import { Tugas } from "@prisma/client";
 
-function Delete({ paslon, reload }: { paslon: Paslon; reload: Function }) {
+function Delete({ data, reload }: { data: Tugas; reload: Function }) {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -26,8 +26,8 @@ function Delete({ paslon, reload }: { paslon: Paslon; reload: Function }) {
     setPost(true);
     const formData = new FormData();
     formData.append("mode", "delete");
-    formData.append("id", String(paslon.id));
-    const x = await axios.patch("/master/all-paslon/api/post", formData);
+    formData.append("id", String(data.id));
+    const x = await axios.patch("/tugas/api/post", formData);
     reload();
     setPost(false);
     Swal.fire({

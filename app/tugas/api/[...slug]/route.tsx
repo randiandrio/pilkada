@@ -16,8 +16,13 @@ export const GET = async (
 
   const adminLogin = token as unknown as AdminLogin;
 
-  if (params.slug[0] === "data_paslon") {
-    const result = await DataPaslon(adminLogin);
+  if (params.slug[0] === "data") {
+    const result = await Data(adminLogin);
+    return NextResponse.json(result, { status: 200 });
+  }
+
+  if (params.slug[0] === "cari_user") {
+    const result = await CariUser(adminLogin, String(params.slug[1]));
     return NextResponse.json(result, { status: 200 });
   }
 
@@ -43,38 +48,58 @@ export const PATCH = async (
   }
 };
 
-async function DataPaslon(admin: AdminLogin) {
-  const paslon = await prisma.paslon.findMany({
-    where: { appId: Number(admin.appId) },
+async function CariUser(admin: AdminLogin, cari: String) {
+  const users = await prisma.user.findMany({
+    where: {
+      appId: Number(admin.appId),
+      nama: {
+        contains: String(cari),
+        mode: "insensitive",
+      },
+    },
   });
-  return paslon;
+
+  return users;
+}
+
+async function Data(admin: AdminLogin) {
+  const tugas = await prisma.tugas.findMany({
+    where: { appId: Number(admin.appId) },
+    orderBy: { id: "desc" },
+    include: { user: true },
+  });
+  return tugas;
 }
 
 async function Post(data: any, admin: AdminLogin) {
   if (String(data.get("mode")) == "add") {
-    await prisma.paslon.create({
+    await prisma.tugas.create({
       data: {
         appId: Number(admin.appId),
-        noUrut: Number(data.get("noUrut")),
-        calon: String(data.get("calon")),
-        wakil: String(data.get("wakil")),
+        userId: Number(data.get("userId")),
+        judul: String(data.get("judul")),
+        deskripsi: String(data.get("deskripsi")),
+        jumlah: Number(data.get("jumlah")),
+        deadline: String(data.get("deadline")),
       },
     });
-    return { error: false, message: "Data paslon berhasil ditambahkan" };
+    return { error: false, message: "Data tugas berhasil ditambahkan" };
   } else if (String(data.get("mode")) == "update") {
-    await prisma.paslon.update({
+    await prisma.tugas.update({
       where: { id: Number(data.get("id")) },
       data: {
-        noUrut: Number(data.get("noUrut")),
-        calon: String(data.get("calon")),
-        wakil: String(data.get("wakil")),
+        userId: Number(data.get("userId")),
+        judul: String(data.get("judul")),
+        deskripsi: String(data.get("deskripsi")),
+        jumlah: Number(data.get("jumlah")),
+        deadline: String(data.get("deadline")),
       },
     });
-    return { error: false, message: "Data paslon berhasil diperbarui" };
+    return { error: false, message: "Data tugas berhasil diperbarui" };
   } else {
-    await prisma.paslon.delete({
+    await prisma.tugas.delete({
       where: { id: Number(data.get("id")) },
     });
-    return { error: false, message: "Data paslon berhasil dihapus" };
+    return { error: false, message: "Data tugas berhasil dihapus" };
   }
 }

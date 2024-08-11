@@ -19,7 +19,8 @@ model AppData {
   paslon              Paslon[]
   pengumuman          Pengumuman[]
   berita              Berita[]
-  users                User[]
+  users               User[]
+  tugas               Tugas[]
 } 
 
 model Setting {
@@ -100,6 +101,7 @@ model User {
   updatedAt           DateTime        @updatedAt
   notifikasi          Notifikasi[]
   tpsSaksi            Tps?
+  tugas               Tugas[]
   appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)
 }   
 
@@ -170,4 +172,19 @@ model Berita {
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
   appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)
+}
+
+model Tugas {
+  id                  Int             @id @default(autoincrement())
+  appId               Int
+  userId              Int
+  judul               String
+  deskripsi           String?     
+  jumlah              Int     
+  progress            Int             @default(0)
+  deadline            String?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)
+  user                User            @relation(fields: [userId], references: [id], onDelete: Cascade)
 } 

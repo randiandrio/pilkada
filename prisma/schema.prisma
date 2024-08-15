@@ -21,6 +21,7 @@ model AppData {
   berita              Berita[]
   users               User[]
   tugas               Tugas[]
+  koordinator         Koordinator[]
 } 
 
 model Setting {
@@ -73,6 +74,7 @@ model Wilayah {
   kota                Setting[]       @relation("kota")
   tpsKota             Tps[]           @relation("tpsKota")
   tpsKec              Tps[]           @relation("tpsKec")
+  koordinator         Koordinator[]
 }
 
 model User {
@@ -103,7 +105,21 @@ model User {
   tpsSaksi            Tps?
   tugas               Tugas[]
   appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)
+  koordinator         Koordinator[]
 }   
+
+model Koordinator {
+  id                  Int             @id @default(autoincrement())
+  appId               Int
+  wilayahId           Int     
+  userId              Int
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)
+  user                User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  wilayah             Wilayah         @relation(fields: [wilayahId], references: [id], onDelete: Cascade)
+  @@unique(fields: [appId, wilayahId])
+}  
 
 model Notifikasi {
   id                Int               @id @default(autoincrement())

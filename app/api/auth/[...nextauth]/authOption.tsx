@@ -27,7 +27,11 @@ export const authOption: NextAuthOptions = {
             hp: credentials!.hp,
           },
           include: {
-            appData: true,
+            appData: {
+              include: {
+                setting: true,
+              },
+            },
           },
         });
 
@@ -44,6 +48,8 @@ export const authOption: NextAuthOptions = {
           appId: x.appId,
           nama: x.nama,
           role: x.role,
+          provId: x.appData.setting?.provId ?? 0,
+          kotaId: x.appData.setting?.kotaId ?? 0,
           appName: x.appData.nama,
         } as any;
       },

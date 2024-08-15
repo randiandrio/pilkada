@@ -6,6 +6,8 @@ declare module "next-auth" {
     appId: Number;
     nama: String;
     role: String;
+    provId: Number;
+    kotaId: Number;
     appName: String;
   }
 

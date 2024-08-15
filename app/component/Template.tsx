@@ -2,13 +2,18 @@ import "material-icons/iconfont/material-icons.css";
 import "bootstrap-select/dist/css/bootstrap-select.min.css";
 import "../../public/template/css/style.css";
 
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Header from "./Header";
 import Swal from "sweetalert2";
 import Link from "next/link";
 import Image from "next/image";
+import { AdminLogin } from "next-auth";
+import Menu from "./Menu";
 
 export default function Template({ children }: { children: React.ReactNode }) {
+  const session = useSession();
+  const akun = session.data as unknown as AdminLogin;
+
   const logout = async () => {
     Swal.fire({
       title: "Anda yakin ...",
@@ -132,40 +137,7 @@ export default function Template({ children }: { children: React.ReactNode }) {
                 </ul>
               </li>
 
-              <li>
-                <a
-                  className="has-arrow "
-                  href="javascript:void(0);"
-                  aria-expanded="false"
-                >
-                  <div className="menu-icon">
-                    <Image
-                      src="/template/content.png"
-                      width={25}
-                      height={25}
-                      alt="database"
-                    />
-                  </div>
-                  <span className="nav-text">Koordinator</span>
-                </a>
-
-                <ul>
-                  <li className="mini-dashboard">Koordinator</li>
-
-                  <li>
-                    <Link href="/koordinator/provinsi">Provinsi</Link>
-                  </li>
-                  <li>
-                    <Link href="/koordinator/kabupaten">Kota / Kabupaten</Link>
-                  </li>
-                  <li>
-                    <Link href="/koordinator/kecamatan">Kecamatan</Link>
-                  </li>
-                  <li>
-                    <Link href="/koordinator/kelurahan">Kelurahan / Desa</Link>
-                  </li>
-                </ul>
-              </li>
+              <Menu akses={Number(akun?.kotaId) > 0 ? "Bupati" : "Gubernur"} />
 
               <li>
                 <a

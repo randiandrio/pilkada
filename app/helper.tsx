@@ -266,28 +266,13 @@ export async function kirimOTP(pesan: String, hp: String) {
   return true;
 }
 
-export async function cekKontak(
+export async function cekKontakx(
   hp: String,
   email: String,
   isAdd: Boolean,
   userId: Number
 ) {
   if (isAdd) {
-    if (email != undefined) {
-      const e = await prisma.user.findMany({
-        where: {
-          email: String(email),
-        },
-      });
-
-      if (e.length > 0) {
-        return {
-          err: true,
-          msg: "Email telah digunakan",
-        };
-      }
-    }
-
     const h = await prisma.user.findMany({
       where: {
         hp: String(hp),
@@ -301,21 +286,6 @@ export async function cekKontak(
       };
     }
   } else {
-    if (email != undefined) {
-      const e = await prisma.user.findMany({
-        where: {
-          NOT: { id: Number(userId) },
-          email: String(email),
-        },
-      });
-      if (e.length > 0) {
-        return {
-          err: true,
-          msg: "email telah digunakan",
-        };
-      }
-    }
-
     const h = await prisma.user.findMany({
       where: {
         NOT: { id: Number(userId) },

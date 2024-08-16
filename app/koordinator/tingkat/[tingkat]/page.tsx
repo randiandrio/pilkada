@@ -20,6 +20,7 @@ const KoordinatorPage = ({ params }: { params: { tingkat: string } }) => {
   const [perPage, setPerpage] = useState(10);
   const [isLoading, setLoading] = useState(true);
   const [datas, setDatas] = useState([]);
+  const [filter, setFilter] = useState("");
 
   useEffect(() => {
     reload();
@@ -81,6 +82,128 @@ const KoordinatorPage = ({ params }: { params: { tingkat: string } }) => {
     },
   ];
 
+  const columnKecamatan: TableColumn<any>[] = [
+    {
+      name: "No.",
+      width: "60px",
+      center: true,
+      cell: (row, index) => (page - 1) * perPage + (index + 1),
+    },
+    {
+      name: "Kecamatan",
+
+      selector: (row) => String(row.nama),
+      sortable: true,
+    },
+    {
+      name: "Kota / Kabupaten",
+      selector: (row) => String(row.kabupaten),
+      sortable: true,
+    },
+    {
+      name: "Koordinator",
+      selector: (row) =>
+        String(row.koordinator.length > 0 ? row.koordinator[0].user.nama : "-"),
+      sortable: true,
+    },
+    {
+      name: "Aksi",
+      width: "230px",
+      cell: (row) => (
+        <div className="d-flex">
+          <Add
+            usr={{
+              value:
+                row.koordinator.length > 0 ? row.koordinator[0].user.id : 0,
+              label:
+                row.koordinator.length > 0
+                  ? row.koordinator[0].user.nama
+                  : "Pilih Koordinator",
+            }}
+            reload={reload}
+            wilayahId={row.id}
+            namaWilayah={row.nama}
+          />
+          {row.koordinator.length > 0 && (
+            <Delete reload={reload} koordinatorId={row.koordinator[0].id} />
+          )}
+        </div>
+      ),
+    },
+  ];
+
+  const columnKelurahan: TableColumn<any>[] = [
+    {
+      name: "No.",
+      width: "100px",
+      center: true,
+      cell: (row, index) => (page - 1) * perPage + (index + 1),
+    },
+    {
+      name: "Kelurahan / Desa",
+      selector: (row) => String(row.nama),
+      sortable: true,
+    },
+    {
+      name: "Kecamatan",
+      selector: (row) => String(row.kecamatan),
+      sortable: true,
+    },
+    {
+      name: "Kota / Kabupaten",
+      selector: (row) => String(row.kabupaten),
+      sortable: true,
+    },
+    {
+      name: "Koordinator",
+      selector: (row) =>
+        String(row.koordinator.length > 0 ? row.koordinator[0].user.nama : "-"),
+      sortable: true,
+    },
+    {
+      name: "Aksi",
+      width: "230px",
+      cell: (row) => (
+        <div className="d-flex">
+          <Add
+            usr={{
+              value:
+                row.koordinator.length > 0 ? row.koordinator[0].user.id : 0,
+              label:
+                row.koordinator.length > 0
+                  ? row.koordinator[0].user.nama
+                  : "Pilih Koordinator",
+            }}
+            reload={reload}
+            wilayahId={row.id}
+            namaWilayah={row.nama}
+          />
+          {row.koordinator.length > 0 && (
+            <Delete reload={reload} koordinatorId={row.koordinator[0].id} />
+          )}
+        </div>
+      ),
+    },
+  ];
+
+  let tabel = columns;
+  let judul = params.tingkat;
+  if (params.tingkat == "Kabupaten") {
+    judul = "Kota / Kabupaten";
+  }
+  if (params.tingkat == "Kecamatan") {
+    tabel = columnKecamatan;
+  }
+  if (params.tingkat == "Kelurahan") {
+    judul = "Kelurahan / Desa";
+    tabel = columnKelurahan;
+  }
+
+  const filteredItems = datas.filter(
+    (item: any) =>
+      item.nama && item.nama.toLowerCase().includes(filter.toLowerCase())
+  );
+
   if (isLoading) return <p>Loading...</p>;
 
   return (
@@ -89,8 +212,22 @@ const KoordinatorPage = ({ params }: { params: { tingkat: string } }) => {
         <div className="col-xl-12 col-lg-12">
           <div className="card">
             <div className="card-header flex-wrap" id="default-tab">
-              <div>
-                <h4 className="card-title">Koordinator {params.tingkat}</h4>
+              <h4 className="card-title">Data Koordinator {judul}</h4>
+
+              <div className="col-sm-3 mb-0">
+                <input
+                  onChange={(e) => {
+                    if (e.target.value.length > 2) {
+                      setFilter(e.target.value);
+                    }
+                    if (e.target.value.length < 1) {
+                      setFilter(e.target.value);
+                    }
+                  }}
+                  type="text"
+                  className="form-control"
+                  placeholder={`Cari koordinator ${judul} min 3 huruf`}
+                />
               </div>
             </div>
 
@@ -99,8 +236,8 @@ const KoordinatorPage = ({ params }: { params: { tingkat: string } }) => {
                 responsive
                 highlightOnHover={true}
                 persistTableHead={true}
-                columns={columns}
-                data={datas}
+                columns={tabel}
+                data={filteredItems}
                 customStyles={customStyles}
                 onChangePage={(page) => {
                   setPage(page);
@@ -114,8 +251,6 @@ const KoordinatorPage = ({ params }: { params: { tingkat: string } }) => {
           </div>
         </div>
       </div>
-
-      <div>{/* <Add reload={reload} /> */}</div>
     </div>
   );
 };

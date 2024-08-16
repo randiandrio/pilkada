@@ -79,6 +79,198 @@ async function Data(admin: AdminLogin, tingkat: String) {
     });
   }
 
+  if (tingkat == "Kabupaten") {
+    if (admin.kotaId != 0) {
+      data = await prisma.wilayah.findMany({
+        where: {
+          id: Number(admin.kotaId),
+        },
+        include: {
+          koordinator: {
+            include: {
+              user: true,
+            },
+          },
+        },
+        orderBy: {
+          nama: "asc",
+        },
+      });
+    } else {
+      const prov = await prisma.wilayah.findUnique({
+        where: { id: Number(admin.provId) },
+      });
+
+      data = await prisma.wilayah.findMany({
+        where: {
+          provinsi: String(prov?.nama),
+          kecamatan: "null",
+          id: {
+            not: Number(admin.provId),
+          },
+        },
+        include: {
+          koordinator: {
+            include: {
+              user: true,
+            },
+          },
+        },
+        orderBy: {
+          nama: "asc",
+        },
+      });
+    }
+  }
+
+  if (tingkat == "Kecamatan") {
+    if (admin.kotaId != 0) {
+      const kota = await prisma.wilayah.findUnique({
+        where: {
+          id: Number(admin.kotaId),
+        },
+      });
+
+      data = await prisma.wilayah.findMany({
+        where: {
+          kabupaten: kota?.nama,
+          kelurahan: "null",
+          kecamatan: {
+            not: "null",
+          },
+        },
+        include: {
+          koordinator: {
+            include: {
+              user: true,
+            },
+          },
+        },
+        orderBy: [
+          {
+            kabupaten: "asc",
+          },
+          {
+            nama: "asc",
+          },
+        ],
+      });
+    } else {
+      const prov = await prisma.wilayah.findUnique({
+        where: {
+          id: Number(admin.provId),
+        },
+      });
+
+      data = await prisma.wilayah.findMany({
+        where: {
+          provinsi: String(prov?.nama),
+          kabupaten: {
+            not: "null",
+          },
+          kecamatan: {
+            not: "null",
+          },
+          kelurahan: "null",
+        },
+        include: {
+          koordinator: {
+            include: {
+              user: true,
+            },
+          },
+        },
+        orderBy: [
+          {
+            kabupaten: "asc",
+          },
+          {
+            nama: "asc",
+          },
+        ],
+      });
+    }
+  }
+
+  if (tingkat == "Kelurahan") {
+    if (admin.kotaId != 0) {
+      const kota = await prisma.wilayah.findUnique({
+        where: {
+          id: Number(admin.kotaId),
+        },
+      });
+
+      data = await prisma.wilayah.findMany({
+        where: {
+          kabupaten: kota?.nama,
+          kecamatan: {
+            not: "null",
+          },
+          kelurahan: {
+            not: "null",
+          },
+        },
+        include: {
+          koordinator: {
+            include: {
+              user: true,
+            },
+          },
+        },
+        orderBy: [
+          {
+            kabupaten: "asc",
+          },
+          {
+            kecamatan: "asc",
+          },
+          {
+            nama: "asc",
+          },
+        ],
+      });
+    } else {
+      const prov = await prisma.wilayah.findUnique({
+        where: {
+          id: Number(admin.provId),
+        },
+      });
+
+      data = await prisma.wilayah.findMany({
+        where: {
+          provinsi: String(prov?.nama),
+          kabupaten: {
+            not: "null",
+          },
+          kecamatan: {
+            not: "null",
+          },
+          kelurahan: {
+            not: "null",
+          },
+        },
+        include: {
+          koordinator: {
+            include: {
+              user: true,
+            },
+          },
+        },
+        orderBy: [
+          {
+            kabupaten: "asc",
+          },
+          {
+            kecamatan: "asc",
+          },
+          {
+            nama: "asc",
+          },
+        ],
+      });
+    }
+  }
+
   return data;
 }
 

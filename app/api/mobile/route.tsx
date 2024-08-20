@@ -1,3 +1,4 @@
+import { decrypt } from "@/app/helper";
 import { PrismaClient } from "@prisma/client";
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
@@ -32,3 +33,36 @@ export const GET = async () => {
 
   return NextResponse.json(true, { status: 200 });
 };
+
+export const POST = async (request: NextRequest) => {
+  const body: any = await request.json();
+  const mapData = JSON.parse(decrypt(body.data));
+
+  if (mapData.jenis_req === "cek_nik") {
+    const result = await CekNik(mapData);
+    return NextResponse.json(result, { status: 200 });
+  }
+
+  return NextResponse.json(false, { status: 200 });
+};
+
+async function CekNik(data: any) {
+  const users = await prisma.user.findMany({
+    where: {
+      appId: Number(data.appId),
+      nik: String(data.nik),
+    },
+  });
+
+  if (users.length > 0) {
+    return {
+      error: true,
+      message: "NIK terlah terdaftar",
+    };
+  }
+
+  return {
+    error: false,
+    message: "Email belum terdaftar",
+  };
+}

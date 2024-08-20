@@ -22,6 +22,7 @@ model AppData {
   users               User[]
   tugas               Tugas[]
   koordinator         Koordinator[]
+  slide               Slide[]
 } 
 
 model Setting {
@@ -85,7 +86,7 @@ model User {
   wa                  String?         
   password            String?  
 
-  noKtp               String?
+  nik                 String?
   tempatLahir         String?
   tanggalLahir        String?
   jenisKelamin        String?
@@ -204,3 +205,15 @@ model Tugas {
   appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)
   user                User            @relation(fields: [userId], references: [id], onDelete: Cascade)
 } 
+
+model Slide {
+  id                  Int             @id @default(autoincrement())
+  appId               Int
+  title               String      
+  gambar              String      
+  deskripsi           String?         
+  isShow              Int             @default(1)
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)
+}  

@@ -58,6 +58,20 @@ export default function Template({ children }: { children: React.ReactNode }) {
               </li>
 
               <li>
+                <Link href="/slide" className="" aria-expanded="false">
+                  <div className="menu-icon">
+                    <Image
+                      src="/template/slide.png"
+                      width={25}
+                      height={25}
+                      alt="xxx"
+                    />
+                  </div>
+                  <span className="nav-text">Slide</span>
+                </Link>
+              </li>
+
+              <li>
                 <a
                   className="has-arrow "
                   href="javascript:void(0);"

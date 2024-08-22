@@ -5,14 +5,19 @@ import Modal from "react-bootstrap/Modal";
 import Swal from "sweetalert2";
 import { resData } from "next-auth";
 import { Editor } from "@tinymce/tinymce-react";
-import { tinymceKey } from "@/app/helper";
+import { apiImg, tinymceKey, uploadGambar } from "@/app/helper";
 import { Berita } from "@prisma/client";
+import Image from "next/image";
 
 function Update({ reload, berita }: { reload: Function; berita: Berita }) {
   const [tanggal, setTanggal] = useState(berita.tanggal);
   const [judul, setJudul] = useState(berita.judul);
   const [deskripsi, setDeskripsi] = useState(berita.deskripsi);
   const [sumber, setSumber] = useState(berita.sumber);
+  const [fotoUrlSelect, setFotoUrlSelect] = useState(
+    `${apiImg}/${berita.gambar}`
+  );
+  const [image, setImage] = useState<File>();
 
   const [show, setShow] = useState(false);
   const handleClose = () => {
@@ -33,10 +38,28 @@ function Update({ reload, berita }: { reload: Function; berita: Berita }) {
     });
   }
 
+  const previewGambar = (event: any) => {
+    if (event.target.files && event.target.files[0]) {
+      const i = event.target.files[0];
+      setImage(i);
+      setFotoUrlSelect(URL.createObjectURL(i));
+    }
+  };
+
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
 
     setPost(true);
+
+    let urlGambar;
+    const newGambar = fotoUrlSelect != `${apiImg}/${berita.gambar}`;
+    if (newGambar) {
+      urlGambar = await uploadGambar(
+        image as File,
+        "pemilu/slide",
+        String(berita.gambar)
+      );
+    }
 
     const formData = new FormData();
     formData.append("mode", "update");
@@ -45,6 +68,8 @@ function Update({ reload, berita }: { reload: Function; berita: Berita }) {
     formData.append("judul", String(judul));
     formData.append("deskripsi", String(deskripsi));
     formData.append("sumber", String(sumber));
+    formData.append("newGambar", newGambar ? "1" : "0");
+    if (newGambar) formData.append("gambar", String(urlGambar));
 
     const x = await axios.patch("/konten/berita/api/post", formData);
     const pesan = (await x.data) as resData;
@@ -89,6 +114,26 @@ function Update({ reload, berita }: { reload: Function; berita: Berita }) {
             <Modal.Title>Update Berita</Modal.Title>
           </Modal.Header>
           <Modal.Body>
+             <Image
+              src={fotoUrlSelect}
+              alt=""
+              height={300}
+              width={300}
+              className="slide mb-4 w-100 rounded"
+            />
+
+            <div className="mb-3 row">
+              <label className="col-sm-4 col-form-label">Foto Slide</label>
+              <div className="col-sm-8">
+                <input
+                  required
+                  type="file"
+                  className="form-control"
+                  onChange={previewGambar}
+                />
+              </div>
+            </div>
+
             <div className="mb-3 row">
               <label className="col-sm-4 col-form-label">Tanggal Berita</label>
               <div className="col-sm-8">

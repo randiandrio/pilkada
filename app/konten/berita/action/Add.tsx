@@ -5,13 +5,17 @@ import Modal from "react-bootstrap/Modal";
 import Swal from "sweetalert2";
 import { resData } from "next-auth";
 import { Editor } from "@tinymce/tinymce-react";
-import { tinymceKey } from "@/app/helper";
+import { tampilLoading, tinymceKey, uploadGambar } from "@/app/helper";
+import Image from "next/image";
 
 function Add({ reload }: { reload: Function }) {
   const [tanggal, setTanggal] = useState("");
   const [judul, setJudul] = useState("");
   const [deskripsi, setDeskripsi] = useState("");
   const [sumber, setSumber] = useState("");
+
+  const [fotoUrlSelect, setFotoUrlSelect] = useState("/template/noimage.jpg");
+  const [image, setImage] = useState<File>();
 
   const [show, setShow] = useState(false);
   const handleClose = () => {
@@ -22,26 +26,29 @@ function Add({ reload }: { reload: Function }) {
   const [isPost, setPost] = useState(false);
 
   if (isPost) {
-    Swal.fire({
-      title: "Mohon tunggu",
-      html: "Sedang mengirim data",
-      showConfirmButton: false,
-      didOpen: () => {
-        Swal.showLoading(Swal.getDenyButton());
-      },
-    });
+    tampilLoading();
   }
+
+  const previewGambar = (event: any) => {
+    if (event.target.files && event.target.files[0]) {
+      const i = event.target.files[0];
+      setImage(i);
+      setFotoUrlSelect(URL.createObjectURL(i));
+    }
+  };
 
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
 
     setPost(true);
 
+    const urlGambar = await uploadGambar(image as File, "pemilu/berita", "");
     const formData = new FormData();
     formData.append("mode", "add");
     formData.append("tanggal", String(tanggal));
     formData.append("judul", String(judul));
     formData.append("deskripsi", String(deskripsi));
+    formData.append("gambar", String(urlGambar));
     formData.append("sumber", String(sumber));
 
     const x = await axios.patch("/konten/berita/api/post", formData);
@@ -66,6 +73,7 @@ function Add({ reload }: { reload: Function }) {
     setJudul("");
     setDeskripsi("");
     setSumber("");
+    setFotoUrlSelect("/template/noimage.jpg");
   }
 
   return (
@@ -90,6 +98,25 @@ function Add({ reload }: { reload: Function }) {
             <Modal.Title>Tambah Berita</Modal.Title>
           </Modal.Header>
           <Modal.Body>
+            <Image
+              src={fotoUrlSelect}
+              alt=""
+              height={300}
+              width={300}
+              className="slide mb-4 w-100 rounded"
+            />
+
+            <div className="mb-3 row">
+              <label className="col-sm-4 col-form-label">Foto Slide</label>
+              <div className="col-sm-8">
+                <input
+                  required
+                  type="file"
+                  className="form-control"
+                  onChange={previewGambar}
+                />
+              </div>
+            </div>
             <div className="mb-3 row">
               <label className="col-sm-4 col-form-label">Tanggal Berita</label>
               <div className="col-sm-8">

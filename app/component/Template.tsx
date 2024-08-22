@@ -94,6 +94,11 @@ export default function Template({ children }: { children: React.ReactNode }) {
                   <li>
                     <Link href="/master/setting">Setting</Link>
                   </li>
+                   <li>
+                    <Link href="/master/halaman/jenis/sambutan">
+                      Sambutan
+                    </Link>
+                  </li>
                   <li>
                     <Link href="/master/halaman/jenis/profil">
                       Profil Calon
@@ -104,11 +109,7 @@ export default function Template({ children }: { children: React.ReactNode }) {
                       Visi & Misi
                     </Link>
                   </li>
-                  <li>
-                    <Link href="/master/halaman/jenis/syarat-ketentuan">
-                      Syarat & Ketentuan
-                    </Link>
-                  </li>
+                 
                   <li>
                     <Link href="/master/tps">Data TPS</Link>
                   </li>

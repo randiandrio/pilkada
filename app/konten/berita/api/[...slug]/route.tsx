@@ -63,19 +63,33 @@ async function Post(data: any, admin: AdminLogin) {
         judul: String(data.get("judul")),
         deskripsi: String(data.get("deskripsi")),
         sumber: String(data.get("sumber")),
+        gambar: String(data.get("gambar")),
       },
     });
     return { error: false, message: "Data berita berhasil ditambahkan" };
   } else if (String(data.get("mode")) == "update") {
-    await prisma.berita.update({
-      where: { id: Number(data.get("id")) },
-      data: {
-        tanggal: String(data.get("tanggal")),
-        judul: String(data.get("judul")),
-        deskripsi: String(data.get("deskripsi")),
-        sumber: String(data.get("sumber")),
-      },
-    });
+    if (String(data.get("newGambar")) == "1") {
+      await prisma.berita.update({
+        where: { id: Number(data.get("id")) },
+        data: {
+          tanggal: String(data.get("tanggal")),
+          judul: String(data.get("judul")),
+          deskripsi: String(data.get("deskripsi")),
+          sumber: String(data.get("sumber")),
+          gambar: String(data.get("gambar")),
+        },
+      });
+    } else {
+      await prisma.berita.update({
+        where: { id: Number(data.get("id")) },
+        data: {
+          tanggal: String(data.get("tanggal")),
+          judul: String(data.get("judul")),
+          deskripsi: String(data.get("deskripsi")),
+          sumber: String(data.get("sumber")),
+        },
+      });
+    }
     return { error: false, message: "Data berita berhasil diperbarui" };
   } else {
     await prisma.berita.delete({

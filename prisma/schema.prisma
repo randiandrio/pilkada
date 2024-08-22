@@ -81,11 +81,11 @@ model Wilayah {
 model User {
   id                  Int             @id @default(autoincrement())
   appId               Int
+  refId               Int             @default(0)
   nama                String?         
   hp                  String?         
   wa                  String?         
   password            String?  
-
   nik                 String?
   tempatLahir         String?
   tanggalLahir        String?
@@ -94,8 +94,8 @@ model User {
   kabId               Int?
   kecId               Int?
   kelId               Int?
-
   foto                String?
+  dukungan            String?
   token               String?
   isTim               Int             @default(0)
   os                  String          @default("ANDROID")
@@ -185,7 +185,8 @@ model Berita {
   tanggal             String
   judul               String
   deskripsi           String?     
-  sumber              String?     
+  sumber              String?  
+  gambar              String?   
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
   appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)

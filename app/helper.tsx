@@ -12,7 +12,7 @@ export const apiImg = "https://file.kuantar.co.id/storage";
 export const urlUploadGambar = "https://file.kuantar.co.id/api/uploadGambar";
 export const urlHapusGambar = "https://file.kuantar.co.id/api/hapusFile";
 export const firebaseProject = "pilkada";
-export const tinymceKey = "1m3zm1u1h5svr78m2e2zd07wciylpgujycqmtp6scdwc1i5c";
+export const tinymceKey = "88q5wvly8zzdap7pwq23poqjt3amwdk1v5iwdg9hr0xnqiq3";
 
 const key = crypto
   .createHash("sha256")
@@ -93,7 +93,7 @@ export function tglJamIndoMap(tanggal: String) {
 export function titleHalaman(jenis: String) {
   if (jenis == "profil") return "Profil Pasangan Calon";
   if (jenis == "visi-misi") return "Visi dan Misi";
-  if (jenis == "syarat-ketentuan") return "Syarat dan Ketentuan";
+  if (jenis == "sambutan") return "Kata Sambutan";
   return "";
 }
 

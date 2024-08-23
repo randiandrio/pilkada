@@ -23,6 +23,7 @@ model AppData {
   tugas               Tugas[]
   koordinator         Koordinator[]
   slide               Slide[]
+  cs                  Cs[]
 } 
 
 model Setting {
@@ -218,3 +219,15 @@ model Slide {
   updatedAt           DateTime        @updatedAt
   appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)
 }  
+
+model Cs {
+  id                  Int             @id @default(autoincrement())
+  appId               Int
+  nama                String 
+  url                 String
+  gambar              String
+  jamOperasional      String
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)
+}

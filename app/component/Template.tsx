@@ -94,6 +94,9 @@ export default function Template({ children }: { children: React.ReactNode }) {
                   <li>
                     <Link href="/master/setting">Setting</Link>
                   </li>
+                <li>
+                    <Link href="/master/cs">Customer Service</Link>
+                  </li>
                    <li>
                     <Link href="/master/halaman/jenis/sambutan">
                       Sambutan

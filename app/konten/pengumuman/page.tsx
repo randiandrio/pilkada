@@ -69,7 +69,7 @@ const PengumumanPage = () => {
           <div className="card">
             <div className="card-header flex-wrap" id="default-tab">
               <div>
-                <h4 className="card-title">Data Paslon</h4>
+                <h4 className="card-title">Data Pengumuman</h4>
               </div>
             </div>
 

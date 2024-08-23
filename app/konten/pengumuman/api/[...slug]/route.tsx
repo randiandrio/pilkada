@@ -52,7 +52,6 @@ async function Data(admin: AdminLogin) {
 
 async function Post(data: any, admin: AdminLogin) {
   if (String(data.get("mode")) == "add") {
-    console.log(data);
     await prisma.pengumuman.create({
       data: {
         appId: Number(admin.appId),

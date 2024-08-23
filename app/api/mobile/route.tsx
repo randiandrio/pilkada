@@ -76,6 +76,16 @@ export const POST = async (request: NextRequest) => {
     return NextResponse.json(result, { status: 200 });
   }
 
+   if (mapData.jenis_req === "load_pengumuman") {
+    const result = await LoadPengumuman(mapData);
+    return NextResponse.json(result, { status: 200 });
+   }
+  
+  if (mapData.jenis_req === "load_refferal") {
+    const result = await LoadRefferal(mapData);
+    return NextResponse.json(result, { status: 200 });
+  }
+
   return NextResponse.json(false, { status: 200 });
 };
 
@@ -181,6 +191,7 @@ async function Registrasi(data: any) {
       kabId: kab?.id,
       kecId: kec?.id,
       kelId: kel?.id,
+      refId: Number(data.refId)
     }
   });
 
@@ -321,6 +332,74 @@ async function LoadBerita(data: any) {
   const newData = await prisma.berita.findMany({
     where: {
       appId: Number(data.appId),
+      updatedAt: {
+        gt: new Date(data.last),
+      },
+    },
+  });
+
+  var newId = newData.map(function (item) {
+    return item.id;
+  });
+
+  const result = {
+    allId: allId.toString(),
+    newId: newId.toString(),
+    newData: newData,
+  };
+
+  return result;
+}
+
+async function LoadPengumuman(data: any) {
+  const xAllId = await prisma.pengumuman.findMany({
+    where:{
+      appId: Number(data.appId)
+    }
+  });
+
+  var allId = xAllId.map(function (item) {
+    return item.id;
+  });
+
+  const newData = await prisma.pengumuman.findMany({
+    where: {
+      appId: Number(data.appId),
+      updatedAt: {
+        gt: new Date(data.last),
+      },
+    },
+  });
+
+  var newId = newData.map(function (item) {
+    return item.id;
+  });
+
+  const result = {
+    allId: allId.toString(),
+    newId: newId.toString(),
+    newData: newData,
+  };
+
+  return result;
+}
+
+async function LoadRefferal(data: any) {
+  const xAllId = await prisma.user.findMany({
+    where: {
+      appId: Number(data.appId),
+      refId: Number(data.userId)
+    }
+  });
+
+  var allId = xAllId.map(function (item) {
+    return item.id;
+  });
+
+  const newData = await prisma.user.findMany({
+    where: {
+      appId: Number(data.appId),
+      refId: Number(data.userId),
       updatedAt: {
         gt: new Date(data.last),
       },

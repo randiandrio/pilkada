@@ -95,6 +95,16 @@ export const POST = async (request: NextRequest) => {
     return NextResponse.json(result, { status: 200 });
   }
 
+  if (mapData.jenis_req === "post_pengaduan") {
+    const result = await PostPengaduan(mapData);
+    return NextResponse.json(result, { status: 200 });
+  }
+
+  if (mapData.jenis_req === "load_pengaduan") {
+    const result = await LoadPengaduan(mapData);
+    return NextResponse.json(result, { status: 200 });
+  }
+
   return NextResponse.json(false, { status: 200 });
 };
 
@@ -475,6 +485,112 @@ async function LoadAgenda(data: any) {
   });
 
   const newData = await prisma.agenda.findMany({
+    where: {
+      appId: Number(data.appId),
+      updatedAt: {
+        gt: new Date(data.last),
+      },
+    },
+  });
+
+  var newId = newData.map(function (item) {
+    return item.id;
+  });
+
+  const result = {
+    allId: allId.toString(),
+    newId: newId.toString(),
+    newData: newData,
+  };
+
+  return result;
+}
+
+async function PostPengaduan(data: any) {
+  const user = await prisma.user.findUnique({
+    where: { id: Number(data.userId) },
+  });
+
+  if (String(data.mode) == "add") {
+    await prisma.pengaduan.create({
+      data: {
+        appId: Number(user?.appId),
+        userId: Number(data.userId),
+        judul: String(data.judul),
+        alamat: String(data.alamat),
+        deskripsi: String(data.deskripsi),
+        gambar: String(data.gambar),
+        koordinat: String(data.koordinat),
+      },
+    });
+    return {
+      error: false,
+      message: "Pengaduan telah disimpan",
+    };
+  }
+
+  if (String(data.mode) == "update") {
+    if (String(data.newGambar) == "1") {
+      await prisma.pengaduan.update({
+        where: { id: Number(data.id) },
+        data: {
+          appId: Number(user?.appId),
+          userId: Number(data.userId),
+          judul: String(data.judul),
+          alamat: String(data.alamat),
+          deskripsi: String(data.deskripsi),
+          gambar: String(data.gambar),
+          koordinat: String(data.koordinat),
+        },
+      });
+    } else {
+      await prisma.pengaduan.update({
+        where: { id: Number(data.id) },
+        data: {
+          appId: Number(user?.appId),
+          userId: Number(data.userId),
+          judul: String(data.judul),
+          alamat: String(data.alamat),
+          deskripsi: String(data.deskripsi),
+          koordinat: String(data.koordinat),
+        },
+      });
+    }
+
+    return {
+      error: false,
+      message: "Pengaduan telah diperbarui",
+    };
+  }
+
+  if (String(data.mode) == "delete") {
+    await prisma.pengaduan.delete({
+      where: { id: Number(data.id) },
+    });
+    return {
+      error: false,
+      message: "Pengaduan telah disimpan",
+    };
+  }
+
+  return {
+    error: true,
+    message: "Gagal",
+  };
+}
+
+async function LoadPengaduan(data: any) {
+  const xAllId = await prisma.pengaduan.findMany({
+    where: {
+      appId: Number(data.appId),
+    },
+  });
+
+  var allId = xAllId.map(function (item) {
+    return item.id;
+  });
+
+  const newData = await prisma.pengaduan.findMany({
     where: {
       appId: Number(data.appId),
       updatedAt: {

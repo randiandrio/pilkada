@@ -253,7 +253,6 @@ model Pengaduan {
   appId               Int
   userId              Int
   judul               String 
-  tanggal             String
   alamat              String
   deskripsi           String
   gambar              String

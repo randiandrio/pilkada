@@ -24,6 +24,7 @@ model AppData {
   koordinator         Koordinator[]
   slide               Slide[]
   cs                  Cs[]
+  agenda              Agenda[]
 } 
 
 model Setting {
@@ -227,6 +228,19 @@ model Cs {
   url                 String
   gambar              String
   jamOperasional      String
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)
+}
+
+model Agenda {
+  id                  Int             @id @default(autoincrement())
+  appId               Int
+  judul               String 
+  tanggal             String
+  alamat              String
+  deskripsi           String
+  gambar              String
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
   appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)

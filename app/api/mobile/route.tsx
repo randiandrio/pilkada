@@ -5,7 +5,6 @@ import bcrypt from "bcryptjs";
 import { error } from "console";
 import { NextRequest, NextResponse } from "next/server";
 
-
 const prisma = new PrismaClient();
 
 export const GET = async () => {
@@ -76,11 +75,11 @@ export const POST = async (request: NextRequest) => {
     return NextResponse.json(result, { status: 200 });
   }
 
-   if (mapData.jenis_req === "load_pengumuman") {
+  if (mapData.jenis_req === "load_pengumuman") {
     const result = await LoadPengumuman(mapData);
     return NextResponse.json(result, { status: 200 });
-   }
-  
+  }
+
   if (mapData.jenis_req === "load_refferal") {
     const result = await LoadRefferal(mapData);
     return NextResponse.json(result, { status: 200 });
@@ -88,6 +87,11 @@ export const POST = async (request: NextRequest) => {
 
   if (mapData.jenis_req === "load_cs") {
     const result = await LoadCs(mapData);
+    return NextResponse.json(result, { status: 200 });
+  }
+
+  if (mapData.jenis_req === "load_agenda") {
+    const result = await LoadAgenda(mapData);
     return NextResponse.json(result, { status: 200 });
   }
 
@@ -121,36 +125,35 @@ async function LoadWilayah() {
 }
 
 async function Registrasi(data: any) {
-
   const prov = await prisma.wilayah.findFirst({
     where: {
-      kode: String(data.provId)
-    }
-  })
+      kode: String(data.provId),
+    },
+  });
   const kab = await prisma.wilayah.findFirst({
     where: {
-      kode: String(data.kabId)
-    }
-  })
+      kode: String(data.kabId),
+    },
+  });
   const kec = await prisma.wilayah.findFirst({
     where: {
-      kode: String(data.kecId)
-    }
-  })
+      kode: String(data.kecId),
+    },
+  });
   const kel = await prisma.wilayah.findFirst({
     where: {
-      kode: String(data.kelId)
-    }
-  })
+      kode: String(data.kelId),
+    },
+  });
 
   const setting = await prisma.setting.findUnique({
     where: { id: Number(data.appId) },
     include: {
       prov: true,
-      kota: true
-    }
-  })
-  
+      kota: true,
+    },
+  });
+
   let inDapil;
   if (setting?.kotaId != null) {
     inDapil = setting.kota?.nama == kab?.nama;
@@ -158,10 +161,11 @@ async function Registrasi(data: any) {
     inDapil = setting?.prov?.nama == prov?.nama;
   }
 
-  if(!inDapil) return {
-    error: true,
-    message: "Maaf anda berada diluar dapil kami"
-  }
+  if (!inDapil)
+    return {
+      error: true,
+      message: "Maaf anda berada diluar dapil kami",
+    };
 
   const hashPassword = await bcrypt.hash(data.password, 10);
 
@@ -170,15 +174,15 @@ async function Registrasi(data: any) {
   const cek = await prisma.user.findMany({
     where: {
       appId: Number(data.appId),
-      hp: hp
-    }
-  })
+      hp: hp,
+    },
+  });
 
-  if (cek.length > 0) return {
-    error: true,
-    message: "Nomor HP telah digunakan"
-  }
-
+  if (cek.length > 0)
+    return {
+      error: true,
+      message: "Nomor HP telah digunakan",
+    };
 
   const user = await prisma.user.create({
     data: {
@@ -196,72 +200,74 @@ async function Registrasi(data: any) {
       kabId: kab?.id,
       kecId: kec?.id,
       kelId: kel?.id,
-      refId: Number(data.refId)
-    }
+      refId: Number(data.refId),
+    },
   });
 
   return {
     error: false,
     message: "Registrasi berhasil",
-    data: user
+    data: user,
   };
 }
 
 async function Login(data: any) {
-
   const hp = modifiHP(data.hp);
 
   const user = await prisma.user.findMany({
     where: {
       appId: Number(data.appId),
-      hp: hp
-    }
-  })
+      hp: hp,
+    },
+  });
 
-  if(user.length == 0) return {
-    error: true,
-    message: "Nomor Handphone Anda belum terdaftar"
-  };
-  
-  const isValid = await bcrypt.compare(String(data.password), String(user[0].password));
+  if (user.length == 0)
+    return {
+      error: true,
+      message: "Nomor Handphone Anda belum terdaftar",
+    };
 
-  if(!isValid) return {
-    error: true,
-    message: "Password salah",
-    data: user
-  };
+  const isValid = await bcrypt.compare(
+    String(data.password),
+    String(user[0].password)
+  );
+
+  if (!isValid)
+    return {
+      error: true,
+      message: "Password salah",
+      data: user,
+    };
 
   return {
     error: false,
     message: "Login berhasil",
-    data: user[0]
+    data: user[0],
   };
 }
 
 async function GantiFoto(data: any) {
-
-
   const user = await prisma.user.update({
     where: {
-      id: Number(data.id)
+      id: Number(data.id),
     },
     data: {
-      foto: String(data.foto)
-    }
-  })
+      foto: String(data.foto),
+    },
+  });
 
   return {
     error: false,
     message: "Ganti foto sukses",
-    data: user
+    data: user,
   };
 }
 
 async function LoadSlide(data: any) {
   const xAllId = await prisma.slide.findMany({
-    where:{
-      appId: Number(data.appId)
-    }
+    where: {
+      appId: Number(data.appId),
+    },
   });
 
   var allId = xAllId.map(function (item) {
@@ -292,9 +298,9 @@ async function LoadSlide(data: any) {
 
 async function LoadHalaman(data: any) {
   const xAllId = await prisma.halaman.findMany({
-    where:{
-      appId: Number(data.appId)
-    }
+    where: {
+      appId: Number(data.appId),
+    },
   });
 
   var allId = xAllId.map(function (item) {
@@ -325,9 +331,9 @@ async function LoadHalaman(data: any) {
 
 async function LoadBerita(data: any) {
   const xAllId = await prisma.berita.findMany({
-    where:{
-      appId: Number(data.appId)
-    }
+    where: {
+      appId: Number(data.appId),
+    },
   });
 
   var allId = xAllId.map(function (item) {
@@ -358,9 +364,9 @@ async function LoadBerita(data: any) {
 
 async function LoadPengumuman(data: any) {
   const xAllId = await prisma.pengumuman.findMany({
-    where:{
-      appId: Number(data.appId)
-    }
+    where: {
+      appId: Number(data.appId),
+    },
   });
 
   var allId = xAllId.map(function (item) {
@@ -393,8 +399,8 @@ async function LoadRefferal(data: any) {
   const xAllId = await prisma.user.findMany({
     where: {
       appId: Number(data.appId),
-      refId: Number(data.userId)
-    }
+      refId: Number(data.userId),
+    },
   });
 
   var allId = xAllId.map(function (item) {
@@ -426,9 +432,9 @@ async function LoadRefferal(data: any) {
 
 async function LoadCs(data: any) {
   const xAllId = await prisma.cs.findMany({
-    where:{
-      appId: Number(data.appId)
-    }
+    where: {
+      appId: Number(data.appId),
+    },
   });
 
   var allId = xAllId.map(function (item) {
@@ -436,6 +442,39 @@ async function LoadCs(data: any) {
   });
 
   const newData = await prisma.cs.findMany({
+    where: {
+      appId: Number(data.appId),
+      updatedAt: {
+        gt: new Date(data.last),
+      },
+    },
+  });
+
+  var newId = newData.map(function (item) {
+    return item.id;
+  });
+
+  const result = {
+    allId: allId.toString(),
+    newId: newId.toString(),
+    newData: newData,
+  };
+
+  return result;
+}
+
+async function LoadAgenda(data: any) {
+  const xAllId = await prisma.agenda.findMany({
+    where: {
+      appId: Number(data.appId),
+    },
+  });
+
+  var allId = xAllId.map(function (item) {
+    return item.id;
+  });
+
+  const newData = await prisma.agenda.findMany({
     where: {
       appId: Number(data.appId),
       updatedAt: {

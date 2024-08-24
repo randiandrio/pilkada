@@ -94,13 +94,11 @@ export default function Template({ children }: { children: React.ReactNode }) {
                   <li>
                     <Link href="/master/setting">Setting</Link>
                   </li>
-                <li>
+                  <li>
                     <Link href="/master/cs">Customer Service</Link>
                   </li>
-                   <li>
-                    <Link href="/master/halaman/jenis/sambutan">
-                      Sambutan
-                    </Link>
+                  <li>
+                    <Link href="/master/halaman/jenis/sambutan">Sambutan</Link>
                   </li>
                   <li>
                     <Link href="/master/halaman/jenis/profil">
@@ -112,7 +110,7 @@ export default function Template({ children }: { children: React.ReactNode }) {
                       Visi & Misi
                     </Link>
                   </li>
-                 
+
                   <li>
                     <Link href="/master/tps">Data TPS</Link>
                   </li>
@@ -149,6 +147,11 @@ export default function Template({ children }: { children: React.ReactNode }) {
                   <li>
                     <Link href="/konten/berita">Berita</Link>
                   </li>
+
+                  <li>
+                    <Link href="/konten/agenda">Agenda</Link>
+                  </li>
+
                   <li>
                     <Link href="/konten/notifikasi">Notifikasi</Link>
                   </li>

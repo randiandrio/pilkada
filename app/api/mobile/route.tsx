@@ -590,13 +590,32 @@ async function LoadPengaduan(data: any) {
     return item.id;
   });
 
-  const newData = await prisma.pengaduan.findMany({
+  const newDatas = await prisma.pengaduan.findMany({
     where: {
       appId: Number(data.appId),
       updatedAt: {
         gt: new Date(data.last),
       },
     },
+    include: {
+      user: true,
+    },
+  });
+
+  const newData = newDatas.map(function (item) {
+    return {
+      id: item.id,
+      appId: item.appId,
+      userId: item.userId,
+      namaUser: item.user.nama,
+      judul: item.judul,
+      alamat: item.alamat,
+      deskripsi: item.deskripsi,
+      gambar: item.gambar,
+      koordinat: item.koordinat,
+      createdAt: item.createdAt,
+      updatedAt: item.updatedAt,
+    };
   });
 
   var newId = newData.map(function (item) {

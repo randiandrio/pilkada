@@ -76,12 +76,12 @@ export default function InfoPage() {
       button: true,
       cell: (row) => (
         <>
-          {akun.role == "Super Admin" && (
+        
             <div className="d-flex">
               <Update reload={reload} cs={row} />
               <Delete reload={reload} cs={row} />
             </div>
-          )}
+          
         </>
       ),
     },

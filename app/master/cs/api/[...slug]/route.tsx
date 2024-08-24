@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { getToken } from "next-auth/jwt";
+import { AdminLogin } from "next-auth";
 
 const prisma = new PrismaClient();
 
@@ -25,15 +26,18 @@ export const PATCH = async (
   request: NextRequest,
   { params }: { params: { slug: string[] } }
 ) => {
+
   const token = await getToken({
     req: request,
     secret: process.env.NEXTAUTH_SECRET,
   });
 
+  const adminLogin = token as unknown as AdminLogin;
+
   const data = await request.formData();
 
   if (params.slug[0] == "post") {
-    const result = await Post(data);
+    const result = await Post(data, adminLogin);
     return NextResponse.json(result, { status: 200 });
   }
 
@@ -48,10 +52,11 @@ async function Get() {
   return result;
 }
 
-async function Post(data: any) {
+async function Post(data: any, admin: AdminLogin) {
   if (String(data.get("method")) == "add") {
     await prisma.cs.create({
       data: {
+        appId: Number(admin.appId),
         nama: String(data.get("nama")),
         url: String(data.get("url")),
         jamOperasional: String(data.get("jamOperasional")),
@@ -59,7 +64,7 @@ async function Post(data: any) {
       },
     });
   } else {
-    if (data.get("gambar") != null) {
+    if (data.get("newImage") == "1") {
       await prisma.cs.update({
         where: { id: Number(data.get("id")) },
         data: {

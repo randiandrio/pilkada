@@ -49,6 +49,7 @@ function Update({ reload, cs }: { reload: Function; cs: Cs }) {
     formData.append("nama", nama);
     formData.append("url", url);
     formData.append("jamOperasional", jamOperasional);
+    formData.append("newImage", (newImage) ? "1" : "0");
     if (newImage) formData.append("gambar", String(urlGambar));
     const x = await axios.patch("/master/cs/api/post", formData);
     const pesan = (await x.data) as resData;

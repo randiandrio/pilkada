@@ -4,7 +4,7 @@ import axios from "axios";
 import Modal from "react-bootstrap/Modal";
 import Swal from "sweetalert2";
 import { Cs } from "@prisma/client";
-import { urlHapusGambar } from "@/app/helperLocal";
+import { urlHapusGambar } from "@/app/helper";
 
 function Delete({ cs, reload }: { cs: Cs; reload: Function }) {
   const [show, setShow] = useState(false);

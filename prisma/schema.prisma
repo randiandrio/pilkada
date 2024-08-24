@@ -25,6 +25,7 @@ model AppData {
   slide               Slide[]
   cs                  Cs[]
   agenda              Agenda[]
+  pengaduan           Pengaduan[]
 } 
 
 model Setting {
@@ -109,6 +110,7 @@ model User {
   tugas               Tugas[]
   appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)
   koordinator         Koordinator[]
+  pengaduan           Pengaduan[]
 }   
 
 model Koordinator {
@@ -244,4 +246,20 @@ model Agenda {
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
   appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)
+}
+
+model Pengaduan {
+  id                  Int             @id @default(autoincrement())
+  appId               Int
+  userId              Int
+  judul               String 
+  tanggal             String
+  alamat              String
+  deskripsi           String
+  gambar              String
+  koordinat           String
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)
+  user                User            @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

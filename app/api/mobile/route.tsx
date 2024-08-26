@@ -705,7 +705,7 @@ async function LoadAspirasi(data: any) {
     return item.id;
   });
 
-  const newData = await prisma.aspirasi.findMany({
+  const newDatas = await prisma.aspirasi.findMany({
     where: {
       appId: Number(data.appId),
       updatedAt: {
@@ -715,6 +715,19 @@ async function LoadAspirasi(data: any) {
     include: {
       user: true,
     },
+  });
+
+  const newData = newDatas.map(function (item) {
+    return {
+      id: item.id,
+      appId: item.appId,
+      userId: item.userId,
+      namaUser: item.user.nama,
+      judul: item.judul,
+      deskripsi: item.deskripsi,
+      createdAt: item.createdAt,
+      updatedAt: item.updatedAt,
+    };
   });
 
   var newId = newData.map(function (item) {

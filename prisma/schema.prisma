@@ -26,6 +26,7 @@ model AppData {
   cs                  Cs[]
   agenda              Agenda[]
   pengaduan           Pengaduan[]
+  aspirasi            Aspirasi[]
 } 
 
 model Setting {
@@ -111,6 +112,7 @@ model User {
   appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)
   koordinator         Koordinator[]
   pengaduan           Pengaduan[]
+  aspirasi            Aspirasi[]
 }   
 
 model Koordinator {
@@ -257,6 +259,18 @@ model Pengaduan {
   deskripsi           String
   gambar              String
   koordinat           String
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)
+  user                User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Aspirasi {
+  id                  Int             @id @default(autoincrement())
+  appId               Int
+  userId              Int
+  judul               String 
+  deskripsi           String
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
   appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)

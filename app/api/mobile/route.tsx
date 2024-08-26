@@ -105,6 +105,16 @@ export const POST = async (request: NextRequest) => {
     return NextResponse.json(result, { status: 200 });
   }
 
+  if (mapData.jenis_req === "post_aspirasi") {
+    const result = await PostAspirasi(mapData);
+    return NextResponse.json(result, { status: 200 });
+  }
+
+  if (mapData.jenis_req === "load_aspirasi") {
+    const result = await LoadAspirasi(mapData);
+    return NextResponse.json(result, { status: 200 });
+  }
+
   return NextResponse.json(false, { status: 200 });
 };
 
@@ -569,7 +579,7 @@ async function PostPengaduan(data: any) {
     });
     return {
       error: false,
-      message: "Pengaduan telah disimpan",
+      message: "Pengaduan telah dihapus",
     };
   }
 
@@ -616,6 +626,95 @@ async function LoadPengaduan(data: any) {
       createdAt: item.createdAt,
       updatedAt: item.updatedAt,
     };
+  });
+
+  var newId = newData.map(function (item) {
+    return item.id;
+  });
+
+  const result = {
+    allId: allId.toString(),
+    newId: newId.toString(),
+    newData: newData,
+  };
+
+  return result;
+}
+
+async function PostAspirasi(data: any) {
+  const user = await prisma.user.findUnique({
+    where: { id: Number(data.userId) },
+  });
+
+  if (String(data.mode) == "add") {
+    await prisma.aspirasi.create({
+      data: {
+        appId: Number(user?.appId),
+        userId: Number(data.userId),
+        judul: String(data.judul),
+        deskripsi: String(data.deskripsi),
+      },
+    });
+    return {
+      error: false,
+      message: "Aspirasi telah disampaikan",
+    };
+  }
+
+  if (String(data.mode) == "update") {
+    await prisma.aspirasi.update({
+      where: { id: Number(data.id) },
+      data: {
+        appId: Number(user?.appId),
+        userId: Number(data.userId),
+        judul: String(data.judul),
+        deskripsi: String(data.deskripsi),
+      },
+    });
+
+    return {
+      error: false,
+      message: "Aspirasi telah diperbarui",
+    };
+  }
+
+  if (String(data.mode) == "delete") {
+    await prisma.aspirasi.delete({
+      where: { id: Number(data.id) },
+    });
+    return {
+      error: false,
+      message: "Aspirasi telah dihapus",
+    };
+  }
+
+  return {
+    error: true,
+    message: "Gagal",
+  };
+}
+
+async function LoadAspirasi(data: any) {
+  const xAllId = await prisma.aspirasi.findMany({
+    where: {
+      appId: Number(data.appId),
+    },
+  });
+
+  var allId = xAllId.map(function (item) {
+    return item.id;
+  });
+
+  const newData = await prisma.aspirasi.findMany({
+    where: {
+      appId: Number(data.appId),
+      updatedAt: {
+        gt: new Date(data.last),
+      },
+    },
+    include: {
+      user: true,
+    },
   });
 
   var newId = newData.map(function (item) {

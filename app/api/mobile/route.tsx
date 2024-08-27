@@ -125,6 +125,11 @@ export const POST = async (request: NextRequest) => {
     return NextResponse.json(result, { status: 200 });
   }
 
+  if (mapData.jenis_req === "post_laporan_tugas") {
+    const result = await PostLaporanTugas(mapData);
+    return NextResponse.json(result, { status: 200 });
+  }
+
   if (mapData.jenis_req === "load_laporan_tugas") {
     const result = await LoadLaporanTugas(mapData);
     return NextResponse.json(result, { status: 200 });
@@ -835,4 +840,64 @@ async function LoadLaporanTugas(data: any) {
   };
 
   return result;
+}
+
+async function PostLaporanTugas(data: any) {
+  if (String(data.mode) == "add") {
+    await prisma.laporanTugas.create({
+      data: {
+        tugasId: Number(data.tugasId),
+        deskripsi: String(data.deskripsi),
+        koordinat: String(data.koordinat),
+        gambar: String(data.gambar),
+      },
+    });
+    return {
+      error: false,
+      message: "Laporan tugas telah disimpan",
+    };
+  }
+
+  if (String(data.mode) == "update") {
+    if (String(data.newGambar) == "1") {
+      await prisma.laporanTugas.update({
+        where: { id: Number(data.id) },
+        data: {
+          tugasId: Number(data.tugasId),
+          deskripsi: String(data.deskripsi),
+          koordinat: String(data.koordinat),
+          gambar: String(data.gambar),
+        },
+      });
+    } else {
+      await prisma.laporanTugas.update({
+        where: { id: Number(data.id) },
+        data: {
+          tugasId: Number(data.tugasId),
+          deskripsi: String(data.deskripsi),
+          koordinat: String(data.koordinat),
+        },
+      });
+    }
+
+    return {
+      error: false,
+      message: "Laporan tugas telah diperbarui",
+    };
+  }
+
+  if (String(data.mode) == "delete") {
+    await prisma.laporanTugas.delete({
+      where: { id: Number(data.id) },
+    });
+    return {
+      error: false,
+      message: "Laporan tugas telah dihapus",
+    };
+  }
+
+  return {
+    error: true,
+    message: "Gagal",
+  };
 }

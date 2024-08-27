@@ -852,6 +852,29 @@ async function PostLaporanTugas(data: any) {
         gambar: String(data.gambar),
       },
     });
+
+    const lp = await prisma.laporanTugas.findMany({
+      where: {
+        tugasId: Number(data.tugasId),
+      }
+    });
+
+    const tugas = await prisma.tugas.findUnique({
+      where: { id: Number(data.tugasId) },
+    })
+
+    let prog = 0
+    if (lp.length > 0) {
+      prog = lp.length / tugas!.jumlah * 100;
+    }
+
+    await prisma.tugas.update({
+      where: { id: Number(data.tugasId) },
+      data: {
+        progress: Number(prog)
+      }
+    })
+
     return {
       error: false,
       message: "Laporan tugas telah disimpan",

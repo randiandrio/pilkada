@@ -45,7 +45,6 @@ export const POST = async (request: NextRequest) => {
     return NextResponse.json(result, { status: 200 });
   }
 
-
   if (mapData.jenis_req === "load_setting") {
     const result = await LoadSetting(mapData);
     return NextResponse.json(result, { status: 200 });
@@ -123,6 +122,11 @@ export const POST = async (request: NextRequest) => {
 
   if (mapData.jenis_req === "load_tugas") {
     const result = await LoadTugas(mapData);
+    return NextResponse.json(result, { status: 200 });
+  }
+
+  if (mapData.jenis_req === "load_laporan_tugas") {
+    const result = await LoadLaporanTugas(mapData);
     return NextResponse.json(result, { status: 200 });
   }
 
@@ -777,6 +781,43 @@ async function LoadTugas(data: any) {
   const newData = await prisma.tugas.findMany({
     where: {
       userId: Number(data.userId),
+      updatedAt: {
+        gt: new Date(data.last),
+      },
+    },
+  });
+
+  var newId = newData.map(function (item) {
+    return item.id;
+  });
+
+  const result = {
+    allId: allId.toString(),
+    newId: newId.toString(),
+    newData: newData,
+  };
+
+  return result;
+}
+
+async function LoadLaporanTugas(data: any) {
+  const xAllId = await prisma.laporanTugas.findMany({
+    where: {
+      tugas: {
+        userId: Number(data.userId),
+      },
+    },
+  });
+
+  var allId = xAllId.map(function (item) {
+    return item.id;
+  });
+
+  const newData = await prisma.laporanTugas.findMany({
+    where: {
+      tugas: {
+        userId: Number(data.userId),
+      },
       updatedAt: {
         gt: new Date(data.last),
       },

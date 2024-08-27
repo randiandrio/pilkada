@@ -213,6 +213,19 @@ model Tugas {
   updatedAt           DateTime        @updatedAt
   appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)
   user                User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  laporanTUgas        LaporanTugas[]
+} 
+
+model LaporanTugas {
+  id                  Int             @id @default(autoincrement())
+  tugasId             Int
+  deskripsi           String?     
+  koordinat           String?     
+  gambar              String?   
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  tugas               Tugas           @relation(fields: [tugasId], references: [id], onDelete: Cascade)
+
 } 
 
 model Slide {

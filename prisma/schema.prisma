@@ -207,6 +207,8 @@ model Tugas {
   jumlah              Int     
   progress            Int             @default(0)
   deadline            String?
+  oleh                String?
+  jabatan             String?
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
   appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)

@@ -45,6 +45,12 @@ export const POST = async (request: NextRequest) => {
     return NextResponse.json(result, { status: 200 });
   }
 
+
+  if (mapData.jenis_req === "load_setting") {
+    const result = await LoadSetting(mapData);
+    return NextResponse.json(result, { status: 200 });
+  }
+
   if (mapData.jenis_req === "registrasi") {
     const result = await Registrasi(mapData);
     return NextResponse.json(result, { status: 200 });
@@ -112,6 +118,11 @@ export const POST = async (request: NextRequest) => {
 
   if (mapData.jenis_req === "load_aspirasi") {
     const result = await LoadAspirasi(mapData);
+    return NextResponse.json(result, { status: 200 });
+  }
+
+  if (mapData.jenis_req === "load_tugas") {
+    const result = await LoadTugas(mapData);
     return NextResponse.json(result, { status: 200 });
   }
 
@@ -728,6 +739,48 @@ async function LoadAspirasi(data: any) {
       createdAt: item.createdAt,
       updatedAt: item.updatedAt,
     };
+  });
+
+  var newId = newData.map(function (item) {
+    return item.id;
+  });
+
+  const result = {
+    allId: allId.toString(),
+    newId: newId.toString(),
+    newData: newData,
+  };
+
+  return result;
+}
+
+async function LoadSetting(data: any) {
+  const setting = await prisma.setting.findUnique({
+    where: {
+      id: Number(data.appId),
+    },
+  });
+  return setting;
+}
+
+async function LoadTugas(data: any) {
+  const xAllId = await prisma.tugas.findMany({
+    where: {
+      userId: Number(data.userId),
+    },
+  });
+
+  var allId = xAllId.map(function (item) {
+    return item.id;
+  });
+
+  const newData = await prisma.tugas.findMany({
+    where: {
+      userId: Number(data.userId),
+      updatedAt: {
+        gt: new Date(data.last),
+      },
+    },
   });
 
   var newId = newData.map(function (item) {

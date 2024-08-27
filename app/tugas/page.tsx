@@ -71,6 +71,16 @@ const TugasPage = () => {
       sortable: true,
     },
     {
+      name: "Oleh",
+      selector: (row) => row.oleh,
+      sortable: true,
+    },
+    {
+      name: "Jabatan",
+      selector: (row) => row.jabatan,
+      sortable: true,
+    },
+    {
       name: "Aksi",
       width: "120px",
       cell: (row) => (

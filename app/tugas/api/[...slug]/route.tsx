@@ -81,6 +81,8 @@ async function Post(data: any, admin: AdminLogin) {
         deskripsi: String(data.get("deskripsi")),
         jumlah: Number(data.get("jumlah")),
         deadline: String(data.get("deadline")),
+        oleh: "Admin",
+        jabatan: "Admin"
       },
     });
     return { error: false, message: "Data tugas berhasil ditambahkan" };

@@ -41,6 +41,7 @@ export default function KonstituenPage({
       .then((x) => {
         setLoading(false);
         setData(x);
+        console.log(x);
       });
   };
 
@@ -85,7 +86,8 @@ export default function KonstituenPage({
     },
     {
       name: "Refferal",
-      selector: (row) => (row.refferal ? String(row.refferal.nama) : "-"),
+      selector: (row) =>
+        row.refferal != undefined ? String(row.refferal.nama) : "-",
       sortable: true,
     },
     {

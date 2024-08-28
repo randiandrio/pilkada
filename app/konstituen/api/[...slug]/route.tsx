@@ -58,6 +58,7 @@ async function Get(appId: Number, jabatan: String) {
       kab: true,
       kec: true,
       kel: true,
+      refferal: true,
     },
   });
   return result;

@@ -22,13 +22,13 @@ const menuBupati = (
       <li className="mini-dashboard">Koordinator</li>
 
       <li>
-        <Link href="/koordinator/kabupaten">Kota / Kabupaten</Link>
+        <Link href="/koordinator/tingkat/Kabupaten">Kota / Kabupaten</Link>
       </li>
       <li>
-        <Link href="/koordinator/kecamatan">Kecamatan</Link>
+        <Link href="/koordinator/tingkat/Kecamatan">Kecamatan</Link>
       </li>
       <li>
-        <Link href="/koordinator/kelurahan">Kelurahan / Desa</Link>
+        <Link href="/koordinator/tingkat/Kelurahan">Kelurahan / Desa</Link>
       </li>
     </ul>
   </li>

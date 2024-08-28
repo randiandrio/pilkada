@@ -38,7 +38,7 @@ function Update({ reload, data }: { reload: Function; data: any }) {
   }
 
   const loadUser = async (cari: String) => {
-    fetch(`/tugas/api/cari_user/${cari}`)
+    fetch(`/koordinator/api/cari_user/${cari}`)
       .then((res) => res.json())
       .then((x) => {
         console.log(x);

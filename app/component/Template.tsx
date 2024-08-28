@@ -189,9 +189,6 @@ export default function Template({ children }: { children: React.ReactNode }) {
                   <li>
                     <Link href="/konstituen/timses">Timses</Link>
                   </li>
-                  <li>
-                    <Link href="/konstituen/paslon">Paslon</Link>
-                  </li>
                 </ul>
               </li>
 

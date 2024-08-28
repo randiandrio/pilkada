@@ -40,7 +40,7 @@ function Add({
   }
 
   const loadUser = async (cari: String) => {
-    fetch(`/master/tps/api/cari_user/${cari}`)
+    fetch(`/koordinator/api/cari_user/${cari}`)
       .then((res) => res.json())
       .then((x) => {
         console.log(x);

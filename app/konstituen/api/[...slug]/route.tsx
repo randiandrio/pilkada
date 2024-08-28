@@ -51,6 +51,7 @@ export const PATCH = async (
 async function Get(appId: Number, jabatan: String) {
   const result = await prisma.user.findMany({
     where: {
+      appId: Number(appId),
       jabatan: String(jabatan) == "all" ? undefined : String(jabatan),
     },
     include: {

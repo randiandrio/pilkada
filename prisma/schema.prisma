@@ -80,12 +80,15 @@ model Wilayah {
   tpsKota             Tps[]           @relation("tpsKota")
   tpsKec              Tps[]           @relation("tpsKec")
   koordinator         Koordinator[]
+  userKota            User[]           @relation("kota")
+  userKec             User[]           @relation("kecamatan")
+  userKel             User[]           @relation("kelurahan")
 }
 
 model User {
   id                  Int             @id @default(autoincrement())
   appId               Int
-  refId               Int             @default(0)
+  refId               Int?
   nama                String?         
   hp                  String?         
   wa                  String?         
@@ -94,14 +97,14 @@ model User {
   tempatLahir         String?
   tanggalLahir        String?
   jenisKelamin        String?
-  provId              Int?
-  kabId               Int?
-  kecId               Int?
-  kelId               Int?
+  provId              Int
+  kabId               Int
+  kecId               Int
+  kelId               Int
   foto                String?
   dukungan            String?
   token               String?
-  isTim               Int             @default(0)
+  jabatan             String          @default("Simpatisan")
   os                  String          @default("ANDROID")
   appVersion          Int             @default(0)
   createdAt           DateTime        @default(now())
@@ -110,9 +113,14 @@ model User {
   tpsSaksi            Tps?
   tugas               Tugas[]
   appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)
+  kab                 Wilayah         @relation("kota", fields: [kabId], references: [id])
+  kec                 Wilayah         @relation("kecamatan", fields: [kecId], references: [id])
+  kel                 Wilayah         @relation("kelurahan", fields: [kelId], references: [id])
   koordinator         Koordinator[]
   pengaduan           Pengaduan[]
   aspirasi            Aspirasi[]
+  refferal            User?           @relation("refferal", fields: [refId], references: [id])
+  referalkan          User[]          @relation("refferal")
 }   
 
 model Koordinator {

@@ -161,38 +161,6 @@ export default function Template({ children }: { children: React.ReactNode }) {
               <Menu akses={Number(akun?.kotaId) > 0 ? "Bupati" : "Gubernur"} />
 
               <li>
-                <a
-                  className="has-arrow "
-                  href="javascript:void(0);"
-                  aria-expanded="false"
-                >
-                  <div className="menu-icon">
-                    <Image
-                      src="/template/team.png"
-                      width={25}
-                      height={25}
-                      alt="database"
-                    />
-                  </div>
-                  <span className="nav-text">Konstituen</span>
-                </a>
-
-                <ul>
-                  <li className="mini-dashboard">Konstituen</li>
-
-                  <li>
-                    <Link href="/konstituen/simpatisan">Simpatisan</Link>
-                  </li>
-                  <li>
-                    <Link href="/konstituen/saksi">Saksi</Link>
-                  </li>
-                  <li>
-                    <Link href="/konstituen/timses">Timses</Link>
-                  </li>
-                </ul>
-              </li>
-
-              <li>
                 <Link href={`/tugas`} className="" aria-expanded="false">
                   <div className="menu-icon">
                     <Image
@@ -203,6 +171,24 @@ export default function Template({ children }: { children: React.ReactNode }) {
                     />
                   </div>
                   <span className="nav-text">Tugas</span>
+                </Link>
+              </li>
+
+              <li>
+                <Link
+                  href={`/konstituen/filter/all`}
+                  className=""
+                  aria-expanded="false"
+                >
+                  <div className="menu-icon">
+                    <Image
+                      src="/template/user.png"
+                      width={25}
+                      height={25}
+                      alt="xxx"
+                    />
+                  </div>
+                  <span className="nav-text">Konstituen</span>
                 </Link>
               </li>
 

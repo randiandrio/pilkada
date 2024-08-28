@@ -60,6 +60,11 @@ export const POST = async (request: NextRequest) => {
     return NextResponse.json(result, { status: 200 });
   }
 
+  if (mapData.jenis_req === "reload_akun") {
+    const result = await ReloadAkun(mapData);
+    return NextResponse.json(result, { status: 200 });
+  }
+
   if (mapData.jenis_req === "ganti_foto") {
     const result = await GantiFoto(mapData);
     return NextResponse.json(result, { status: 200 });
@@ -284,6 +289,16 @@ async function Login(data: any) {
     message: "Login berhasil",
     data: user[0],
   };
+}
+
+async function ReloadAkun(data: any) {
+  const user = await prisma.user.findUnique({
+    where: {
+      id: Number(data.userId),
+    },
+  });
+
+  return user;
 }
 
 async function GantiFoto(data: any) {

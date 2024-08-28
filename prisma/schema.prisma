@@ -88,7 +88,6 @@ model Wilayah {
 model User {
   id                  Int             @id @default(autoincrement())
   appId               Int
-  refId               Int?
   nama                String?         
   hp                  String?         
   wa                  String?         
@@ -119,9 +118,11 @@ model User {
   koordinator         Koordinator[]
   pengaduan           Pengaduan[]
   aspirasi            Aspirasi[]
-  refferal            User?           @relation("refferal", fields: [refId], references: [id])
-  referalkan          User[]          @relation("refferal")
+  refId               Int?
+  refferal            User?           @relation("RefferalFollower", fields: [refId], references: [id])
+  follower            User[]          @relation("RefferalFollower")
 }   
+
 
 model Koordinator {
   id                  Int             @id @default(autoincrement())

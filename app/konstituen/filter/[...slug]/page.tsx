@@ -84,6 +84,11 @@ export default function KonstituenPage({
       sortable: true,
     },
     {
+      name: "Refferal",
+      selector: (row) => (row.refferal ? String(row.refferal.nama) : "-"),
+      sortable: true,
+    },
+    {
       name: "Action",
       button: true,
       width: "200px",

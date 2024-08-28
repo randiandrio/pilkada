@@ -236,11 +236,11 @@ async function Registrasi(data: any) {
       tempatLahir: data.tempatLahir,
       tanggalLahir: data.tanggalLahir,
       jenisKelamin: data.jenisKelamin,
-      provId: prov?.id,
-      kabId: kab?.id,
-      kecId: kec?.id,
-      kelId: kel?.id,
-      refId: Number(data.refId),
+      provId: Number(prov?.id),
+      kabId: Number(kab?.id),
+      kecId: Number(kec?.id),
+      kelId: Number(kel?.id),
+      refId: Number(data.refId) == 0 ? undefined : Number(data.refId),
     },
   });
 
@@ -856,24 +856,24 @@ async function PostLaporanTugas(data: any) {
     const lp = await prisma.laporanTugas.findMany({
       where: {
         tugasId: Number(data.tugasId),
-      }
+      },
     });
 
     const tugas = await prisma.tugas.findUnique({
       where: { id: Number(data.tugasId) },
-    })
+    });
 
-    let prog = 0
+    let prog = 0;
     if (lp.length > 0) {
-      prog = lp.length / tugas!.jumlah * 100;
+      prog = (lp.length / tugas!.jumlah) * 100;
     }
 
     await prisma.tugas.update({
       where: { id: Number(data.tugasId) },
       data: {
-        progress: Number(prog)
-      }
-    })
+        progress: Number(prog),
+      },
+    });
 
     return {
       error: false,

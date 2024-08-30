@@ -2,10 +2,10 @@
 import { useEffect } from "react";
 import { useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
-import { useSession } from "next-auth/react";
-import { AdminLogin } from "next-auth";
 import Delete from "../../action/Delete";
 import Update from "../../action/Update";
+import Select from "react-select";
+import { useRouter } from "next/navigation";
 
 const customStyles = {
   headCells: {
@@ -22,26 +22,158 @@ export default function KonstituenPage({
 }: {
   params: { slug: string[] };
 }) {
-  const session = useSession();
-  const akun = session.data as unknown as AdminLogin;
+  const router = useRouter();
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const [filter, setFilter] = useState("");
-
   const [page, setPage] = useState(1);
   const [perPage, setPerpage] = useState(10);
 
+  const [disKab, setDisKab] = useState(false);
+  const [disKec, setDisKec] = useState(false);
+  const [disKel, setDisKel] = useState(false);
+
+  const [listTim, setListTim] = useState<any[]>([
+    {
+      value: "all",
+      label: "Semua Tim",
+    },
+    {
+      value: "Timses",
+      label: "Tim Sukses",
+    },
+    {
+      value: "Simpatisan",
+      label: "Simpatisan",
+    },
+  ]);
+  const [selectedTim, setSelectedTim] = useState({
+    value: "all",
+    label: "Semua Tim",
+  });
+
+  const handleSelectTim = async (data: any) => {
+    return router.push(
+      `/konstituen/filter/${data.value}/${selectedKota.value}/${selectedKecamatan.value}/${selectedKelurahan.value}`
+    );
+  };
+
+  const [listKota, setListKota] = useState<any[]>([]);
+
+  const [selectedKota, setSelectedKota] = useState({
+    value: "all-kabupaten",
+    label: "Semua Kabupaten / Kota",
+  });
+  const handleSelectKota = async (data: any) => {
+    return router.push(
+      `/konstituen/filter/${selectedTim.value}/${data.value}/${selectedKecamatan.value}/${selectedKelurahan.value}`
+    );
+  };
+
+  const [lisKecamatan, setListKecamatan] = useState<any[]>([]);
+  const [selectedKecamatan, setSelectedKecamatan] = useState({
+    value: "all-kecamatan",
+    label: "Semua Kecamatan",
+  });
+
+  const handleSelectKecamatan = async (data: any) => {
+    return router.push(
+      `/konstituen/filter/${selectedTim.value}/${selectedKota.value}/${data.value}/${selectedKelurahan.value}`
+    );
+  };
+
+  const [lisKelurahan, setListKelurahan] = useState<any[]>([]);
+  const [selectedKelurahan, setSelectedKelurahan] = useState({
+    value: "all-kelurahan",
+    label: "Semua Kelurahan",
+  });
+
+  const handleSelectKelurahan = async (data: any) => {
+    return router.push(
+      `/konstituen/filter/${selectedTim.value}/${selectedKota.value}/${selectedKecamatan.value}/${data.value}`
+    );
+  };
+
   useEffect(() => {
     reload();
+    loadKota();
+    if (params.slug[1] == "all-kabupaten") {
+      setDisKec(true);
+      setDisKel(true);
+    }
+    if (params.slug[2] == "all-kecamatan") {
+      setDisKel(true);
+    }
   }, []);
 
   const reload = async () => {
-    fetch(`/konstituen/api/get/${params.slug[0]}`)
+    fetch(
+      `/konstituen/api/get/${params.slug[0]}/${params.slug[1]}/${params.slug[2]}/${params.slug[3]}`
+    )
       .then((res) => res.json())
       .then((x) => {
         setLoading(false);
         setData(x);
+      });
+  };
+
+  const loadKota = async () => {
+    fetch(`/konstituen/api/load_kota`)
+      .then((res) => res.json())
+      .then((x) => {
+        var a = x.map(function (item: any) {
+          return {
+            value: item.value,
+            label: item.nama,
+          };
+        });
+        setListKota(a);
+        if (params.slug[1] != "all-kabupaten") {
+          setSelectedKota(
+            a.find((q: any) => String(q.value) === params.slug[1])
+          );
+          loadKecamatan();
+        }
+      });
+  };
+
+  const loadKecamatan = async () => {
+    fetch(`/konstituen/api/load_kecamatan/${params.slug[1]}`)
+      .then((res) => res.json())
+      .then((x) => {
+        var a = x.map(function (item: any) {
+          return {
+            value: item.value,
+            label: item.nama,
+          };
+        });
+        setListKecamatan(a);
+        if (params.slug[2] != "all-kecamatan") {
+          setSelectedKecamatan(
+            a.find((q: any) => String(q.value) === params.slug[2])
+          );
+          loadKelurahan();
+        }
+      });
+  };
+
+  const loadKelurahan = async () => {
+    fetch(`/konstituen/api/load_kelurahan/${params.slug[2]}`)
+      .then((res) => res.json())
+      .then((x) => {
         console.log(x);
+        var a = x.map(function (item: any) {
+          return {
+            value: item.value,
+            label: item.nama,
+          };
+        });
+        setListKelurahan(a);
+        if (params.slug[3] != "all-kelurahan") {
+          setSelectedKelurahan(
+            a.find((q: any) => String(q.value) === params.slug[3])
+          );
+        }
       });
   };
 
@@ -118,7 +250,65 @@ export default function KonstituenPage({
         <div className="col-xl-12 col-lg-12">
           <div className="card">
             <div className="card-header flex-wrap" id="default-tab">
-              <h4 className="card-title">Data {params.slug[0]}</h4>
+              <div className="col-sm-8">
+                <div className="row">
+                  <div className="col-sm-3">
+                    <Select
+                      placeholder="Semua Tim"
+                      className="basic-single mt-1"
+                      classNamePrefix="select"
+                      options={listTim}
+                      value={selectedTim}
+                      onChange={(e) => handleSelectTim(e!)}
+                    />
+                  </div>
+                  <div className="col-sm-3">
+                    <Select
+                      isDisabled={disKab}
+                      placeholder="Semua Kabupaten / Kota"
+                      className="basic-single mt-1"
+                      classNamePrefix="select"
+                      isSearchable={true}
+                      options={listKota}
+                      value={selectedKota}
+                      noOptionsMessage={(e) => {
+                        return "Kabupaten / Kota tidak ditemukan";
+                      }}
+                      onChange={(e) => handleSelectKota(e!)}
+                    />
+                  </div>
+                  <div className="col-sm-3">
+                    <Select
+                      isDisabled={disKec}
+                      placeholder="Semua Kecamatan"
+                      className="basic-single mt-1"
+                      classNamePrefix="select"
+                      isSearchable={true}
+                      options={lisKecamatan}
+                      value={selectedKecamatan}
+                      noOptionsMessage={(e) => {
+                        return "Kecamatan tidak ditemukan";
+                      }}
+                      onChange={(e) => handleSelectKecamatan(e!)}
+                    />
+                  </div>
+                  <div className="col-sm-3">
+                    <Select
+                      isDisabled={disKel}
+                      placeholder="Semua Kelurahan"
+                      className="basic-single mt-1"
+                      classNamePrefix="select"
+                      isSearchable={true}
+                      options={lisKelurahan}
+                      value={selectedKelurahan}
+                      noOptionsMessage={(e) => {
+                        return "Kelurahan tidak ditemukan";
+                      }}
+                      onChange={(e) => handleSelectKelurahan(e!)}
+                    />
+                  </div>
+                </div>
+              </div>
 
               <div className="col-sm-3 mb-0">
                 <input

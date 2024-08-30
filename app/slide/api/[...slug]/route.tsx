@@ -11,8 +11,15 @@ export const GET = async (
   request: NextRequest,
   { params }: { params: { slug: string[] } }
 ) => {
+  const token = await getToken({
+    req: request,
+    secret: process.env.NEXTAUTH_SECRET,
+  });
+
+  const adminLogin = token as unknown as AdminLogin;
+
   if (params.slug[0] === "get") {
-    const result = await Get();
+    const result = await Get(adminLogin);
     return NextResponse.json(result, { status: 200 });
   }
 
@@ -43,8 +50,10 @@ export const PATCH = async (
   }
 };
 
-async function Get() {
-  const result = await prisma.slide.findMany();
+async function Get(admin: AdminLogin) {
+  const result = await prisma.slide.findMany({
+    where: { appId: Number(admin.appId) },
+  });
   return result;
 }
 

@@ -194,7 +194,7 @@ export default function Template({ children }: { children: React.ReactNode }) {
                 </Link>
               </li>
 
-              <li>
+              {/* <li>
                 <a
                   className="has-arrow "
                   href="javascript:void(0);"
@@ -224,9 +224,9 @@ export default function Template({ children }: { children: React.ReactNode }) {
                     <Link href="/laporan/keuangan">Keuangan</Link>
                   </li>
                 </ul>
-              </li>
+              </li> */}
 
-              <li>
+              {/* <li>
                 <a
                   className="has-arrow "
                   href="javascript:void(0);"
@@ -253,7 +253,7 @@ export default function Template({ children }: { children: React.ReactNode }) {
                     <Link href="/suara/real-count">Real Count</Link>
                   </li>
                 </ul>
-              </li>
+              </li> */}
 
               <li>
                 <Link

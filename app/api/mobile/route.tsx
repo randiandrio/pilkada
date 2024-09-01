@@ -35,6 +35,8 @@ export const POST = async (request: NextRequest) => {
   const body: any = await request.json();
   const mapData = JSON.parse(decrypt(body.data));
 
+  console.log(mapData);
+
   if (mapData.jenis_req === "cek_nik") {
     const result = await CekNik(mapData);
     return NextResponse.json(result, { status: 200 });
@@ -142,6 +144,11 @@ export const POST = async (request: NextRequest) => {
 
   if (mapData.jenis_req === "load_koordinator") {
     const result = await LoadKoordinator(mapData);
+    return NextResponse.json(result, { status: 200 });
+  }
+
+  if (mapData.jenis_req === "load_koordinator_wilayah") {
+    const result = await LoadKoordinatorWilayah(mapData);
     return NextResponse.json(result, { status: 200 });
   }
 
@@ -996,4 +1003,42 @@ async function LoadKoordinator(data: any) {
   };
 
   return result;
+}
+
+async function LoadKoordinatorWilayah(data: any) {
+  const wilayah = await prisma.wilayah.findUnique({
+    where: { id: Number(data.wilayahId) },
+  });
+
+  let x;
+  if (wilayah?.kode.length == 2) {
+    x = await prisma.wilayah.findMany({
+      where: {
+        id: {
+          not: Number(data.wilayahId),
+        },
+        provinsi: wilayah.nama,
+        kecamatan: "null",
+        kelurahan: "null",
+      },
+    });
+  }
+
+  // const newData = newDatax.map(function (item) {
+  //   return {
+  //     id: item.id,
+  //     appId: item.appId,
+  //     wilayahId: item.wilayahId,
+  //     kodeWilayah: item.wilayah.kode,
+  //     namaWilayah: item.wilayah.nama,
+  //     userId: 21,
+  //     userNama: item.user.nama,
+  //     userHp: item.user.hp,
+  //     userWa: item.user.wa,
+  //     createdAt: item.createdAt,
+  //     updatedAt: item.updatedAt,
+  //   };
+  // });
+
+  return x;
 }

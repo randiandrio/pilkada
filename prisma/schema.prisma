@@ -128,7 +128,7 @@ model Koordinator {
   id                  Int             @id @default(autoincrement())
   appId               Int
   wilayahId           Int     
-  userId              Int
+  userId              Int             @unique
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
   appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)

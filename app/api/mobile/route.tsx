@@ -140,6 +140,11 @@ export const POST = async (request: NextRequest) => {
     return NextResponse.json(result, { status: 200 });
   }
 
+  if (mapData.jenis_req === "load_koordinator") {
+    const result = await LoadKoordinator(mapData);
+    return NextResponse.json(result, { status: 200 });
+  }
+
   return NextResponse.json(false, { status: 200 });
 };
 
@@ -938,4 +943,57 @@ async function PostLaporanTugas(data: any) {
     error: true,
     message: "Gagal",
   };
+}
+
+async function LoadKoordinator(data: any) {
+  const xAllId = await prisma.koordinator.findMany({
+    where: {
+      userId: Number(data.userId),
+    },
+  });
+
+  var allId = xAllId.map(function (item) {
+    return item.id;
+  });
+
+  const newDatax = await prisma.koordinator.findMany({
+    where: {
+      userId: Number(data.userId),
+      updatedAt: {
+        gt: new Date(data.last),
+      },
+    },
+    include: {
+      wilayah: true,
+      user: true,
+    },
+  });
+
+  const newData = newDatax.map(function (item) {
+    return {
+      id: item.id,
+      appId: item.appId,
+      wilayahId: item.wilayahId,
+      kodeWilayah: item.wilayah.kode,
+      namaWilayah: item.wilayah.nama,
+      userId: 21,
+      userNama: item.user.nama,
+      userHp: item.user.hp,
+      userWa: item.user.wa,
+      createdAt: item.createdAt,
+      updatedAt: item.updatedAt,
+    };
+  });
+
+  var newId = newData.map(function (item) {
+    return item.id;
+  });
+
+  const result = {
+    allId: allId.toString(),
+    newId: newId.toString(),
+    newData: newData,
+  };
+
+  return result;
 }

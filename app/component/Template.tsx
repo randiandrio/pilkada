@@ -194,67 +194,6 @@ export default function Template({ children }: { children: React.ReactNode }) {
                 </Link>
               </li>
 
-              {/* <li>
-                <a
-                  className="has-arrow "
-                  href="javascript:void(0);"
-                  aria-expanded="false"
-                >
-                  <div className="menu-icon">
-                    <Image
-                      src="/template/report.png"
-                      width={25}
-                      height={25}
-                      alt="database"
-                    />
-                  </div>
-                  <span className="nav-text">Laporan</span>
-                </a>
-
-                <ul>
-                  <li className="mini-dashboard">Laporan</li>
-
-                  <li>
-                    <Link href="/laporan/konstituen">Konstituen</Link>
-                  </li>
-                  <li>
-                    <Link href="/laporan/tugas">Tugas</Link>
-                  </li>
-                  <li>
-                    <Link href="/laporan/keuangan">Keuangan</Link>
-                  </li>
-                </ul>
-              </li> */}
-
-              {/* <li>
-                <a
-                  className="has-arrow "
-                  href="javascript:void(0);"
-                  aria-expanded="false"
-                >
-                  <div className="menu-icon">
-                    <Image
-                      src="/template/voting.png"
-                      width={25}
-                      height={25}
-                      alt="database"
-                    />
-                  </div>
-                  <span className="nav-text">Suara</span>
-                </a>
-
-                <ul>
-                  <li className="mini-dashboard">Suara</li>
-
-                  <li>
-                    <Link href="/suara/proyeksi">Proyeksi</Link>
-                  </li>
-                  <li>
-                    <Link href="/suara/real-count">Real Count</Link>
-                  </li>
-                </ul>
-              </li> */}
-
               <li>
                 <Link
                   href={`/ganti-password`}

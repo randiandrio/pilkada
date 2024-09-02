@@ -983,10 +983,11 @@ async function LoadKoordinator(data: any) {
       wilayahId: item.wilayahId,
       kodeWilayah: item.wilayah.kode,
       namaWilayah: item.wilayah.nama,
-      userId: 21,
+      userId: item.user.id,
       userNama: item.user.nama,
       userHp: item.user.hp,
       userWa: item.user.wa,
+      userFoto: item.user.foto,
       createdAt: item.createdAt,
       updatedAt: item.updatedAt,
     };
@@ -1021,24 +1022,73 @@ async function LoadKoordinatorWilayah(data: any) {
         kecamatan: "null",
         kelurahan: "null",
       },
+      orderBy: {
+        nama: "asc"
+      }
+    });
+  }
+   if (wilayah?.kode.length == 5) {
+    x = await prisma.wilayah.findMany({
+      where: {
+        id: {
+          not: Number(data.wilayahId),
+        },
+        provinsi: wilayah.provinsi,
+        kabupaten: wilayah.kabupaten,
+        kelurahan: "null",
+      },
+      orderBy: {
+        nama: "asc"
+      }
+    });
+   }
+  
+  if (wilayah?.kode.length == 8) {
+    x = await prisma.wilayah.findMany({
+      where: {
+        id: {
+          not: Number(data.wilayahId),
+        },
+        provinsi: wilayah.provinsi,
+        kabupaten: wilayah.kabupaten,
+        kecamatan: wilayah.kecamatan,
+      },
+      orderBy: {
+        nama: "asc"
+      }
     });
   }
 
-  // const newData = newDatax.map(function (item) {
-  //   return {
-  //     id: item.id,
-  //     appId: item.appId,
-  //     wilayahId: item.wilayahId,
-  //     kodeWilayah: item.wilayah.kode,
-  //     namaWilayah: item.wilayah.nama,
-  //     userId: 21,
-  //     userNama: item.user.nama,
-  //     userHp: item.user.hp,
-  //     userWa: item.user.wa,
-  //     createdAt: item.createdAt,
-  //     updatedAt: item.updatedAt,
-  //   };
-  // });
+  console.log(x)
+  let res:any[] = []
 
-  return x;
+    for (let i = 0; i < x!.length; i++) {
+      const appId = Number(data.appId)
+      const koor = await prisma.koordinator.findMany({
+        where: {
+          appId: appId,
+          wilayahId: x![i].id
+        },
+        include: {
+          user: true
+        }
+      })
+
+      res.push({
+        id: x![i].id,
+        appId: appId,
+        wilayahId: x![i].id,
+        kodeWilayah: x![i].kode,
+        namaWilayah: x![i].nama,
+        userId: koor.length > 0 ? koor[0].user.id : 0,
+        userNama: koor.length > 0 ? koor[0].user.nama : "-",
+        userHp: koor.length > 0 ? koor[0].user.hp : "-",
+        userWa: koor.length > 0 ? koor[0].user.wa : "-",
+        userFoto: koor.length > 0 ? koor[0].user.foto : null,
+        createdAt: x![i].createdAt,
+        updatedAt: x![i].updatedAt,
+      })
+    }
+
+  return res;
 }

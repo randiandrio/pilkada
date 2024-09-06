@@ -155,6 +155,11 @@ export const POST = async (request: NextRequest) => {
     return NextResponse.json(result, { status: 200 });
   }
 
+  if (mapData.jenis_req === "load_paslon") {
+    const result = await LoadPaslon(mapData);
+    return NextResponse.json(result, { status: 200 });
+  }
+
   return NextResponse.json(false, { status: 200 });
 };
 
@@ -1134,6 +1139,39 @@ async function LoadSaksiTPS(data: any) {
       createdAt: item.createdAt,
       updatedAt: item.updatedAt,
     };
+  });
+
+  var newId = newData.map(function (item) {
+    return item.id;
+  });
+
+  const result = {
+    allId: allId.toString(),
+    newId: newId.toString(),
+    newData: newData,
+  };
+
+  return result;
+}
+
+async function LoadPaslon(data: any) {
+  const xAllId = await prisma.paslon.findMany({
+    where: {
+      appId: Number(data.appId),
+    },
+  });
+
+  var allId = xAllId.map(function (item) {
+    return item.id;
+  });
+
+  const newData = await prisma.paslon.findMany({
+    where: {
+      appId: Number(data.appId),
+      updatedAt: {
+        gt: new Date(data.last),
+      },
+    },
   });
 
   var newId = newData.map(function (item) {

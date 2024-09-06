@@ -160,6 +160,11 @@ export const POST = async (request: NextRequest) => {
     return NextResponse.json(result, { status: 200 });
   }
 
+  if (mapData.jenis_req === "post_suara") {
+    const result = await PostSuara(mapData);
+    return NextResponse.json(result, { status: 200 });
+  }
+
   return NextResponse.json(false, { status: 200 });
 };
 
@@ -1134,6 +1139,7 @@ async function LoadSaksiTPS(data: any) {
       kecId: item.kecId,
       namaKec: item.kec?.nama,
       tpsNo: item.tpsNo,
+      tpsId: item.id,
       saksiId: item.saksiId,
       namaSaksi: item.saksi?.nama,
       createdAt: item.createdAt,
@@ -1185,4 +1191,31 @@ async function LoadPaslon(data: any) {
   };
 
   return result;
+}
+
+async function PostSuara(data: any) {
+  await prisma.realCount.upsert({
+    where: {
+      tpsId_paslonId: {
+        tpsId: Number(data.tpsId),
+        paslonId: Number(data.paslonId),
+      },
+    },
+    create: {
+      appId: Number(data.appId),
+      tpsId: Number(data.tpsId),
+      paslonId: Number(data.paslonId),
+      suara: Number(data.suara),
+      foto: String(data.foto),
+    },
+    update: {
+      suara: Number(data.suara),
+      foto: String(data.foto),
+    },
+  });
+
+  return {
+    error: false,
+    message: "Data suara telah disimpan",
+  };
 }

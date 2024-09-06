@@ -315,4 +315,6 @@ model RealCount {
   appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)
   paslon              Paslon          @relation(fields: [paslonId], references: [id], onDelete: Cascade)
   tps                 Tps             @relation(fields: [tpsId], references: [id], onDelete: Cascade)
+  @@unique([tpsId, paslonId], name: "tpsId_paslonId")
+
 }

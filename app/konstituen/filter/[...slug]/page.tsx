@@ -6,6 +6,7 @@ import Delete from "../../action/Delete";
 import Update from "../../action/Update";
 import Select from "react-select";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const customStyles = {
   headCells: {
@@ -97,6 +98,24 @@ export default function KonstituenPage({
   useEffect(() => {
     reload();
     loadKota();
+    if (params.slug[0] == "all") {
+      setSelectedTim({
+        value: "all",
+        label: "Semua Tim",
+      });
+    }
+    if (params.slug[0] == "Timses") {
+      setSelectedTim({
+        value: "Timses",
+        label: "Timses",
+      });
+    }
+    if (params.slug[0] == "Simpatisan") {
+      setSelectedTim({
+        value: "Simpatisan",
+        label: "Simpatisan",
+      });
+    }
     if (params.slug[1] == "all-kabupaten") {
       setDisKec(true);
       setDisKel(true);
@@ -189,7 +208,9 @@ export default function KonstituenPage({
       cell: (row) => (
         <>
           <p className="pt-3" style={{ lineHeight: 1 }}>
-            <strong>{row.nama}</strong>
+            <strong>
+              <Link href={`/konstituen/refferal/${row.id}`}>{row.nama}</Link>
+            </strong>
             <br />
             {row.jabatan}
           </p>
@@ -218,8 +239,14 @@ export default function KonstituenPage({
     },
     {
       name: "Refferal",
-      selector: (row) =>
-        row.refferal != undefined ? String(row.refferal.nama) : "-",
+      cell: (row) =>
+        row.refferal != undefined ? (
+          <Link href={`/konstituen/refferal/${row.refferal.id}`}>
+            {row.refferal.nama}
+          </Link>
+        ) : (
+          "-"
+        ),
       sortable: true,
     },
     {
@@ -337,6 +364,9 @@ export default function KonstituenPage({
                   setPerpage(page);
                 }}
               />
+            </div>
+            <div className="card-body">
+              <h3>Total Data : {data.length} Orang</h3>
             </div>
           </div>
         </div>

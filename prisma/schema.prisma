@@ -27,6 +27,7 @@ model AppData {
   agenda              Agenda[]
   pengaduan           Pengaduan[]
   aspirasi            Aspirasi[]
+  realCount           RealCount[]
 } 
 
 model Setting {
@@ -123,7 +124,6 @@ model User {
   follower            User[]          @relation("RefferalFollower")
 }   
 
-
 model Koordinator {
   id                  Int             @id @default(autoincrement())
   appId               Int
@@ -171,6 +171,7 @@ model Tps {
   kota                Wilayah?        @relation("tpsKota", fields: [kotaId], references: [id])
   kec                 Wilayah?        @relation("tpsKec", fields: [kecId], references: [id])
   saksi               User?           @relation(fields: [saksiId], references: [id])
+  realCount           RealCount[]
 }  
 
 model Paslon {
@@ -182,6 +183,7 @@ model Paslon {
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
   appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)
+  realCount           RealCount[]
 } 
 
 model Pengumuman {
@@ -299,4 +301,18 @@ model Aspirasi {
   updatedAt           DateTime        @updatedAt
   appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)
   user                User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model RealCount {
+  id                  Int             @id @default(autoincrement())
+  appId               Int
+  tpsId               Int
+  paslonId            Int
+  suara               Int             @default(0) 
+  foto                String?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)
+  paslon              Paslon          @relation(fields: [paslonId], references: [id], onDelete: Cascade)
+  tps                 Tps             @relation(fields: [tpsId], references: [id], onDelete: Cascade)
 }

@@ -21,6 +21,11 @@ export const GET = async (
     return NextResponse.json(result, { status: 200 });
   }
 
+  if (params.slug[0] === "refferal") {
+    const result = await Refferal(adminLogin.appId, params.slug);
+    return NextResponse.json(result, { status: 200 });
+  }
+
   if (params.slug[0] === "load_kota") {
     const result = await LoadKota(adminLogin);
     return NextResponse.json(result, { status: 200 });
@@ -80,6 +85,32 @@ async function Get(appId: Number, slug: String[]) {
     },
   });
   return result;
+}
+
+async function Refferal(appId: Number, slug: String[]) {
+  const user = await prisma.user.findUnique({
+    where: {
+      id: Number(slug[1]),
+    },
+    select: {
+      nama: true,
+    },
+  });
+  const result = await prisma.user.findMany({
+    where: {
+      refId: Number(slug[1]),
+    },
+    include: {
+      kab: true,
+      kec: true,
+      kel: true,
+      refferal: true,
+    },
+  });
+  return {
+    data: result,
+    user: user?.nama,
+  };
 }
 
 async function LoadKota(admin: AdminLogin) {

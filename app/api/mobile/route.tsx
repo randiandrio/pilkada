@@ -35,8 +35,6 @@ export const POST = async (request: NextRequest) => {
   const body: any = await request.json();
   const mapData = JSON.parse(decrypt(body.data));
 
-  console.log(mapData);
-
   if (mapData.jenis_req === "cek_nik") {
     const result = await CekNik(mapData);
     return NextResponse.json(result, { status: 200 });
@@ -149,6 +147,11 @@ export const POST = async (request: NextRequest) => {
 
   if (mapData.jenis_req === "load_koordinator_wilayah") {
     const result = await LoadKoordinatorWilayah(mapData);
+    return NextResponse.json(result, { status: 200 });
+  }
+
+  if (mapData.jenis_req === "load_saksi_tps") {
+    const result = await LoadSaksiTPS(mapData);
     return NextResponse.json(result, { status: 200 });
   }
 
@@ -1023,11 +1026,11 @@ async function LoadKoordinatorWilayah(data: any) {
         kelurahan: "null",
       },
       orderBy: {
-        nama: "asc"
-      }
+        nama: "asc",
+      },
     });
   }
-   if (wilayah?.kode.length == 5) {
+  if (wilayah?.kode.length == 5) {
     x = await prisma.wilayah.findMany({
       where: {
         id: {
@@ -1038,11 +1041,11 @@ async function LoadKoordinatorWilayah(data: any) {
         kelurahan: "null",
       },
       orderBy: {
-        nama: "asc"
-      }
+        nama: "asc",
+      },
     });
-   }
-  
+  }
+
   if (wilayah?.kode.length == 8) {
     x = await prisma.wilayah.findMany({
       where: {
@@ -1054,41 +1057,94 @@ async function LoadKoordinatorWilayah(data: any) {
         kecamatan: wilayah.kecamatan,
       },
       orderBy: {
-        nama: "asc"
-      }
+        nama: "asc",
+      },
     });
   }
 
-  console.log(x)
-  let res:any[] = []
+  console.log(x);
+  let res: any[] = [];
 
-    for (let i = 0; i < x!.length; i++) {
-      const appId = Number(data.appId)
-      const koor = await prisma.koordinator.findMany({
-        where: {
-          appId: appId,
-          wilayahId: x![i].id
-        },
-        include: {
-          user: true
-        }
-      })
-
-      res.push({
-        id: x![i].id,
+  for (let i = 0; i < x!.length; i++) {
+    const appId = Number(data.appId);
+    const koor = await prisma.koordinator.findMany({
+      where: {
         appId: appId,
         wilayahId: x![i].id,
-        kodeWilayah: x![i].kode,
-        namaWilayah: x![i].nama,
-        userId: koor.length > 0 ? koor[0].user.id : 0,
-        userNama: koor.length > 0 ? koor[0].user.nama : "-",
-        userHp: koor.length > 0 ? koor[0].user.hp : "-",
-        userWa: koor.length > 0 ? koor[0].user.wa : "-",
-        userFoto: koor.length > 0 ? koor[0].user.foto : null,
-        createdAt: x![i].createdAt,
-        updatedAt: x![i].updatedAt,
-      })
-    }
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    res.push({
+      id: x![i].id,
+      appId: appId,
+      wilayahId: x![i].id,
+      kodeWilayah: x![i].kode,
+      namaWilayah: x![i].nama,
+      userId: koor.length > 0 ? koor[0].user.id : 0,
+      userNama: koor.length > 0 ? koor[0].user.nama : "-",
+      userHp: koor.length > 0 ? koor[0].user.hp : "-",
+      userWa: koor.length > 0 ? koor[0].user.wa : "-",
+      userFoto: koor.length > 0 ? koor[0].user.foto : null,
+      createdAt: x![i].createdAt,
+      updatedAt: x![i].updatedAt,
+    });
+  }
 
   return res;
+}
+
+async function LoadSaksiTPS(data: any) {
+  const xAllId = await prisma.tps.findMany({
+    where: {
+      saksiId: Number(data.userId),
+    },
+  });
+
+  var allId = xAllId.map(function (item) {
+    return item.id;
+  });
+
+  const newDatax = await prisma.tps.findMany({
+    where: {
+      saksiId: Number(data.userId),
+      updatedAt: {
+        gt: new Date(data.last),
+      },
+    },
+    include: {
+      kota: true,
+      kec: true,
+      saksi: true,
+    },
+  });
+
+  const newData = newDatax.map(function (item) {
+    return {
+      id: item.id,
+      kotaId: item.kotaId,
+      namaKota: item.kota?.nama,
+      kecId: item.kecId,
+      namaKec: item.kec?.nama,
+      tpsNo: item.tpsNo,
+      saksiId: item.saksiId,
+      namaSaksi: item.saksi?.nama,
+      createdAt: item.createdAt,
+      updatedAt: item.updatedAt,
+    };
+  });
+
+  var newId = newData.map(function (item) {
+    return item.id;
+  });
+
+  const result = {
+    allId: allId.toString(),
+    newId: newId.toString(),
+    newData: newData,
+  };
+
+  return result;
 }

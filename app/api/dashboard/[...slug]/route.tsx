@@ -108,6 +108,19 @@ async function SimpatisanWilayah(admin: AdminLogin, wilayah: String) {
       j = Number(u._count.id);
     }
 
+    if (kode?.kode.length == 13) {
+      const u = await prisma.user.aggregate({
+        where: {
+          kelId: Number(result[i].id),
+        },
+        _count: {
+          id: true,
+        },
+      });
+
+      j = Number(u._count.id);
+    }
+
     max = j > max ? j : max;
     x.push({
       nama: result[i].nama,

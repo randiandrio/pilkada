@@ -165,6 +165,11 @@ export const POST = async (request: NextRequest) => {
     return NextResponse.json(result, { status: 200 });
   }
 
+  if (mapData.jenis_req === "load_suara") {
+    const result = await LoadSuara(mapData);
+    return NextResponse.json(result, { status: 200 });
+  }
+
   return NextResponse.json(false, { status: 200 });
 };
 

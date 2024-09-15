@@ -1232,3 +1232,38 @@ async function PostSuara(data: any) {
     message: "Data suara telah disimpan",
   };
 }
+
+async function LoadSuara(data: any) {
+  const xAllId = await prisma.realCount.findMany({
+    where: {
+      appId: Number(data.appId),
+      tpsId: Number(data.tpsId),
+    },
+  });
+
+  var allId = xAllId.map(function (item) {
+    return item.id;
+  });
+
+  const newData = await prisma.realCount.findMany({
+    where: {
+      appId: Number(data.appId),
+      tpsId: Number(data.tpsId),
+      updatedAt: {
+        gt: new Date(data.last),
+      },
+    },
+  });
+
+  var newId = newData.map(function (item) {
+    return item.id;
+  });
+
+  const result = {
+    allId: allId.toString(),
+    newId: newId.toString(),
+    newData: newData,
+  };
+
+  return result;
+}

@@ -1223,10 +1223,19 @@ async function PostSuara(data: any) {
         tpsId: Number(data.tpsId),
         paslonId: Number(paslon[i].id),
         suara: Number(data.suara[i]),
-        foto: String(data.foto),
       },
       update: {
         suara: Number(data.suara[i]),
+      },
+    });
+  }
+
+  if (String(data.foto) != "") {
+    await prisma.realCount.updateMany({
+      where: {
+        tpsId: Number(data.tpsId),
+      },
+      data: {
         foto: String(data.foto),
       },
     });

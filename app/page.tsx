@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import ReactEcharts from "echarts-for-react";
 import Image from "next/image";
 import "moment/locale/id";
+import { noRupiah } from "./helper";
 
 function Dashboard() {
   const [isLoading, setLoading] = useState(true);
@@ -12,12 +13,17 @@ function Dashboard() {
   const [option1, setOption1] = useState({});
   const [option2, setOption2] = useState({});
   const [option3, setOption3] = useState({});
+  const [relawan, setRelawan] = useState(0);
+  const [timses, setTimses] = useState(0);
+  const [tps, setTps] = useState(0);
+  const [dpt, setDpt] = useState(0);
 
   useEffect(() => {
     setLoading(false);
     load1("all");
     load2();
     load3();
+    load4();
   }, []);
 
   const load1 = async (id: String) => {
@@ -175,6 +181,17 @@ function Dashboard() {
       });
   };
 
+  const load4 = async () => {
+    fetch(`/api/dashboard/statistik`)
+      .then((res) => res.json())
+      .then((x) => {
+        setRelawan(x.relawan);
+        setTimses(x.timses);
+        setTps(x.tps);
+        setDpt(x.dpt);
+      });
+  };
+
   const onChartClick = (params: any): void => {
     load1(params.name);
   };
@@ -197,12 +214,12 @@ function Dashboard() {
             <div className="card-body">
               <div className="students d-flex align-items-center justify-content-between flex-wrap">
                 <div>
-                  <h4>1000</h4>
+                  <h4>{noRupiah(relawan)}</h4>
                   <h5>Total Relawan</h5>
                 </div>
                 <div>
                   <Image
-                    src="/template/ride.png"
+                    src="/template/user.png"
                     width={60}
                     height={60}
                     alt="xxx"
@@ -217,12 +234,12 @@ function Dashboard() {
             <div className="card-body">
               <div className="students d-flex align-items-center justify-content-between flex-wrap">
                 <div>
-                  <h4>300</h4>
+                  <h4>{noRupiah(timses)}</h4>
                   <h5>Total Timses</h5>
                 </div>
                 <div>
                   <Image
-                    src="/template/mitra.png"
+                    src="/template/user.png"
                     width={60}
                     height={60}
                     alt="xxx"
@@ -237,12 +254,12 @@ function Dashboard() {
             <div className="card-body">
               <div className="students d-flex align-items-center justify-content-between flex-wrap">
                 <div>
-                  <h4>500</h4>
-                  <h5>Total Saksi</h5>
+                  <h4>{noRupiah(tps)}</h4>
+                  <h5>Total TPS</h5>
                 </div>
                 <div>
                   <Image
-                    src="/template/user.png"
+                    src="/template/mitra.png"
                     width={60}
                     height={60}
                     alt="xxx"
@@ -258,7 +275,7 @@ function Dashboard() {
             <div className="card-body">
               <div className="students d-flex align-items-center justify-content-between flex-wrap">
                 <div>
-                  <h4>170000</h4>
+                  <h4>{noRupiah(dpt)}</h4>
                   <h5>Total DPT</h5>
                 </div>
                 <div>

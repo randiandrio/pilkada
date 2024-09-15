@@ -31,6 +31,11 @@ export const GET = async (
     return NextResponse.json(result, { status: 200 });
   }
 
+  if (params.slug[0] === "statistik") {
+    const result = await Statistik(adminLogin);
+    return NextResponse.json(result, { status: 200 });
+  }
+
   return NextResponse.json(false);
 };
 
@@ -280,5 +285,46 @@ async function Umur(admin: AdminLogin) {
     u4145: u4145._count.id,
     u4650: u4650._count.id,
     lebih50: lebih50._count.id,
+  };
+}
+
+async function Statistik(admin: AdminLogin) {
+  const relawan = await prisma.user.aggregate({
+    where: {
+      appId: Number(admin.appId),
+    },
+    _count: {
+      id: true,
+    },
+  });
+
+  const timses = await prisma.user.aggregate({
+    where: {
+      appId: Number(admin.appId),
+      jabatan: "Timses",
+    },
+    _count: {
+      id: true,
+    },
+  });
+
+  const tps = await prisma.tps.aggregate({
+    where: {
+      appId: Number(admin.appId),
+    },
+    _count: {
+      id: true,
+    },
+  });
+
+  const setting = await prisma.setting.findUnique({
+    where: { appId: Number(admin.appId) },
+  });
+
+  return {
+    relawan: relawan._count.id,
+    timses: timses._count.id,
+    tps: tps._count.id,
+    dpt: setting?.jumlahSuara,
   };
 }

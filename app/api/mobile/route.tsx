@@ -1194,25 +1194,38 @@ async function LoadPaslon(data: any) {
 }
 
 async function PostSuara(data: any) {
-  await prisma.realCount.upsert({
+  const paslon = await prisma.paslon.findMany({
     where: {
-      tpsId_paslonId: {
-        tpsId: Number(data.tpsId),
-        paslonId: Number(data.paslonId),
-      },
-    },
-    create: {
       appId: Number(data.appId),
-      tpsId: Number(data.tpsId),
-      paslonId: Number(data.paslonId),
-      suara: Number(data.suara),
-      foto: String(data.foto),
     },
-    update: {
-      suara: Number(data.suara),
-      foto: String(data.foto),
+    orderBy: {
+      noUrut: "asc",
     },
   });
+
+  if (paslon.length == 0) return false;
+
+  for (let i = 0; i < paslon.length; i++) {
+    await prisma.realCount.upsert({
+      where: {
+        tpsId_paslonId: {
+          tpsId: Number(data.tpsId),
+          paslonId: Number(paslon[i].id),
+        },
+      },
+      create: {
+        appId: Number(data.appId),
+        tpsId: Number(data.tpsId),
+        paslonId: Number(paslon[i].id),
+        suara: Number(data.suara[i]),
+        foto: String(data.foto),
+      },
+      update: {
+        suara: Number(data.suara[i]),
+        foto: String(data.foto),
+      },
+    });
+  }
 
   return {
     error: false,

@@ -26,7 +26,7 @@ function Delete({ userId, reload }: { userId: Number; reload: Function }) {
     setPost(true);
     const formData = new FormData();
     formData.append("id", String(userId));
-    await axios.patch("/konstituen/api/delete", formData);
+    await axios.patch("/peta-suara/api/delete", formData);
     reload();
     setPost(false);
     Swal.fire({

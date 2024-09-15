@@ -55,7 +55,7 @@ export default function KonstituenPage({
 
   const handleSelectTim = async (data: any) => {
     return router.push(
-      `/konstituen/filter/${data.value}/${selectedKota.value}/${selectedKecamatan.value}/${selectedKelurahan.value}`
+      `/peta-suara/filter/${data.value}/${selectedKota.value}/${selectedKecamatan.value}/${selectedKelurahan.value}`
     );
   };
 
@@ -67,7 +67,7 @@ export default function KonstituenPage({
   });
   const handleSelectKota = async (data: any) => {
     return router.push(
-      `/konstituen/filter/${selectedTim.value}/${data.value}/${selectedKecamatan.value}/${selectedKelurahan.value}`
+      `/peta-suara/filter/${selectedTim.value}/${data.value}/${selectedKecamatan.value}/${selectedKelurahan.value}`
     );
   };
 
@@ -79,7 +79,7 @@ export default function KonstituenPage({
 
   const handleSelectKecamatan = async (data: any) => {
     return router.push(
-      `/konstituen/filter/${selectedTim.value}/${selectedKota.value}/${data.value}/${selectedKelurahan.value}`
+      `/peta-suara/filter/${selectedTim.value}/${selectedKota.value}/${data.value}/${selectedKelurahan.value}`
     );
   };
 
@@ -91,7 +91,7 @@ export default function KonstituenPage({
 
   const handleSelectKelurahan = async (data: any) => {
     return router.push(
-      `/konstituen/filter/${selectedTim.value}/${selectedKota.value}/${selectedKecamatan.value}/${data.value}`
+      `/peta-suara/filter/${selectedTim.value}/${selectedKota.value}/${selectedKecamatan.value}/${data.value}`
     );
   };
 

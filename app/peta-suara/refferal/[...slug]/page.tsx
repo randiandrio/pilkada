@@ -32,7 +32,7 @@ export default function KonstituenPage({
   }, []);
 
   const reload = async () => {
-    fetch(`/konstituen/api/refferal/${params.slug[0]}`)
+    fetch(`/peta-suara/api/refferal/${params.slug[0]}`)
       .then((res) => res.json())
       .then((x) => {
         setLoading(false);

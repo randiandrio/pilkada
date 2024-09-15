@@ -29,7 +29,7 @@ function Update({ reload, user }: { reload: Function; user: any }) {
     formData.append("method", "update");
     formData.append("id", String(user.id));
     formData.append("jabatan", String(jabatan));
-    const x = await axios.patch("/konstituen/api/post", formData);
+    const x = await axios.patch("/peta-suara/api/post", formData);
     const pesan = (await x.data) as resData;
 
     if (!pesan.error) {

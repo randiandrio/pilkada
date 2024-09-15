@@ -176,7 +176,7 @@ export default function Template({ children }: { children: React.ReactNode }) {
 
               <li>
                 <Link
-                  href={`/konstituen/filter/all/${
+                  href={`/peta-suara/filter/all/${
                     Number(akun?.kotaId) > 0 ? akun.kotaId : "all-kabupaten"
                   }/all-kecamatan/all-kelurahan`}
                   className=""
@@ -190,7 +190,7 @@ export default function Template({ children }: { children: React.ReactNode }) {
                       alt="xxx"
                     />
                   </div>
-                  <span className="nav-text">Konstituen</span>
+                  <span className="nav-text">Peta Suara</span>
                 </Link>
               </li>
 

@@ -7,6 +7,7 @@ import "moment/locale/id";
 
 function Dashboard() {
   const [isLoading, setLoading] = useState(true);
+  const [load1Load, setLoad1Load] = useState(true);
   const [option1, setOption1] = useState({});
   const [option2, setOption2] = useState({});
   const [option3, setOption3] = useState({});
@@ -17,19 +18,17 @@ function Dashboard() {
   }, []);
 
   const load1 = async (id: String) => {
+    setLoad1Load(true);
     fetch(`/api/dashboard/simpatisan-wilayah/${id}`)
       .then((res) => res.json())
-      .then((x) => {
-        var a = x.map(function (item: any) {
-          return [100, 100, item.nama];
-        });
-
+      .then((result) => {
+        let x = result.datas;
         let arr: any[] = [];
         for (let i = 0; i <= x.length; i++) {
           if (i == 0) {
             arr.push(["Nilai", "Jumlah", "Wilayah"]);
           } else {
-            arr.push([100, 100, x[i - 1].nama]);
+            arr.push([x[i - 1].jumlah, x[i - 1].jumlah, x[i - 1].nama]);
           }
         }
 
@@ -44,7 +43,7 @@ function Dashboard() {
             orient: "horizontal",
             left: "center",
             min: 0,
-            max: 100,
+            max: Number(result.max),
             text: ["Tinggi", "Rendah"],
             dimension: 0,
             inRange: {
@@ -63,6 +62,7 @@ function Dashboard() {
         };
 
         setOption1(opt1);
+        setLoad1Load(false);
       });
   };
 
@@ -280,11 +280,15 @@ function Dashboard() {
               </button>
             </div>
             <div className="card-body" style={{ height: "750px" }}>
-              <ReactEcharts
-                onEvents={onEvents}
-                style={{ height: "700px" }}
-                option={option1}
-              />
+              {load1Load ? (
+                <ReactEcharts
+                  onEvents={onEvents}
+                  style={{ height: "700px" }}
+                  option={option1}
+                />
+              ) : (
+                <p>Loading ... </p>
+              )}
             </div>
           </div>
         </div>

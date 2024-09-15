@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Wilayah } from "@prisma/client";
 import { getToken } from "next-auth/jwt";
 import { AdminLogin } from "next-auth";
 
@@ -25,7 +25,7 @@ export const GET = async (
 };
 
 async function SimpatisanWilayah(admin: AdminLogin, wilayah: String) {
-  let result;
+  let result: Wilayah[] = [];
 
   if (wilayah == "all") {
     let wilayahId = admin.provId;
@@ -50,7 +50,6 @@ async function SimpatisanWilayah(admin: AdminLogin, wilayah: String) {
         AND kabupaten = ${kode?.kabupaten} 
         ORDER BY nama DESC`;
     }
-    return result;
   }
 
   const kode = await prisma.wilayah.findFirst({
@@ -76,5 +75,48 @@ async function SimpatisanWilayah(admin: AdminLogin, wilayah: String) {
         ORDER BY nama DESC`;
   }
 
-  return result;
+  let x = [];
+  let max = 0;
+  for (let i = 0; i < result.length; i++) {
+    const kode = await prisma.wilayah.findUnique({
+      where: {
+        id: Number(result[i].id),
+      },
+    });
+    let j = 0;
+    if (kode?.kode.length == 5) {
+      const u = await prisma.user.aggregate({
+        where: {
+          kabId: Number(result[i].id),
+        },
+        _count: {
+          id: true,
+        },
+      });
+      j = Number(u._count.id);
+    }
+    if (kode?.kode.length == 8) {
+      const u = await prisma.user.aggregate({
+        where: {
+          kecId: Number(result[i].id),
+        },
+        _count: {
+          id: true,
+        },
+      });
+
+      j = Number(u._count.id);
+    }
+
+    max = j > max ? j : max;
+    x.push({
+      nama: result[i].nama,
+      jumlah: j,
+    });
+  }
+
+  return {
+    datas: x,
+    max: max,
+  };
 }

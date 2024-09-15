@@ -127,7 +127,7 @@ export default function KonstituenPage({
 
   const reload = async () => {
     fetch(
-      `/konstituen/api/get/${params.slug[0]}/${params.slug[1]}/${params.slug[2]}/${params.slug[3]}`
+      `/peta-suara/api/get/${params.slug[0]}/${params.slug[1]}/${params.slug[2]}/${params.slug[3]}`
     )
       .then((res) => res.json())
       .then((x) => {
@@ -137,7 +137,7 @@ export default function KonstituenPage({
   };
 
   const loadKota = async () => {
-    fetch(`/konstituen/api/load_kota`)
+    fetch(`/peta-suara/api/load_kota`)
       .then((res) => res.json())
       .then((x) => {
         var a = x.map(function (item: any) {
@@ -157,7 +157,7 @@ export default function KonstituenPage({
   };
 
   const loadKecamatan = async () => {
-    fetch(`/konstituen/api/load_kecamatan/${params.slug[1]}`)
+    fetch(`/peta-suara/api/load_kecamatan/${params.slug[1]}`)
       .then((res) => res.json())
       .then((x) => {
         var a = x.map(function (item: any) {
@@ -177,7 +177,7 @@ export default function KonstituenPage({
   };
 
   const loadKelurahan = async () => {
-    fetch(`/konstituen/api/load_kelurahan/${params.slug[2]}`)
+    fetch(`/peta-suara/api/load_kelurahan/${params.slug[2]}`)
       .then((res) => res.json())
       .then((x) => {
         console.log(x);
@@ -209,7 +209,7 @@ export default function KonstituenPage({
         <>
           <p className="pt-3" style={{ lineHeight: 1 }}>
             <strong>
-              <Link href={`/konstituen/refferal/${row.id}`}>{row.nama}</Link>
+              <Link href={`/peta-suara/refferal/${row.id}`}>{row.nama}</Link>
             </strong>
             <br />
             {row.jabatan}
@@ -241,7 +241,7 @@ export default function KonstituenPage({
       name: "Refferal",
       cell: (row) =>
         row.refferal != undefined ? (
-          <Link href={`/konstituen/refferal/${row.refferal.id}`}>
+          <Link href={`/peta-suara/refferal/${row.refferal.id}`}>
             {row.refferal.nama}
           </Link>
         ) : (

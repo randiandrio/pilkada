@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "Data Konstituen",
+  title: "Peta Suara",
 };
 
 function UserLayout({ children }: { children: React.ReactNode }) {

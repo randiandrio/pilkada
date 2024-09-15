@@ -54,7 +54,7 @@ export default function KonstituenPage({
         <>
           <p className="pt-3" style={{ lineHeight: 1 }}>
             <strong>
-              <Link href={`/konstituen/refferal/${row.id}`}>{row.nama}</Link>
+              <Link href={`/peta-suara/refferal/${row.id}`}>{row.nama}</Link>
             </strong>
             <br />
             {row.jabatan}
@@ -86,7 +86,7 @@ export default function KonstituenPage({
       name: "Refferal",
       cell: (row) =>
         row.refferal != undefined ? (
-          <Link href={`/konstituen/refferal/${row.refferal.id}`}>
+          <Link href={`/peta-suara/refferal/${row.refferal.id}`}>
             {row.refferal.nama}
           </Link>
         ) : (

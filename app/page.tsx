@@ -281,13 +281,13 @@ function Dashboard() {
             </div>
             <div className="card-body" style={{ height: "750px" }}>
               {load1Load ? (
+                <p>Loading ... </p>
+              ) : (
                 <ReactEcharts
                   onEvents={onEvents}
                   style={{ height: "700px" }}
                   option={option1}
                 />
-              ) : (
-                <p>Loading ... </p>
               )}
             </div>
           </div>

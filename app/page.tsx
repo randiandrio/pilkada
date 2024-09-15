@@ -84,7 +84,7 @@ function Dashboard() {
           },
           series: [
             {
-              name: "Umur Relawan",
+              name: "Gender Relawan",
               type: "pie",
               radius: ["40%", "70%"],
               avoidLabelOverlap: false,

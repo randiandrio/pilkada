@@ -2,12 +2,13 @@
 import { useEffect, useState } from "react";
 import ReactEcharts from "echarts-for-react";
 import Image from "next/image";
-import moment from "moment";
 import "moment/locale/id";
 
 function Dashboard() {
   const [isLoading, setLoading] = useState(true);
   const [load1Load, setLoad1Load] = useState(true);
+  const [load2Load, setLoad2Load] = useState(true);
+  const [load3Load, setLoad3Load] = useState(true);
   const [option1, setOption1] = useState({});
   const [option2, setOption2] = useState({});
   const [option3, setOption3] = useState({});
@@ -15,6 +16,8 @@ function Dashboard() {
   useEffect(() => {
     setLoading(false);
     load1("all");
+    load2();
+    load3();
   }, []);
 
   const load1 = async (id: String) => {
@@ -67,7 +70,8 @@ function Dashboard() {
   };
 
   const load2 = async () => {
-    fetch(`/api/dashboard/wilayah/all`)
+    setLoad2Load(true);
+    fetch(`/api/dashboard/gender`)
       .then((res) => res.json())
       .then((x) => {
         const opt2 = {
@@ -103,18 +107,20 @@ function Dashboard() {
                 show: true,
               },
               data: [
-                { value: 2148, name: "Laki-laki" },
-                { value: 1048, name: "Perempuan" },
+                { value: x.l, name: "Laki-laki" },
+                { value: x.p, name: "Perempuan" },
               ],
             },
           ],
         };
         setOption2(opt2);
+        setLoad2Load(false);
       });
   };
 
   const load3 = async () => {
-    fetch(`/api/dashboard/wilayah/all`)
+    setLoad3Load(true);
+    fetch(`/api/dashboard/umur`)
       .then((res) => res.json())
       .then((x) => {
         const opt3 = {
@@ -152,19 +158,20 @@ function Dashboard() {
                 show: true,
               },
               data: [
-                { value: 1048, name: "< 20 thn" },
-                { value: 1048, name: "21 - 25 thn" },
-                { value: 1048, name: "26 - 30 thn" },
-                { value: 1048, name: "31 - 35 thn" },
-                { value: 1048, name: "36 - 40 thn" },
-                { value: 1048, name: "41 - 45 thn" },
-                { value: 1048, name: "46 - 50 thn" },
-                { value: 1048, name: "> 50 thn" },
+                { value: x.kurang21, name: "< 21 thn" },
+                { value: x.u2125, name: "21 - 25 thn" },
+                { value: x.u2630, name: "26 - 30 thn" },
+                { value: x.u3135, name: "31 - 35 thn" },
+                { value: x.u3640, name: "36 - 40 thn" },
+                { value: x.u4145, name: "41 - 45 thn" },
+                { value: x.u4650, name: "46 - 50 thn" },
+                { value: x.lebih50, name: "> 50 thn" },
               ],
             },
           ],
         };
         setOption3(opt3);
+        setLoad3Load(false);
       });
   };
 

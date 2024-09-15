@@ -97,6 +97,7 @@ model User {
   tempatLahir         String?
   tanggalLahir        String?
   jenisKelamin        String?
+  umur                Int?
   provId              Int
   kabId               Int
   kecId               Int

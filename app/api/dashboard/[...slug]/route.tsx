@@ -21,6 +21,16 @@ export const GET = async (
     return NextResponse.json(result, { status: 200 });
   }
 
+  if (params.slug[0] === "gender") {
+    const result = await Gender(adminLogin);
+    return NextResponse.json(result, { status: 200 });
+  }
+
+  if (params.slug[0] === "umur") {
+    const result = await Umur(adminLogin);
+    return NextResponse.json(result, { status: 200 });
+  }
+
   return NextResponse.json(false);
 };
 
@@ -131,5 +141,144 @@ async function SimpatisanWilayah(admin: AdminLogin, wilayah: String) {
   return {
     datas: x,
     max: max,
+  };
+}
+
+async function Gender(admin: AdminLogin) {
+  const l = await prisma.user.aggregate({
+    where: {
+      appId: Number(admin.appId),
+      jenisKelamin: "Laki-laki",
+    },
+    _count: {
+      id: true,
+    },
+  });
+  const p = await prisma.user.aggregate({
+    where: {
+      appId: Number(admin.appId),
+      jenisKelamin: "Perempuan",
+    },
+    _count: {
+      id: true,
+    },
+  });
+  return {
+    l: l._count.id,
+    p: p._count.id,
+  };
+}
+
+async function Umur(admin: AdminLogin) {
+  const kurang21 = await prisma.user.aggregate({
+    where: {
+      appId: Number(admin.appId),
+      umur: {
+        lte: 21,
+      },
+    },
+    _count: {
+      id: true,
+    },
+  });
+  const u2125 = await prisma.user.aggregate({
+    where: {
+      appId: Number(admin.appId),
+      umur: {
+        gt: 21,
+        lte: 25,
+      },
+    },
+    _count: {
+      id: true,
+    },
+  });
+
+  const u2630 = await prisma.user.aggregate({
+    where: {
+      appId: Number(admin.appId),
+      umur: {
+        gt: 26,
+        lte: 30,
+      },
+    },
+    _count: {
+      id: true,
+    },
+  });
+
+  const u3135 = await prisma.user.aggregate({
+    where: {
+      appId: Number(admin.appId),
+      umur: {
+        gt: 31,
+        lte: 35,
+      },
+    },
+    _count: {
+      id: true,
+    },
+  });
+
+  const u3640 = await prisma.user.aggregate({
+    where: {
+      appId: Number(admin.appId),
+      umur: {
+        gt: 36,
+        lte: 40,
+      },
+    },
+    _count: {
+      id: true,
+    },
+  });
+
+  const u4145 = await prisma.user.aggregate({
+    where: {
+      appId: Number(admin.appId),
+      umur: {
+        gt: 41,
+        lte: 45,
+      },
+    },
+    _count: {
+      id: true,
+    },
+  });
+
+  const u4650 = await prisma.user.aggregate({
+    where: {
+      appId: Number(admin.appId),
+      umur: {
+        gt: 46,
+        lte: 50,
+      },
+    },
+    _count: {
+      id: true,
+    },
+  });
+
+  const lebih50 = await prisma.user.aggregate({
+    where: {
+      appId: Number(admin.appId),
+      umur: {
+        gt: 50,
+      },
+    },
+    _count: {
+      id: true,
+    },
+  });
+
+  return {
+    kurang21: kurang21._count.id,
+    u2125: u2125._count.id,
+    u2630: u2630._count.id,
+    u3135: u3135._count.id,
+    u3640: u3640._count.id,
+    u4145: u4145._count.id,
+    u4650: u4650._count.id,
+    lebih50: lebih50._count.id,
   };
 }

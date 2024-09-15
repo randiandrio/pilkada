@@ -82,18 +82,7 @@ export default function KonstituenPage({
       selector: (row) => String(row.kel.nama),
       sortable: true,
     },
-    {
-      name: "Refferal",
-      cell: (row) =>
-        row.refferal != undefined ? (
-          <Link href={`/peta-suara/refferal/${row.refferal.id}`}>
-            {row.refferal.nama}
-          </Link>
-        ) : (
-          "-"
-        ),
-      sortable: true,
-    },
+
     {
       name: "Action",
       button: true,

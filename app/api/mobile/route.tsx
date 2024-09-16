@@ -972,10 +972,31 @@ async function LoadKoordinator(data: any) {
     where: {
       userId: Number(data.userId),
     },
+    include: {
+      wilayah: true,
+    },
   });
 
+  let kode = "xxxxxxxxxxxxxx";
+
   var allId = xAllId.map(function (item) {
+    kode = item.wilayah.kode.length < kode.length ? item.wilayah.kode : kode;
     return item.id;
+  });
+
+  const xu = await prisma.wilayah.findFirst({
+    where: { kode: kode },
+    include: {
+      koordinator: {
+        include: {
+          user: true,
+        },
+      },
+    },
+  });
+
+  const users = xu?.koordinator.map(function (item) {
+    return item.user;
   });
 
   const newDatax = await prisma.koordinator.findMany({
@@ -1016,6 +1037,7 @@ async function LoadKoordinator(data: any) {
     allId: allId.toString(),
     newId: newId.toString(),
     newData: newData,
+    users: users,
   };
 
   return result;
@@ -1057,7 +1079,6 @@ async function LoadKoordinatorWilayah(data: any) {
       },
     });
   }
-
   if (wilayah?.kode.length == 8) {
     x = await prisma.wilayah.findMany({
       where: {
@@ -1095,13 +1116,9 @@ async function LoadKoordinatorWilayah(data: any) {
       wilayahId: x![i].id,
       kodeWilayah: x![i].kode,
       namaWilayah: x![i].nama,
-      userId: koor.length > 0 ? koor[0].user.id : 0,
-      userNama: koor.length > 0 ? koor[0].user.nama : "-",
-      userHp: koor.length > 0 ? koor[0].user.hp : "-",
-      userWa: koor.length > 0 ? koor[0].user.wa : "-",
-      userFoto: koor.length > 0 ? koor[0].user.foto : null,
       createdAt: x![i].createdAt,
       updatedAt: x![i].updatedAt,
+      user: koor,
     });
   }
 

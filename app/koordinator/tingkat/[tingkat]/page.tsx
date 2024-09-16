@@ -31,7 +31,6 @@ const KoordinatorPage = ({ params }: { params: { tingkat: string } }) => {
       .then((res) => res.json())
       .then((x) => {
         setDatas(x);
-        console.log(x);
         setLoading(false);
       });
   };
@@ -51,31 +50,31 @@ const KoordinatorPage = ({ params }: { params: { tingkat: string } }) => {
     },
     {
       name: "Koordinator",
-      selector: (row) =>
-        String(row.koordinator.length > 0 ? row.koordinator[0].user.nama : "-"),
+      cell: (row) =>
+        row.koordinator.length > 1 ? (
+          <table>
+            {row.koordinator.map((a: any, index: number) => (
+              <tr key={a.user.id}>
+                <td width={"20px"}>{index + 1}.</td>
+                <td> {a.user.nama} </td>
+              </tr>
+            ))}
+          </table>
+        ) : row.koordinator.length == 0 ? (
+          "-"
+        ) : (
+          row.koordinator[0].user.nama
+        ),
       sortable: true,
     },
-
     {
       name: "Aksi",
-      width: "230px",
+      width: "250px",
       cell: (row) => (
         <div className="d-flex">
-          <Add
-            usr={{
-              value:
-                row.koordinator.length > 0 ? row.koordinator[0].user.id : 0,
-              label:
-                row.koordinator.length > 0
-                  ? row.koordinator[0].user.nama
-                  : "Pilih Koordinator",
-            }}
-            reload={reload}
-            wilayahId={row.id}
-            namaWilayah={row.nama}
-          />
+          <Add reload={reload} wilayahId={row.id} namaWilayah={row.nama} />
           {row.koordinator.length > 0 && (
-            <Delete reload={reload} koordinatorId={row.koordinator[0].id} />
+            <Delete reload={reload} wilayahId={row.id} />
           )}
         </div>
       ),
@@ -102,30 +101,31 @@ const KoordinatorPage = ({ params }: { params: { tingkat: string } }) => {
     },
     {
       name: "Koordinator",
-      selector: (row) =>
-        String(row.koordinator.length > 0 ? row.koordinator[0].user.nama : "-"),
+      cell: (row) =>
+        row.koordinator.length > 1 ? (
+          <table>
+            {row.koordinator.map((a: any, index: number) => (
+              <tr key={a.user.id}>
+                <td width={"20px"}>{index + 1}.</td>
+                <td> {a.user.nama} </td>
+              </tr>
+            ))}
+          </table>
+        ) : row.koordinator.length == 0 ? (
+          "-"
+        ) : (
+          row.koordinator[0].user.nama
+        ),
       sortable: true,
     },
     {
       name: "Aksi",
-      width: "230px",
+      width: "250px",
       cell: (row) => (
         <div className="d-flex">
-          <Add
-            usr={{
-              value:
-                row.koordinator.length > 0 ? row.koordinator[0].user.id : 0,
-              label:
-                row.koordinator.length > 0
-                  ? row.koordinator[0].user.nama
-                  : "Pilih Koordinator",
-            }}
-            reload={reload}
-            wilayahId={row.id}
-            namaWilayah={row.nama}
-          />
+          <Add reload={reload} wilayahId={row.id} namaWilayah={row.nama} />
           {row.koordinator.length > 0 && (
-            <Delete reload={reload} koordinatorId={row.koordinator[0].id} />
+            <Delete reload={reload} wilayahId={row.id} />
           )}
         </div>
       ),
@@ -156,30 +156,31 @@ const KoordinatorPage = ({ params }: { params: { tingkat: string } }) => {
     },
     {
       name: "Koordinator",
-      selector: (row) =>
-        String(row.koordinator.length > 0 ? row.koordinator[0].user.nama : "-"),
+      cell: (row) =>
+        row.koordinator.length > 1 ? (
+          <table>
+            {row.koordinator.map((a: any, index: number) => (
+              <tr key={a.user.id}>
+                <td width={"20px"}>{index + 1}.</td>
+                <td> {a.user.nama} </td>
+              </tr>
+            ))}
+          </table>
+        ) : row.koordinator.length == 0 ? (
+          "-"
+        ) : (
+          row.koordinator[0].user.nama
+        ),
       sortable: true,
     },
     {
       name: "Aksi",
-      width: "230px",
+      width: "250px",
       cell: (row) => (
         <div className="d-flex">
-          <Add
-            usr={{
-              value:
-                row.koordinator.length > 0 ? row.koordinator[0].user.id : 0,
-              label:
-                row.koordinator.length > 0
-                  ? row.koordinator[0].user.nama
-                  : "Pilih Koordinator",
-            }}
-            reload={reload}
-            wilayahId={row.id}
-            namaWilayah={row.nama}
-          />
+          <Add reload={reload} wilayahId={row.id} namaWilayah={row.nama} />
           {row.koordinator.length > 0 && (
-            <Delete reload={reload} koordinatorId={row.koordinator[0].id} />
+            <Delete reload={reload} wilayahId={row.id} />
           )}
         </div>
       ),

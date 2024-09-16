@@ -8,17 +8,18 @@ import Select from "react-select";
 
 function Add({
   reload,
-  usr,
   wilayahId,
   namaWilayah,
 }: {
   reload: Function;
-  usr: any;
   wilayahId: Number;
   namaWilayah: String;
 }) {
   const [listUser, setListUser] = useState<any[]>([]);
-  const [selectedUser, setSelectedUser] = useState(usr);
+  const [selectedUser, setSelectedUser] = useState({
+    value: 0,
+    label: "Pilih Koordinator",
+  });
 
   const [show, setShow] = useState(false);
   const handleClose = () => {
@@ -43,7 +44,6 @@ function Add({
     fetch(`/koordinator/api/cari_user/${cari}`)
       .then((res) => res.json())
       .then((x) => {
-        console.log(x);
         var a = x.map(function (item: any) {
           return {
             value: item.id,
@@ -73,6 +73,10 @@ function Add({
       handleClose();
       reload();
     }
+    setSelectedUser({
+      value: 0,
+      label: "Pilih Koordinator",
+    });
     setPost(false);
     Swal.fire({
       title: pesan.error ? "Error" : "Success!",
@@ -90,8 +94,7 @@ function Add({
         type="button"
         className="btn btn-outline-success btn-xs light"
       >
-        {usr.value == 0 ? "Tambah " : "Ganti "}
-        Koordinator
+        Tambah Koordinator
       </button>
 
       <Modal

@@ -5,10 +5,10 @@ import Modal from "react-bootstrap/Modal";
 import Swal from "sweetalert2";
 
 function Delete({
-  koordinatorId,
+  wilayahId,
   reload,
 }: {
-  koordinatorId: Number;
+  wilayahId: Number;
   reload: Function;
 }) {
   const [show, setShow] = useState(false);
@@ -31,7 +31,7 @@ function Delete({
     setPost(true);
     const formData = new FormData();
     formData.append("mode", "delete");
-    formData.append("id", String(koordinatorId));
+    formData.append("id", String(wilayahId));
     const x = await axios.patch("/koordinator/api/post", formData);
     reload();
     setPost(false);

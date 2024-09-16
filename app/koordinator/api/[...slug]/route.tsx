@@ -59,7 +59,7 @@ async function CariUser(admin: AdminLogin, cari: String) {
     },
   });
 
-  console.log(users)
+  console.log(users);
   return users;
 }
 
@@ -277,37 +277,21 @@ async function Data(admin: AdminLogin, tingkat: String) {
 
 async function Post(data: any, admin: AdminLogin) {
   if (String(data.get("mode")) != "delete") {
-    const cek = await prisma.koordinator.findMany({
-      where: {
+    await prisma.koordinator.create({
+      data: {
         appId: Number(admin.appId),
         wilayahId: Number(data.get("wilayahId")),
+        userId: Number(data.get("userId")),
       },
     });
 
-    if (cek.length > 0) {
-      await prisma.koordinator.updateMany({
-        where: {
-          appId: Number(admin.appId),
-          wilayahId: Number(data.get("wilayahId")),
-        },
-        data: {
-          userId: Number(data.get("userId")),
-        },
-      });
-    } else {
-      await prisma.koordinator.create({
-        data: {
-          appId: Number(admin.appId),
-          wilayahId: Number(data.get("wilayahId")),
-          userId: Number(data.get("userId")),
-        },
-      });
-    }
-
     return { error: false, message: "Data tugas berhasil ditambahkan" };
   } else {
-    await prisma.koordinator.delete({
-      where: { id: Number(data.get("id")) },
+    await prisma.koordinator.deleteMany({
+      where: {
+        wilayahId: Number(data.get("id")),
+        appId: Number(admin.appId),
+      },
     });
     return { error: false, message: "Data tugas berhasil dihapus" };
   }

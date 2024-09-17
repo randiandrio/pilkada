@@ -1078,10 +1078,10 @@ async function LoadKoordinatorWilayah(data: any) {
 
   for (let i = 0; i < x!.length; i++) {
     const appId = Number(data.appId);
-    const koor = await prisma.koordinator.findMany({
+    const usr = await prisma.koordinator.findMany({
       where: {
+        wilayahId: Number(x![i].id),
         appId: appId,
-        wilayahId: x![i].id,
       },
       include: {
         user: {
@@ -1096,13 +1096,43 @@ async function LoadKoordinatorWilayah(data: any) {
       },
     });
 
+    const users = usr.map(function (item) {
+      return item.user;
+    });
+
     res.push({
-      id: x![i].id,
+      id: wilayah!.id,
       appId: appId,
       kodeWilayah: x![i].kode,
       namaWilayah: x![i].nama,
-      users: koor,
+      users: users,
     });
+
+    // const koor = await prisma.koordinator.findMany({
+    //   where: {
+    //     appId: appId,
+    //     wilayahId: x![i].id,
+    //   },
+    //   include: {
+    //     user: {
+    //       select: {
+    //         id: true,
+    //         nama: true,
+    //         hp: true,
+    //         wa: true,
+    //         foto: true,
+    //       },
+    //     },
+    //   },
+    // });
+
+    // res.push({
+    //   id: x![i].id,
+    //   appId: appId,
+    //   kodeWilayah: x![i].kode,
+    //   namaWilayah: x![i].nama,
+    //   users: koor,
+    // });
   }
 
   return res;

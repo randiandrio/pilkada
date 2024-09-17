@@ -1101,38 +1101,12 @@ async function LoadKoordinatorWilayah(data: any) {
     });
 
     res.push({
-      id: wilayah!.id,
+      id: x![i].id,
       appId: appId,
       kodeWilayah: x![i].kode,
       namaWilayah: x![i].nama,
       users: users,
     });
-
-    // const koor = await prisma.koordinator.findMany({
-    //   where: {
-    //     appId: appId,
-    //     wilayahId: x![i].id,
-    //   },
-    //   include: {
-    //     user: {
-    //       select: {
-    //         id: true,
-    //         nama: true,
-    //         hp: true,
-    //         wa: true,
-    //         foto: true,
-    //       },
-    //     },
-    //   },
-    // });
-
-    // res.push({
-    //   id: x![i].id,
-    //   appId: appId,
-    //   kodeWilayah: x![i].kode,
-    //   namaWilayah: x![i].nama,
-    //   users: koor,
-    // });
   }
 
   return res;

@@ -1101,7 +1101,7 @@ async function LoadKoordinatorWilayah(data: any) {
       appId: appId,
       kodeWilayah: x![i].kode,
       namaWilayah: x![i].nama,
-      user: koor,
+      users: koor,
     });
   }
 

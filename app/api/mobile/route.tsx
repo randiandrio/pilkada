@@ -968,7 +968,7 @@ async function PostLaporanTugas(data: any) {
 }
 
 async function LoadKoordinator(data: any) {
-  const xAllId = await prisma.koordinator.findMany({
+  const cek = await prisma.koordinator.findMany({
     where: {
       userId: Number(data.userId),
     },
@@ -977,70 +977,49 @@ async function LoadKoordinator(data: any) {
     },
   });
 
+  if (cek.length == 0) return { status: false };
+
   let kode = "xxxxxxxxxxxxxx";
 
-  var allId = xAllId.map(function (item) {
+  cek.map(function (item) {
     kode = item.wilayah.kode.length < kode.length ? item.wilayah.kode : kode;
-    return item.id;
   });
 
-  const xu = await prisma.wilayah.findFirst({
+  const wilayah = await prisma.wilayah.findFirst({
     where: { kode: kode },
+  });
+
+  const usr = await prisma.koordinator.findMany({
+    where: {
+      wilayahId: wilayah?.id,
+      appId: cek[0].appId,
+    },
     include: {
-      koordinator: {
-        include: {
-          user: true,
+      user: {
+        select: {
+          id: true,
+          nama: true,
+          hp: true,
+          wa: true,
+          foto: true,
         },
       },
     },
   });
 
-  const users = xu?.koordinator.map(function (item) {
+  const users = usr.map(function (item) {
     return item.user;
   });
 
-  const newDatax = await prisma.koordinator.findMany({
-    where: {
-      userId: Number(data.userId),
-      updatedAt: {
-        gt: new Date(data.last),
-      },
-    },
-    include: {
-      wilayah: true,
-      user: true,
-    },
-  });
-
-  const newData = newDatax.map(function (item) {
-    return {
-      id: item.id,
-      appId: item.appId,
-      wilayahId: item.wilayahId,
-      kodeWilayah: item.wilayah.kode,
-      namaWilayah: item.wilayah.nama,
-      userId: item.user.id,
-      userNama: item.user.nama,
-      userHp: item.user.hp,
-      userWa: item.user.wa,
-      userFoto: item.user.foto,
-      createdAt: item.createdAt,
-      updatedAt: item.updatedAt,
-    };
-  });
-
-  var newId = newData.map(function (item) {
-    return item.id;
-  });
-
-  const result = {
-    allId: allId.toString(),
-    newId: newId.toString(),
-    newData: newData,
+  let res = {
+    id: wilayah!.id,
+    appId: cek[0].appId,
+    kodeWilayah: wilayah!.kode,
+    namaWilayah: wilayah!.nama,
     users: users,
   };
 
-  return result;
+  return { status: true, data: res };
 }
 
 async function LoadKoordinatorWilayah(data: any) {
@@ -1095,7 +1074,6 @@ async function LoadKoordinatorWilayah(data: any) {
     });
   }
 
-  console.log(x);
   let res: any[] = [];
 
   for (let i = 0; i < x!.length; i++) {
@@ -1106,18 +1084,23 @@ async function LoadKoordinatorWilayah(data: any) {
         wilayahId: x![i].id,
       },
       include: {
-        user: true,
+        user: {
+          select: {
+            id: true,
+            nama: true,
+            hp: true,
+            wa: true,
+            foto: true,
+          },
+        },
       },
     });
 
     res.push({
       id: x![i].id,
       appId: appId,
-      wilayahId: x![i].id,
       kodeWilayah: x![i].kode,
       namaWilayah: x![i].nama,
-      createdAt: x![i].createdAt,
-      updatedAt: x![i].updatedAt,
       user: koor,
     });
   }

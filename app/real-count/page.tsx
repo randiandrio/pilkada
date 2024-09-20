@@ -5,6 +5,9 @@ import Image from "next/image";
 
 function Dashboard() {
   const [isLoading, setLoading] = useState(true);
+  const [click, setClick] = useState(true);
+  const [firstName, setFirstName] = useState("");
+  const [namaWilayah, setNamaWilayah] = useState("");
   const [load1Load, setLoad1Load] = useState(true);
   const [load2Load, setLoad2Load] = useState(true);
   const [load3Load, setLoad3Load] = useState(true);
@@ -18,68 +21,52 @@ function Dashboard() {
 
   useEffect(() => {
     setLoading(false);
-    load1();
-    load2();
+    load1("all");
     load3();
     load4();
   }, []);
 
-  const load1 = async () => {
+  const load1 = async (name: String) => {
     setLoad1Load(true);
-
-    const opt1 = {
-      title: {
-        text: "Real Count",
-      },
-      tooltip: {
-        trigger: "axis",
-        axisPointer: {
-          type: "shadow",
-        },
-      },
-      legend: {},
-      grid: {
-        left: "3%",
-        right: "4%",
-        bottom: "3%",
-        containLabel: true,
-      },
-      xAxis: {
-        type: "value",
-        boundaryGap: [0, 0.01],
-      },
-      yAxis: {
-        type: "category",
-        data: ["Rohil", "Rohul", "Pekanbaru", "Siak", "Dumai", "Kampar"],
-      },
-      series: [
-        {
-          name: "H. Syamsuar & Mawardi",
-          type: "bar",
-          data: [18203, 23489, 29034, 104970, 131744, 630230],
-        },
-        {
-          name: "Nasir & Wardan",
-          type: "bar",
-          data: [19325, 23438, 31000, 121594, 134141, 681807],
-        },
-        {
-          name: "Abdul Wahid & SF Harianto",
-          type: "bar",
-          data: [19325, 134141, 23438, 31000, 121594, 681807],
-        },
-      ],
-    };
-
-    setOption1(opt1);
-    setLoad1Load(false);
-  };
-
-  const load2 = async () => {
     setLoad2Load(true);
-    fetch(`/api/dashboard/gender`)
+
+    fetch(`/real-count/api/realcount/${name}`)
       .then((res) => res.json())
       .then((x) => {
+        console.log(x);
+        setNamaWilayah(x.namaWilayah);
+        setFirstName(x.firstName);
+        const opt1 = {
+          title: {
+            text: "Real Count",
+          },
+          tooltip: {
+            trigger: "axis",
+            axisPointer: {
+              type: "shadow",
+            },
+          },
+          legend: {},
+          grid: {
+            left: "3%",
+            right: "4%",
+            bottom: "3%",
+            containLabel: true,
+          },
+          xAxis: {
+            type: "value",
+            boundaryGap: [0, 0.01],
+          },
+          yAxis: {
+            type: "category",
+            data: x.wilayah,
+          },
+          series: x.series,
+        };
+        setClick(x.click);
+        setLoad1Load(false);
+        setOption1(opt1);
+
         const opt2 = {
           tooltip: {
             trigger: "item",
@@ -90,7 +77,7 @@ function Dashboard() {
           },
           series: [
             {
-              name: "Gender Relawan",
+              name: "Pie Diagram",
               type: "pie",
               radius: ["40%", "70%"],
               avoidLabelOverlap: false,
@@ -112,10 +99,7 @@ function Dashboard() {
               labelLine: {
                 show: true,
               },
-              data: [
-                { value: x.l, name: "Laki-laki" },
-                { value: x.p, name: "Perempuan" },
-              ],
+              data: x.pie,
             },
           ],
         };
@@ -131,47 +115,20 @@ function Dashboard() {
       .then((x) => {
         const opt3 = {
           tooltip: {
-            trigger: "item",
-          },
-          legend: {
-            bottom: "0%",
-            left: "center",
-            padding: 0,
+            formatter: "{a} <br/>{b} : {c}%",
           },
           series: [
             {
-              name: "Umur Relawan",
-              type: "pie",
-              radius: ["40%", "70%"],
-              avoidLabelOverlap: false,
-              padAngle: 1,
-              triggerEvent: true,
-              itemStyle: {
-                borderRadius: 5,
-              },
-              label: {
-                show: false,
-                position: "center",
-              },
-              emphasis: {
-                label: {
-                  show: true,
-                  fontSize: 40,
-                  fontWeight: "bold",
-                },
-              },
-              labelLine: {
-                show: true,
+              name: "Pressure",
+              type: "gauge",
+              detail: {
+                formatter: "{value}",
               },
               data: [
-                { value: x.kurang21, name: "< 21 thn" },
-                { value: x.u2125, name: "21 - 25 thn" },
-                { value: x.u2630, name: "26 - 30 thn" },
-                { value: x.u3135, name: "31 - 35 thn" },
-                { value: x.u3640, name: "36 - 40 thn" },
-                { value: x.u4145, name: "41 - 45 thn" },
-                { value: x.u4650, name: "46 - 50 thn" },
-                { value: x.lebih50, name: "> 50 thn" },
+                {
+                  value: 50,
+                  name: "Data",
+                },
               ],
             },
           ],
@@ -193,11 +150,14 @@ function Dashboard() {
   };
 
   const onChartClick = (params: any): void => {
-    load1();
+    if (click) {
+      load1(params.name);
+      // console.log(params.name);
+    }
   };
 
   const onReset = (): void => {
-    load1();
+    load1("all");
   };
 
   // Objek event handler
@@ -212,7 +172,10 @@ function Dashboard() {
         <div className="col-xl-8 col-lg-8">
           <div className="card">
             <div className="card-header">
-              <h4 className="card-title"></h4>
+              <h4 className="card-title">
+                Real Count {firstName}
+                {namaWilayah}
+              </h4>
               <button
                 type="button"
                 onClick={onReset}
@@ -239,15 +202,19 @@ function Dashboard() {
           <div className="row mx-1">
             <div className="card px-0 pb-3">
               <div className="card-header">
-                <h4 className="card-title">Gender Relawan</h4>
+                <h4 className="card-title">Pie Diagram</h4>
               </div>
               <div className="card-body" style={{ height: "300px" }}>
-                <ReactEcharts style={{ height: "320px" }} option={option2} />
+                {load1Load ? (
+                  <p>Loading ... </p>
+                ) : (
+                  <ReactEcharts style={{ height: "320px" }} option={option2} />
+                )}
               </div>
             </div>
             <div className="card px-0 pb-3">
               <div className="card-header">
-                <h4 className="card-title">Umur Relawan</h4>
+                <h4 className="card-title">Data Masuk (%)</h4>
               </div>
               <div className="card-body" style={{ height: "350px" }}>
                 <ReactEcharts style={{ height: "300px" }} option={option3} />

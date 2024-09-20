@@ -9,8 +9,6 @@ function Dashboard() {
   const [firstName, setFirstName] = useState("");
   const [namaWilayah, setNamaWilayah] = useState("");
   const [load1Load, setLoad1Load] = useState(true);
-  const [load2Load, setLoad2Load] = useState(true);
-  const [load3Load, setLoad3Load] = useState(true);
   const [option1, setOption1] = useState({});
   const [option2, setOption2] = useState({});
   const [option3, setOption3] = useState({});
@@ -27,8 +25,6 @@ function Dashboard() {
 
   const load1 = async (name: String) => {
     setLoad1Load(true);
-    setLoad2Load(true);
-    setLoad3Load(true);
 
     fetch(`/real-count/api/realcount/${name}`)
       .then((res) => res.json())
@@ -104,7 +100,6 @@ function Dashboard() {
           ],
         };
         setOption2(opt2);
-        setLoad2Load(false);
 
         const opt3 = {
           tooltip: {
@@ -127,7 +122,6 @@ function Dashboard() {
           ],
         };
         setOption3(opt3);
-        setLoad3Load(false);
       });
   };
 
@@ -210,7 +204,11 @@ function Dashboard() {
                 <h4 className="card-title">Data Masuk (%)</h4>
               </div>
               <div className="card-body" style={{ height: "350px" }}>
-                <ReactEcharts style={{ height: "300px" }} option={option3} />
+                {load1Load ? (
+                  <p>Loading ... </p>
+                ) : (
+                  <ReactEcharts style={{ height: "300px" }} option={option3} />
+                )}
               </div>
             </div>
           </div>

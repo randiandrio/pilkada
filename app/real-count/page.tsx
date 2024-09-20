@@ -22,13 +22,13 @@ function Dashboard() {
   useEffect(() => {
     setLoading(false);
     load1("all");
-    load3();
     load4();
   }, []);
 
   const load1 = async (name: String) => {
     setLoad1Load(true);
     setLoad2Load(true);
+    setLoad3Load(true);
 
     fetch(`/real-count/api/realcount/${name}`)
       .then((res) => res.json())
@@ -105,14 +105,7 @@ function Dashboard() {
         };
         setOption2(opt2);
         setLoad2Load(false);
-      });
-  };
 
-  const load3 = async () => {
-    setLoad3Load(true);
-    fetch(`/api/dashboard/umur`)
-      .then((res) => res.json())
-      .then((x) => {
         const opt3 = {
           tooltip: {
             formatter: "{a} <br/>{b} : {c}%",

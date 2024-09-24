@@ -227,7 +227,7 @@ model Tugas {
   updatedAt           DateTime        @updatedAt
   appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)
   user                User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  laporanTUgas        LaporanTugas[]
+  laporanTugas        LaporanTugas[]
 } 
 
 model LaporanTugas {

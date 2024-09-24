@@ -163,6 +163,11 @@ export const POST = async (request: NextRequest) => {
     return NextResponse.json(result, { status: 200 });
   }
 
+  if (mapData.jenis_req === "load_tugas_anggota") {
+    const result = await LoadTugasAnggota(mapData);
+    return NextResponse.json(result, { status: 200 });
+  }
+
   return NextResponse.json(false, { status: 200 });
 };
 
@@ -1279,6 +1284,17 @@ async function LoadSuara(data: any) {
     newId: newId.toString(),
     newData: newData,
   };
+
+  return result;
+}
+
+async function LoadTugasAnggota(data: any) {
+  const result = await prisma.tugas.findMany({
+    where: { userId: Number(data.userId) },
+    include: {
+      laporanTugas: true,
+    },
+  });
 
   return result;
 }

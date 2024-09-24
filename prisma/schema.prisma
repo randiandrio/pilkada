@@ -38,6 +38,7 @@ model Setting {
   bgUtama             String?     
   bgLogin             String?     
   jumlahSuara         Int             @default(0)     
+  appVersion          Int             @default(0)     
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
   appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)

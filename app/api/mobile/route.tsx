@@ -1289,12 +1289,19 @@ async function LoadSuara(data: any) {
 }
 
 async function LoadTugasAnggota(data: any) {
-  const result = await prisma.tugas.findMany({
+  const tugas = await prisma.tugas.findMany({
     where: { userId: Number(data.userId) },
     include: {
       laporanTugas: true,
     },
   });
 
-  return result;
+  const user = await prisma.user.findMany({
+    where: { refId: Number(data.userId) },
+  });
+
+  return {
+    tugas: tugas,
+    referal: user,
+  };
 }

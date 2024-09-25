@@ -1321,7 +1321,7 @@ async function TambahTugasAnggota(data: any) {
       judul: String(data.judul),
       deskripsi: String(data.deskripsi),
       jumlah: Number(data.jumlah),
-      deadline: String(data.deadline),
+      deadline: String(data.deadline).replaceAll("/", "-"),
       oleh: String(data.oleh),
     },
   });

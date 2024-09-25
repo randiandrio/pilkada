@@ -58,8 +58,6 @@ async function CariUser(admin: AdminLogin, cari: String) {
       },
     },
   });
-
-  console.log(users);
   return users;
 }
 

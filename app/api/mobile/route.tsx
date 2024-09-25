@@ -1,8 +1,6 @@
 import { decrypt, modifiHP } from "@/app/helper";
 import { PrismaClient } from "@prisma/client";
-import axios from "axios";
 import bcrypt from "bcryptjs";
-import { error } from "console";
 import { NextRequest, NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
@@ -165,6 +163,11 @@ export const POST = async (request: NextRequest) => {
 
   if (mapData.jenis_req === "load_tugas_anggota") {
     const result = await LoadTugasAnggota(mapData);
+    return NextResponse.json(result, { status: 200 });
+  }
+
+  if (mapData.jenis_req === "tambah_tugas_anggota") {
+    const result = await TambahTugasAnggota(mapData);
     return NextResponse.json(result, { status: 200 });
   }
 
@@ -1294,14 +1297,32 @@ async function LoadTugasAnggota(data: any) {
     include: {
       laporanTugas: true,
     },
+    orderBy: { id: "asc" },
   });
 
   const user = await prisma.user.findMany({
     where: { refId: Number(data.userId) },
+    orderBy: { id: "asc" },
   });
 
   return {
     tugas: tugas,
     referal: user,
   };
+}
+
+async function TambahTugasAnggota(data: any) {
+  await prisma.tugas.create({
+    data: {
+      appId: Number(data.appId),
+      userId: Number(data.userId),
+      judul: String(data.judul),
+      deskripsi: String(data.deskripsi),
+      jumlah: Number(data.jumlah),
+      progress: Number(data.process),
+      deadline: String(data.deadline),
+      oleh: String(data.oleh),
+    },
+  });
+  return true;
 }

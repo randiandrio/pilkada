@@ -71,9 +71,9 @@ export default function LoginPage() {
                     width={300}
                     height={220}
                   />
-                  <h3 className="title">AyoMenang 2024</h3>
+                  <h3 className="title">SISPOL.ID</h3>
                   <p className="mb-5" style={{ lineHeight: "5px" }}>
-                    Sistem pemenangan pemilu terbaik di Indonesia
+                    Sistem Politik Indonesia
                   </p>
                 </div>
                 <form onSubmit={handleSubmit}>

@@ -46,6 +46,11 @@ export const POST = async (request: NextRequest) => {
     return NextResponse.json(result, { status: 200 });
   }
 
+  if (mapData.jenis_req === "ganti_password") {
+    const result = await GantiPassword(mapData);
+    return NextResponse.json(result, { status: 200 });
+  }
+
   if (mapData.jenis_req === "login") {
     const result = await Login(mapData);
     return NextResponse.json(result, { status: 200 });
@@ -288,6 +293,39 @@ async function Registrasi(data: any) {
     error: false,
     message: "Registrasi berhasil",
     data: user,
+  };
+}
+
+async function GantiPassword(data: any) {
+  const user = await prisma.user.findUnique({
+    where: {
+      id: Number(data.userId),
+    },
+  });
+
+  const isValid = await bcrypt.compare(
+    String(data.passLama),
+    String(user!.password)
+  );
+
+  if (!isValid) {
+    return { error: true, pesan: "Password lama salah, silahkan coba lagi" };
+  }
+
+  const hashPassword = await bcrypt.hash(String(data.passBaru), 10);
+
+  await prisma.user.update({
+    where: {
+      id: Number(user?.id),
+    },
+    data: {
+      password: hashPassword,
+    },
+  });
+
+  return {
+    error: false,
+    message: "Password telah diganti",
   };
 }
 

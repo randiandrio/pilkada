@@ -54,6 +54,9 @@ async function PostApp(data: any) {
           {
             nama: "syarat-ketentuan",
           },
+          {
+            nama: "sambutan",
+          },
         ],
       },
     },

@@ -1312,7 +1312,8 @@ async function LoadTugasAnggota(data: any) {
 }
 
 async function TambahTugasAnggota(data: any) {
-  console.log(data);
+  const x = String(data.deadline).split("/");
+  const tgl = `${x[2]}-${x[1]}-${x[0]}`;
 
   await prisma.tugas.create({
     data: {
@@ -1321,7 +1322,7 @@ async function TambahTugasAnggota(data: any) {
       judul: String(data.judul),
       deskripsi: String(data.deskripsi),
       jumlah: Number(data.jumlah),
-      deadline: String(data.deadline).replaceAll("/", "-"),
+      deadline: tgl,
       oleh: String(data.oleh),
     },
   });

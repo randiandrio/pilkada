@@ -5,22 +5,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "file.kuantar.co.id",
-        pathname: "**",
-      },
-      {
-        protocol: "https",
-        hostname: "file.jagoanpay.com",
-        pathname: "**",
-      },
-      {
-        protocol: "https",
-        hostname: "pay.kuantar.co.id",
-        pathname: "**",
-      },
-      {
-        protocol: "https",
-        hostname: "admin.jagoanpay.com",
+        hostname: "file.sispol.id",
         pathname: "**",
       },
     ],

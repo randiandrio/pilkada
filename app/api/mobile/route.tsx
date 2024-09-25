@@ -327,9 +327,12 @@ async function Login(data: any) {
 }
 
 async function ReloadAkun(data: any) {
-  const user = await prisma.user.findUnique({
+  const user = await prisma.user.update({
     where: {
       id: Number(data.userId),
+    },
+    data: {
+      token: String(data.token),
     },
   });
 

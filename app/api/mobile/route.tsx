@@ -325,7 +325,7 @@ async function GantiPassword(data: any) {
 
   return {
     error: false,
-    message: "Password telah diganti",
+    pesan: "Password telah diganti",
   };
 }
 

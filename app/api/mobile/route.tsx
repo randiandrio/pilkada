@@ -1312,17 +1312,20 @@ async function LoadTugasAnggota(data: any) {
 }
 
 async function TambahTugasAnggota(data: any) {
-  await prisma.tugas.create({
-    data: {
-      appId: Number(data.appId),
-      userId: Number(data.userId),
-      judul: String(data.judul),
-      deskripsi: String(data.deskripsi),
-      jumlah: Number(data.jumlah),
-      progress: Number(data.process),
-      deadline: String(data.deadline),
-      oleh: String(data.oleh),
-    },
-  });
+  console.log(data);
+
+  // await prisma.tugas.create({
+  //   data: {
+  //     appId: Number(data.appId),
+  //     userId: Number(data.userId),
+  //     judul: String(data.judul),
+  //     deskripsi: String(data.deskripsi),
+  //     jumlah: Number(data.jumlah),
+  //     progress: Number(data.process),
+  //     deadline: String(data.deadline),
+  //     oleh: String(data.oleh),
+  //   },
+  // });
+
   return true;
 }

@@ -8,9 +8,9 @@ const prisma = new PrismaClient();
 const mykey = "Bismillah kuantar berkah selalu.";
 const myiv = "AminAminAminYaRabbalAlamin";
 
-export const apiImg = "https://file.kuantar.co.id/storage";
-export const urlUploadGambar = "https://file.kuantar.co.id/api/uploadGambar";
-export const urlHapusGambar = "https://file.kuantar.co.id/api/hapusFile";
+export const apiImg = "https://file.sispol.id/storage";
+export const urlUploadGambar = "https://file.sispol.id/api/uploadGambar";
+export const urlHapusGambar = "https://file.sispol.id/api/hapusFile";
 export const firebaseProject = "pilkada";
 export const tinymceKey = "eoc1aloon8j0y09817k1tup61t53mjfl6ckuy2res8pl2ix0";
 
@@ -256,12 +256,9 @@ export async function kirimOTP(pesan: String, hp: String) {
     jenis_req: "kirim_otp",
   };
   const data = encryptData(JSON.stringify(x));
-  const prabayar = await axios.post(
-    "https://next.kuantar.co.id/api/mobile/v1",
-    {
-      data: data,
-    }
-  );
+  const prabayar = await axios.post("https://next.sispol.id/api/mobile/v1", {
+    data: data,
+  });
 
   return true;
 }

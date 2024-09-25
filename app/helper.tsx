@@ -12,7 +12,7 @@ export const apiImg = "https://file.kuantar.co.id/storage";
 export const urlUploadGambar = "https://file.kuantar.co.id/api/uploadGambar";
 export const urlHapusGambar = "https://file.kuantar.co.id/api/hapusFile";
 export const firebaseProject = "pilkada";
-export const tinymceKey = "88q5wvly8zzdap7pwq23poqjt3amwdk1v5iwdg9hr0xnqiq3";
+export const tinymceKey = "eoc1aloon8j0y09817k1tup61t53mjfl6ckuy2res8pl2ix0";
 
 const key = crypto
   .createHash("sha256")

@@ -107,6 +107,7 @@ function Update({ reload, berita }: { reload: Function; berita: Berita }) {
         show={show}
         onHide={handleClose}
         backdrop="static"
+        enforceFocus={false}
         keyboard={false}
       >
         <form onSubmit={handleSubmit}>
@@ -114,7 +115,7 @@ function Update({ reload, berita }: { reload: Function; berita: Berita }) {
             <Modal.Title>Update Berita</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-             <Image
+            <Image
               src={fotoUrlSelect}
               alt=""
               height={300}
@@ -126,7 +127,6 @@ function Update({ reload, berita }: { reload: Function; berita: Berita }) {
               <label className="col-sm-4 col-form-label">Foto Slide</label>
               <div className="col-sm-8">
                 <input
-                  required
                   type="file"
                   className="form-control"
                   onChange={previewGambar}

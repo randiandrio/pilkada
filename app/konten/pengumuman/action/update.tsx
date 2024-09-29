@@ -84,6 +84,7 @@ function Update({
         show={show}
         onHide={handleClose}
         backdrop="static"
+        enforceFocus={false}
         keyboard={false}
       >
         <form onSubmit={handleSubmit}>

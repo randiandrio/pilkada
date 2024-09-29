@@ -111,6 +111,7 @@ function Add({ reload }: { reload: Function }) {
         show={show}
         onHide={handleClose}
         backdrop="static"
+        enforceFocus={false}
         keyboard={false}
       >
         <form onSubmit={handleSubmit}>

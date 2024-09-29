@@ -107,6 +107,7 @@ function Update({ reload, agenda }: { reload: Function; agenda: Agenda }) {
         show={show}
         onHide={handleClose}
         backdrop="static"
+        enforceFocus={false}
         keyboard={false}
       >
         <form onSubmit={handleSubmit}>

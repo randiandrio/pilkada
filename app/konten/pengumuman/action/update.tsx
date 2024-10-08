@@ -89,7 +89,7 @@ function Update({
       >
         <form onSubmit={handleSubmit}>
           <Modal.Header closeButton>
-            <Modal.Title>Tambah Pengumuman</Modal.Title>
+            <Modal.Title>Update Pengumuman</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <div className="mb-3 row">

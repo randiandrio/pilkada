@@ -32,19 +32,23 @@ model AppData {
 
 model Setting {
   id                  Int             @id @default(autoincrement())
+  kode                String?
   appId               Int             @unique
   provId              Int?
   kotaId              Int?
   bgUtama             String?     
-  bgLogin             String?     
+  bgLogin             String?
+  channel             String?
+  paslon              String?
+  appName             String?
   jumlahSuara         Int             @default(0)     
   appVersion          Int             @default(0)   
   urlUpdate           String?  
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
   appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)
-  prov                Wilayah?         @relation("prov", fields: [provId], references: [id])
-  kota                Wilayah?         @relation("kota", fields: [kotaId], references: [id])
+  prov                Wilayah?        @relation("prov", fields: [provId], references: [id])
+  kota                Wilayah?        @relation("kota", fields: [kotaId], references: [id])
 } 
 
 model FirebaseToken {

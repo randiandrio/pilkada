@@ -26,6 +26,11 @@ export const POST = async (request: NextRequest) => {
   const body: any = await request.json();
   const mapData = JSON.parse(decrypt(body.data));
 
+  if (mapData.jenis_req === "cek_sistem") {
+    const result = await CekSistem(mapData);
+    return NextResponse.json(result, { status: 200 });
+  }
+
   if (mapData.jenis_req === "cek_nik") {
     const result = await CekNik(mapData);
     return NextResponse.json(result, { status: 200 });
@@ -178,6 +183,27 @@ export const POST = async (request: NextRequest) => {
 
   return NextResponse.json(false, { status: 200 });
 };
+
+async function CekSistem(data: any) {
+  const setting = await prisma.setting.findMany({
+    where: {
+      kode: String(data.kode).toUpperCase(),
+    },
+  });
+
+  if (setting.length > 0) {
+    return {
+      error: false,
+      message: "Kode sistem ditemukan",
+      data: setting[0],
+    };
+  }
+
+  return {
+    error: true,
+    message: "Kode sistem tidak dikenali",
+  };
+}
 
 async function CekNik(data: any) {
   const users = await prisma.user.findMany({

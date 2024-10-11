@@ -201,7 +201,7 @@ async function CekSistem(data: any) {
 
   return {
     error: true,
-    message: "Kode sistem tidak dikenali",
+    message: "Kode sistem tidak dikenali, silahkan coba lagi",
   };
 }
 

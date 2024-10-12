@@ -83,6 +83,9 @@ async function Get(appId: Number, slug: String[]) {
       kel: true,
       refferal: true,
     },
+    orderBy: {
+      id: "desc",
+    },
   });
   return result;
 }

@@ -7,6 +7,7 @@ import Update from "../../action/Update";
 import Select from "react-select";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { tglIndo } from "@/app/helper";
 
 const customStyles = {
   headCells: {
@@ -205,8 +206,14 @@ export default function KonstituenPage({
     },
     {
       name: "ID",
-      width: "100px",
+      width: "80px",
       selector: (row) => String(row.id),
+      sortable: true,
+    },
+    {
+      name: "Tgl Bergabung",
+      width: "150px",
+      selector: (row) => tglIndo(row.createdAt),
       sortable: true,
     },
     {

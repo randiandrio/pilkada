@@ -14,8 +14,8 @@ function Update({ reload, user }: { reload: Function; user: any }) {
     setShow(false);
   };
   const handleShow = () => setShow(true);
-
   const [isPost, setPost] = useState(false);
+  const [refId, setRefId] = useState(user.refId);
 
   if (isPost) {
     tampilLoading();
@@ -28,6 +28,7 @@ function Update({ reload, user }: { reload: Function; user: any }) {
     const formData = new FormData();
     formData.append("method", "update");
     formData.append("id", String(user.id));
+    formData.append("refId", String(refId));
     formData.append("jabatan", String(jabatan));
     const x = await axios.patch("/peta-suara/api/post", formData);
     const pesan = (await x.data) as resData;
@@ -69,13 +70,15 @@ function Update({ reload, user }: { reload: Function; user: any }) {
           </Modal.Header>
           <Modal.Body>
             <div className="col-sm-12">
-              <Image
-                src={`${apiImg}/${user.dukungan}`}
-                alt=""
-                height={300}
-                width={300}
-                className="slide mb-4 w-100 rounded"
-              />
+              <a href={`${apiImg}/${user.dukungan}`} target="_blank">
+                <Image
+                  src={`${apiImg}/${user.dukungan}`}
+                  alt=""
+                  height={300}
+                  width={300}
+                  className="slide mb-4 w-100 rounded"
+                />
+              </a>
             </div>
             <div className="row">
               <div className="col-sm-6">
@@ -117,11 +120,6 @@ function Update({ reload, user }: { reload: Function; user: any }) {
                     <td>:</td>
                     <td>{user.kel.nama}</td>
                   </tr>
-                </table>
-              </div>
-
-              <div className="col-sm-6">
-                <table>
                   <tr>
                     <td width={140}>No. Handphone</td>
                     <td width={20}>:</td>
@@ -135,7 +133,7 @@ function Update({ reload, user }: { reload: Function; user: any }) {
                   <tr>
                     <td>Refferal</td>
                     <td>:</td>
-                    <td>Nama Refferal</td>
+                    <td>{user.refferal ? user.refferal.nama : ""}</td>
                   </tr>
                   <tr>
                     <td>Jabatan</td>
@@ -143,8 +141,10 @@ function Update({ reload, user }: { reload: Function; user: any }) {
                     <td>{user.jabatan}</td>
                   </tr>
                 </table>
+              </div>
 
-                <div className="col-sm-12 mt-4">
+              <div className="col-sm-6">
+                <div className="col-sm-12">
                   <select
                     required
                     className="form-control"
@@ -154,6 +154,20 @@ function Update({ reload, user }: { reload: Function; user: any }) {
                     <option value="Simpatisan">Simpatisan</option>
                     <option value="Timses">Timses</option>
                   </select>
+                </div>
+
+                <div className="mb-3 mt-3 row">
+                  <label className="col-sm-4 col-form-label mt-2">
+                    Refferal ID
+                  </label>
+                  <div className="col-sm-8">
+                    <input
+                      type="number"
+                      className="form-control"
+                      value={refId}
+                      onChange={(e) => setRefId(e.target.value)}
+                    />
+                  </div>
                 </div>
               </div>
             </div>

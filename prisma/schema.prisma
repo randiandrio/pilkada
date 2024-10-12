@@ -111,6 +111,7 @@ model User {
   foto                String?
   dukungan            String?
   token               String?
+  refId               Int?
   jabatan             String          @default("Simpatisan")
   os                  String          @default("ANDROID")
   appVersion          Int             @default(0)
@@ -126,7 +127,6 @@ model User {
   koordinator         Koordinator[]
   pengaduan           Pengaduan[]
   aspirasi            Aspirasi[]
-  refId               Int?
   refferal            User?           @relation("RefferalFollower", fields: [refId], references: [id])
   follower            User[]          @relation("RefferalFollower")
 }   

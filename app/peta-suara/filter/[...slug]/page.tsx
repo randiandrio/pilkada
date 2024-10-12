@@ -204,6 +204,12 @@ export default function KonstituenPage({
       cell: (row, index) => (page - 1) * perPage + (index + 1),
     },
     {
+      name: "ID",
+      width: "100px",
+      selector: (row) => String(row.id),
+      sortable: true,
+    },
+    {
       name: "Nama",
       cell: (row) => (
         <>
@@ -240,7 +246,7 @@ export default function KonstituenPage({
     {
       name: "Refferal",
       cell: (row) =>
-        row.refferal != undefined ? (
+        row.refferal != null ? (
           <Link href={`/peta-suara/refferal/${row.refferal.id}`}>
             {row.refferal.nama}
           </Link>

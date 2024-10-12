@@ -192,6 +192,7 @@ async function Post(data: any, admin: AdminLogin) {
       where: { id: Number(data.get("id")) },
       data: {
         jabatan: String(data.get("jabatan")),
+        refId: data.get("refId") == "" ? null : Number(data.get("refId")),
       },
     });
   }

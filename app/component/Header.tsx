@@ -11,9 +11,9 @@ export default function Header() {
         <a href="#" className="brand-logo">
           <Image
             className="logo-abbr"
-            src={`/template/logo.png`}
+            src={`/template/logo.webp`}
             width={55}
-            height={51}
+            height={55}
             alt="xxx"
           />
           <Image

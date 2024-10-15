@@ -115,6 +115,7 @@ model User {
   jabatan             String          @default("Simpatisan")
   os                  String          @default("ANDROID")
   appVersion          Int             @default(0)
+  terverifikasi       Int             @default(0)
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
   notifikasi          Notifikasi[]
@@ -324,4 +325,13 @@ model RealCount {
   tps                 Tps             @relation(fields: [tpsId], references: [id], onDelete: Cascade)
   @@unique([tpsId, paslonId], name: "tpsId_paslonId")
 
+}
+
+model Playstore {
+  id                  Int             @id @default(autoincrement())
+  appVersion          Int             
+  inReview            Int             @default(1)
+  kode                String
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
 }

@@ -176,7 +176,7 @@ export default function Template({ children }: { children: React.ReactNode }) {
 
               <li>
                 <Link
-                  href={`/peta-suara/filter/all/${
+                  href={`/peta-suara/filter/all/all/${
                     Number(akun?.kotaId) > 0 ? akun.kotaId : "all-kabupaten"
                   }/all-kecamatan/all-kelurahan`}
                   className=""

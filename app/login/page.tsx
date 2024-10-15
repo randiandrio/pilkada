@@ -66,9 +66,9 @@ export default function LoginPage() {
               <div className="login-form">
                 <div className="text-center">
                   <Image
-                    src={`/template/logo.png`}
+                    src={`/template/logo.webp`}
                     alt=""
-                    width={300}
+                    width={220}
                     height={220}
                   />
                   <h3 className="title">SISPOL.ID</h3>

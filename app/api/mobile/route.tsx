@@ -181,6 +181,11 @@ export const POST = async (request: NextRequest) => {
     return NextResponse.json(result, { status: 200 });
   }
 
+  if (mapData.jenis_req === "cek_kode") {
+    const result = await CekKode(mapData);
+    return NextResponse.json(result, { status: 200 });
+  }
+
   return NextResponse.json(false, { status: 200 });
 };
 
@@ -1395,4 +1400,15 @@ async function TambahTugasAnggota(data: any) {
   });
 
   return true;
+}
+
+async function CekKode(data: any) {
+  const x = await prisma.playstore.findMany({
+    where: {
+      appVersion: Number(data.appVersion),
+      inReview: 1,
+    },
+  });
+
+  return x.length > 0 ? x[0].kode : "-";
 }

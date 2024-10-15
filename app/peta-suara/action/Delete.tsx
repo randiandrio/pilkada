@@ -40,7 +40,10 @@ function Delete({ userId, reload }: { userId: Number; reload: Function }) {
 
   return (
     <div>
-      <span onClick={handleShow} className="btn btn-danger btn-xs light mx-1">
+      <span
+        onClick={handleShow}
+        className="btn btn-outline-danger btn-xs light"
+      >
         <i className="fa fa-trash"></i>
       </span>
 

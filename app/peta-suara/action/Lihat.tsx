@@ -3,13 +3,61 @@ import { useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import Image from "next/image";
 import { apiImg } from "@/app/helper";
+import axios from "axios";
+import Swal from "sweetalert2";
+import { resData } from "next-auth";
 
-function Lihat({ user }: { user: any }) {
+function Lihat({ user, reload }: { user: any; reload: Function }) {
   const [show, setShow] = useState(false);
   const handleClose = () => {
     setShow(false);
   };
   const handleShow = () => setShow(true);
+
+  const [isPost, setPost] = useState(false);
+  if (isPost) {
+    Swal.fire({
+      title: "Mohon tunggu",
+      html: "Sedang verfikasi data",
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading(Swal.getDenyButton());
+      },
+    });
+  }
+
+  const handleVerifikasi = async () => {
+    Swal.fire({
+      title: "Anda yakin ...",
+      text: "Memverifikasi Data Ini?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Ya, Verifikasi!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        setPost(true);
+        const formData = new FormData();
+        formData.append("method", "verifikasi");
+        formData.append("id", String(user.id));
+        const x = await axios.patch("/peta-suara/api/post", formData);
+        const hasil = (await x.data) as resData;
+        if (!hasil.error) {
+          reload();
+          handleClose();
+          setPost(false);
+          Swal.fire({
+            title: "Success!",
+            text: String(hasil.message),
+            icon: "success",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        }
+      }
+    });
+  };
 
   return (
     <div>
@@ -128,6 +176,15 @@ function Lihat({ user }: { user: any }) {
           >
             Close
           </button>
+          {user.terverifikasi == 0 && (
+            <button
+              type="button"
+              className="btn btn-success light"
+              onClick={handleVerifikasi}
+            >
+              Verifikasi Data
+            </button>
+          )}
         </Modal.Footer>
       </Modal>
     </div>

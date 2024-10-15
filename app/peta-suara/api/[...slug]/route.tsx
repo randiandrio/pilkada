@@ -252,7 +252,15 @@ async function Post(data: any, admin: AdminLogin) {
       });
     }
   }
-  return { error: false, message: "Update data konstituen sukses" };
+  if (String(data.get("method")) == "verifikasi") {
+    await prisma.user.update({
+      where: { id: Number(data.get("id")) },
+      data: {
+        terverifikasi: 1,
+      },
+    });
+  }
+  return { error: false, message: "Data telah diverifikasi" };
 }
 
 async function Delete(data: any) {

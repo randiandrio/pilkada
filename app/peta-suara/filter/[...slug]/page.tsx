@@ -20,6 +20,15 @@ const customStyles = {
   },
 };
 
+const conditionalRowStyles = [
+  {
+    when: (row: { terverifikasi: Number }) => row.terverifikasi == 0,
+    style: {
+      backgroundColor: "#f5f4da",
+    },
+  },
+];
+
 export default function KonstituenPage({
   params,
 }: {
@@ -350,7 +359,7 @@ export default function KonstituenPage({
       cell: (row) => (
         <>
           <div className="d-flex">
-            <Lihat user={row} />
+            <Lihat reload={reload} user={row} />
             <Update reload={reload} user={row} />
             <Delete reload={reload} userId={row.id} />
           </div>
@@ -462,6 +471,7 @@ export default function KonstituenPage({
               data={filteredItems}
               pagination
               customStyles={customStyles}
+              conditionalRowStyles={conditionalRowStyles}
               onChangePage={(page) => {
                 setPage(page);
               }}

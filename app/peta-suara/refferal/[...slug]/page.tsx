@@ -4,6 +4,8 @@ import { useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import Update from "../../action/Update";
 import Link from "next/link";
+import Lihat from "../../action/Lihat";
+import Delete from "../../action/Delete";
 
 const customStyles = {
   headCells: {
@@ -14,6 +16,15 @@ const customStyles = {
     },
   },
 };
+
+const conditionalRowStyles = [
+  {
+    when: (row: { terverifikasi: Number }) => row.terverifikasi == 0,
+    style: {
+      backgroundColor: "#f5f4da",
+    },
+  },
+];
 
 export default function KonstituenPage({
   params,
@@ -90,7 +101,9 @@ export default function KonstituenPage({
       cell: (row) => (
         <>
           <div className="d-flex">
+            <Lihat reload={reload} user={row} />
             <Update reload={reload} user={row} />
+            <Delete reload={reload} userId={row.id} />
           </div>
         </>
       ),
@@ -99,7 +112,9 @@ export default function KonstituenPage({
 
   const filteredItems = data.filter(
     (item: any) =>
-      item.nama && item.nama.toLowerCase().includes(filter.toLowerCase())
+      (item.nama && item.nama.toLowerCase().includes(filter.toLowerCase())) ||
+      (item.nik && item.nik.toLowerCase().includes(filter.toLowerCase())) ||
+      (item.hp && item.hp.toLowerCase().includes(filter.toLowerCase()))
   );
 
   if (isLoading) return <p>Loading...</p>;
@@ -120,7 +135,7 @@ export default function KonstituenPage({
                   onChange={(e) => setFilter(e.target.value)}
                   type="text"
                   className="form-control"
-                  placeholder="Cari ... "
+                  placeholder="Cari NIK/Nama/HP "
                 />
               </div>
             </div>
@@ -134,6 +149,7 @@ export default function KonstituenPage({
                 data={filteredItems}
                 pagination
                 customStyles={customStyles}
+                conditionalRowStyles={conditionalRowStyles}
                 onChangePage={(page) => {
                   setPage(page);
                 }}

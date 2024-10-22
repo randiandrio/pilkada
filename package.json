@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "start": "next start -p 3002",
     "dev": "next dev -p 3002",
     "build": "npx prisma generate && next build",
-    "start": "next start -p 3002",
     "lint": "next lint",
     "postinstall": "prisma generate"
   },

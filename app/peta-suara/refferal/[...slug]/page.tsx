@@ -6,6 +6,7 @@ import Update from "../../action/Update";
 import Link from "next/link";
 import Lihat from "../../action/Lihat";
 import Delete from "../../action/Delete";
+import * as XLSX from "xlsx";
 
 const customStyles = {
   headCells: {
@@ -79,6 +80,11 @@ export default function KonstituenPage({
       sortable: true,
     },
     {
+      name: "Tempat/ Tanggal Lahir",
+      selector: (row) => `${row.tempatLahir}, ${row.tanggalLahir}`,
+      sortable: true,
+    },
+    {
       name: "Kota / Kabupaten",
       selector: (row) => String(row.kab.nama),
       sortable: true,
@@ -93,7 +99,16 @@ export default function KonstituenPage({
       selector: (row) => String(row.kel.nama),
       sortable: true,
     },
-
+    {
+      name: "No. HP",
+      selector: (row) => String(row.hp),
+      sortable: true,
+    },
+    {
+      name: "No. WA",
+      selector: (row) => String(row.wa),
+      sortable: true,
+    },
     {
       name: "Action",
       button: true,
@@ -116,6 +131,37 @@ export default function KonstituenPage({
       (item.nik && item.nik.toLowerCase().includes(filter.toLowerCase())) ||
       (item.hp && item.hp.toLowerCase().includes(filter.toLowerCase()))
   );
+
+  const exportExcel = async (title?: string, worksheetname?: string) => {
+    try {
+      if (data && Array.isArray(data)) {
+        const dataToExport = data.map((x: any, index: number) => ({
+          No: index + 1,
+          Nama: x.nama,
+          NIK: x.nik,
+          Jabatan: x.jabatan,
+          "No. HP": x.hp,
+          "No. WA": x.wa,
+          "Tempat/Tgl Lahir": `${x.tempatLahir}, ${x.tanggalLahir}`,
+          "Kota / Kabupaten": x.kab.nama,
+          Kecamagan: x.kec.nama,
+          "Kelurahan / Desa": x.kel.nama,
+        }));
+        const workbook = XLSX.utils.book_new();
+        const worksheet = XLSX.utils?.json_to_sheet(dataToExport);
+        XLSX.utils.book_append_sheet(workbook, worksheet, worksheetname);
+        XLSX.writeFile(workbook, `${title}.xlsx`);
+        console.log(`Exported data to ${title}.xlsx`);
+        setLoading(false);
+      } else {
+        setLoading(false);
+        console.log("#==================Export Error");
+      }
+    } catch (error: any) {
+      setLoading(false);
+      console.log("#==================Export Error", error.message);
+    }
+  };
 
   if (isLoading) return <p>Loading...</p>;
 
@@ -165,6 +211,13 @@ export default function KonstituenPage({
           </div>
         </div>
       </div>
+      <button
+        onClick={() => exportExcel(`Data Refferal ${namaUser}`, "refferal")}
+        type="button"
+        className="btn btn-info"
+      >
+        Export To Excel
+      </button>
     </div>
   );
 }

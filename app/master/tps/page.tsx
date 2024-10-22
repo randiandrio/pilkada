@@ -3,8 +3,6 @@ import { useEffect } from "react";
 import { useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import Link from "next/link";
-import Reset from "./action/Reset";
-import GenerateTPS from "./action/GenerateTps";
 
 const customStyles = {
   headCells: {
@@ -17,44 +15,18 @@ const customStyles = {
 };
 
 const TpsPage = () => {
+  const [page, setPage] = useState(1);
+  const [perPage, setPerpage] = useState(10);
   const [isLoading, setLoading] = useState(true);
-  const [listKota, setListKota] = useState([]);
-  const [listKec, setListKec] = useState([]);
   const [datas, setDatas] = useState([]);
+  const [filter, setFilter] = useState("");
 
   useEffect(() => {
-    loadKota();
     reload();
   }, []);
 
-  const loadKota = async () => {
-    fetch(`/master/tps/api/load_kota_tps`)
-      .then((res) => res.json())
-      .then((x) => {
-        var a = x.kota.map(function (item: any) {
-          return {
-            value: item.id,
-            label: item.nama,
-          };
-        });
-        setListKota(a);
-
-        if (x.kec.length > 0) {
-          var b = x.kec.map(function (item: any) {
-            return {
-              value: item.id,
-              label: item.nama,
-            };
-          });
-          setListKec(b);
-        }
-
-        setLoading(false);
-      });
-  };
-
   const reload = async () => {
-    fetch(`/master/tps/api/load_data_kota`)
+    fetch(`/master/tps/api/data_desa`)
       .then((res) => res.json())
       .then((x) => {
         setDatas(x);
@@ -62,52 +34,74 @@ const TpsPage = () => {
       });
   };
 
-  const columns: TableColumn<any>[] = [
+  const columnKelurahan: TableColumn<any>[] = [
     {
-      name: "#",
-      cell: (row, index) => index + 1,
-      width: "50px",
-      grow: 0,
+      name: "No.",
+      width: "100px",
+      center: true,
+      cell: (row, index) => (page - 1) * perPage + (index + 1),
     },
     {
-      name: "Kabupaten / Kota",
-      selector: (row) => String(row.namaKota),
+      name: "Kelurahan / Desa",
+      selector: (row) => String(row.nama),
+      sortable: true,
+    },
+    {
+      name: "Kecamatan",
+      selector: (row) => String(row.kecamatan),
+      sortable: true,
+    },
+    {
+      name: "Kota / Kabupaten",
+      selector: (row) => String(row.kabupaten),
       sortable: true,
     },
     {
       name: "Jumlah TPS",
-      selector: (row) => String(row.jumlahTps),
+      selector: (row) => String(row.tpsKel.length),
       sortable: true,
     },
     {
-      name: "",
-      width: "120px",
+      name: "Aksi",
+      width: "150px",
       cell: (row) => (
         <div>
-          <Link href={`/master/tps/kecamatan/${row.kotaId}`}>
+          {row.tpsKel.length > 0 ? (
+            <Link href={``}>
+              <button
+                type="button"
+                className="btn btn-outline-success btn-xs light"
+              >
+                Lihat
+              </button>
+            </Link>
+          ) : (
             <button
               type="button"
               className="btn btn-outline-success btn-xs light"
             >
-              Lihat
+              Generate TPS
             </button>
-          </Link>
+          )}
         </div>
       ),
     },
   ];
+
+  const filteredItems = datas.filter(
+    (item: any) =>
+      item.nama && item.nama.toLowerCase().includes(filter.toLowerCase())
+  );
 
   if (isLoading) return <p>Loading...</p>;
 
   return (
     <div>
       <div className="row">
-        <div className="col-xl-8 col-lg-12">
+        <div className="col-xl-12 col-lg-12">
           <div className="card">
             <div className="card-header flex-wrap" id="default-tab">
-              <div>
-                <h4 className="card-title">Data TPS</h4>
-              </div>
+              <h4 className="card-title">Data TPS</h4>
             </div>
 
             <div className="table-responsive pb-2">
@@ -115,18 +109,20 @@ const TpsPage = () => {
                 responsive
                 highlightOnHover={true}
                 persistTableHead={true}
-                columns={columns}
-                data={datas}
+                columns={columnKelurahan}
+                data={filteredItems}
                 customStyles={customStyles}
+                onChangePage={(page) => {
+                  setPage(page);
+                }}
+                onChangeRowsPerPage={(page) => {
+                  setPage(1);
+                  setPerpage(page);
+                }}
               />
             </div>
           </div>
         </div>
-      </div>
-
-      <div>
-        <GenerateTPS listKota={listKota} defKec={listKec} reload={reload} />
-        <Reset reload={reload} />
       </div>
     </div>
   );

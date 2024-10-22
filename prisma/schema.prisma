@@ -86,6 +86,7 @@ model Wilayah {
   kota                Setting[]       @relation("kota")
   tpsKota             Tps[]           @relation("tpsKota")
   tpsKec              Tps[]           @relation("tpsKec")
+  tpsKel              Tps[]           @relation("tpsKel")
   koordinator         Koordinator[]
   userKota            User[]           @relation("kota")
   userKec             User[]           @relation("kecamatan")
@@ -171,6 +172,7 @@ model Tps {
   appId               Int
   kotaId              Int
   kecId               Int     
+  kelId               Int     
   tpsNo               Int
   saksiId             Int?            @unique
   createdAt           DateTime        @default(now())
@@ -178,6 +180,7 @@ model Tps {
   appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)
   kota                Wilayah?        @relation("tpsKota", fields: [kotaId], references: [id])
   kec                 Wilayah?        @relation("tpsKec", fields: [kecId], references: [id])
+  kel                 Wilayah?        @relation("tpsKel", fields: [kelId], references: [id])
   saksi               User?           @relation(fields: [saksiId], references: [id])
   realCount           RealCount[]
 }  
@@ -191,7 +194,6 @@ model Paslon {
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
   appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)
-  realCount           RealCount[]
 } 
 
 model Pengumuman {
@@ -315,17 +317,30 @@ model RealCount {
   id                  Int             @id @default(autoincrement())
   appId               Int
   tpsId               Int
-  paslonId            Int
-  suara               Int             @default(0) 
+  suaraSah            Int             @default(0)
+  suaraBatal          Int             @default(0)
+  suaraSisa           Int             @default(0)
+  mulai               String?
+  selesai             String?
+  catatan             String?
   foto                String?
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
   appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)
-  paslon              Paslon          @relation(fields: [paslonId], references: [id], onDelete: Cascade)
   tps                 Tps             @relation(fields: [tpsId], references: [id], onDelete: Cascade)
-  @@unique([tpsId, paslonId], name: "tpsId_paslonId")
-
+  detail              DetailRealCount[]
 }
+
+model DetailRealCount {
+  id                  Int             @id @default(autoincrement())
+  realCountId         Int
+  paslonId            Int
+  suara               Int             @default(0)
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  realCount           RealCount       @relation(fields: [realCountId], references: [id], onDelete: Cascade)
+}
+
 
 model Playstore {
   id                  Int             @id @default(autoincrement())

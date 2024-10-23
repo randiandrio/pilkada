@@ -31,8 +31,29 @@ async function RealCount(admin: AdminLogin, wilayah: String) {
   let isProv = false;
   let isTPS = false;
   let wid = 0;
+  let dataMasuk = 0;
 
   if (wilayah == "all") {
+    const all = await prisma.tps.aggregate({
+      where: { appId: Number(admin.appId) },
+      _count: {
+        id: true,
+      },
+    });
+
+    const masuk = await prisma.detailRealCount.aggregate({
+      where: {
+        realCount: {
+          appId: Number(admin.appId),
+        },
+      },
+      _count: {
+        id: true,
+      },
+    });
+
+    dataMasuk = Math.ceil((masuk._count.id / all._count.id) * 100);
+
     let wilayahId = admin.provId;
     if (admin.kotaId != 0) {
       wilayahId = admin.kotaId;
@@ -80,6 +101,32 @@ async function RealCount(admin: AdminLogin, wilayah: String) {
         AND provinsi = ${kode?.provinsi} 
         AND kabupaten = ${kode?.kabupaten} 
         ORDER BY nama DESC`;
+
+    const all = await prisma.tps.aggregate({
+      where: {
+        appId: Number(admin.appId),
+        kotaId: kode.id,
+      },
+      _count: {
+        id: true,
+      },
+    });
+
+    const masuk = await prisma.detailRealCount.aggregate({
+      where: {
+        realCount: {
+          appId: Number(admin.appId),
+          tps: {
+            kotaId: kode.id,
+          },
+        },
+      },
+      _count: {
+        id: true,
+      },
+    });
+
+    dataMasuk = Math.ceil((masuk._count.id / all._count.id) * 100);
   }
 
   if (kode?.kode.length == 8) {
@@ -92,6 +139,32 @@ async function RealCount(admin: AdminLogin, wilayah: String) {
       orderBy: { tpsNo: "desc" },
     });
     firstName = "Kec. ";
+
+    const all = await prisma.tps.aggregate({
+      where: {
+        appId: Number(admin.appId),
+        kecId: kode.id,
+      },
+      _count: {
+        id: true,
+      },
+    });
+
+    const masuk = await prisma.detailRealCount.aggregate({
+      where: {
+        realCount: {
+          appId: Number(admin.appId),
+          tps: {
+            kecId: kode.id,
+          },
+        },
+      },
+      _count: {
+        id: true,
+      },
+    });
+
+    dataMasuk = Math.ceil((masuk._count.id / all._count.id) * 100);
   }
 
   const pcs = await prisma.paslon.findMany({
@@ -103,12 +176,15 @@ async function RealCount(admin: AdminLogin, wilayah: String) {
 
   let series = [];
   let pie = [];
+
   for (let ii = 0; ii < pcs.length; ii++) {
     if (wilayah == "all") {
-      const j = await prisma.realCount.aggregate({
+      const j = await prisma.detailRealCount.aggregate({
         where: {
           paslonId: pcs[ii].id,
-          appId: Number(admin.appId),
+          realCount: {
+            appId: Number(admin.appId),
+          },
         },
         _sum: { suara: true },
       });
@@ -119,12 +195,14 @@ async function RealCount(admin: AdminLogin, wilayah: String) {
       });
     } else {
       if (kode?.kode.length == 5) {
-        const j = await prisma.realCount.aggregate({
+        const j = await prisma.detailRealCount.aggregate({
           where: {
             paslonId: pcs[ii].id,
-            appId: Number(admin.appId),
-            tps: {
-              kotaId: Number(wid),
+            realCount: {
+              appId: Number(admin.appId),
+              tps: {
+                kotaId: Number(wid),
+              },
             },
           },
           _sum: { suara: true },
@@ -136,12 +214,14 @@ async function RealCount(admin: AdminLogin, wilayah: String) {
         });
       }
       if (kode?.kode.length == 8) {
-        const j = await prisma.realCount.aggregate({
+        const j = await prisma.detailRealCount.aggregate({
           where: {
             paslonId: pcs[ii].id,
-            appId: Number(admin.appId),
-            tps: {
-              kecId: Number(wid),
+            realCount: {
+              appId: Number(admin.appId),
+              tps: {
+                kecId: Number(wid),
+              },
             },
           },
           _sum: { suara: true },
@@ -157,37 +237,44 @@ async function RealCount(admin: AdminLogin, wilayah: String) {
     let s = [];
     for (let i = 0; i < result.length; i++) {
       if (isTPS) {
-        const j = await prisma.realCount.findFirst({
+        const j = await prisma.detailRealCount.findFirst({
           where: {
-            tpsId: Number(result[i].id),
             paslonId: pcs[ii].id,
-            appId: Number(admin.appId),
+            realCount: {
+              appId: Number(admin.appId),
+              tpsId: Number(result[i].id),
+            },
           },
         });
+
         s.push(j?.suara ?? 0);
       } else {
         let j;
         if (isProv) {
-          j = await prisma.realCount.aggregate({
+          j = await prisma.detailRealCount.aggregate({
             where: {
-              tps: {
-                kotaId: Number(result[i].id),
-              },
               paslonId: pcs[ii].id,
-              appId: Number(admin.appId),
+              realCount: {
+                appId: Number(admin.appId),
+                tps: {
+                  kotaId: Number(result[i].id),
+                },
+              },
             },
             _sum: {
               suara: true,
             },
           });
         } else {
-          j = await prisma.realCount.aggregate({
+          j = await prisma.detailRealCount.aggregate({
             where: {
-              tps: {
-                kecId: Number(result[i].id),
-              },
               paslonId: pcs[ii].id,
-              appId: Number(admin.appId),
+              realCount: {
+                appId: Number(admin.appId),
+                tps: {
+                  kecId: Number(result[i].id),
+                },
+              },
             },
             _sum: {
               suara: true,
@@ -198,6 +285,7 @@ async function RealCount(admin: AdminLogin, wilayah: String) {
         s.push(j._sum.suara ?? 0);
       }
     }
+
     const x = {
       name: `${pcs[ii].calon} & ${pcs[ii].wakil}`,
       type: "bar",
@@ -225,5 +313,6 @@ async function RealCount(admin: AdminLogin, wilayah: String) {
     namaWilayah: namaWilayah,
     firstName: firstName,
     pie: pie,
+    dataMasuk: dataMasuk,
   };
 }

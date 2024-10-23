@@ -1,9 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import ReactEcharts from "echarts-for-react";
-import Image from "next/image";
 
-function Dashboard() {
+function RealCount() {
   const [isLoading, setLoading] = useState(true);
   const [click, setClick] = useState(true);
   const [firstName, setFirstName] = useState("");
@@ -12,15 +11,10 @@ function Dashboard() {
   const [option1, setOption1] = useState({});
   const [option2, setOption2] = useState({});
   const [option3, setOption3] = useState({});
-  const [relawan, setRelawan] = useState(0);
-  const [timses, setTimses] = useState(0);
-  const [tps, setTps] = useState(0);
-  const [dpt, setDpt] = useState(0);
 
   useEffect(() => {
     setLoading(false);
     load1("all");
-    load4();
   }, []);
 
   const load1 = async (name: String) => {
@@ -33,9 +27,6 @@ function Dashboard() {
         setNamaWilayah(x.namaWilayah);
         setFirstName(x.firstName);
         const opt1 = {
-          title: {
-            text: "Real Count",
-          },
           tooltip: {
             trigger: "axis",
             axisPointer: {
@@ -114,25 +105,14 @@ function Dashboard() {
               },
               data: [
                 {
-                  value: 50,
-                  name: "Data",
+                  value: x.dataMasuk ?? 0,
+                  name: "Data Masuk",
                 },
               ],
             },
           ],
         };
         setOption3(opt3);
-      });
-  };
-
-  const load4 = async () => {
-    fetch(`/api/dashboard/statistik`)
-      .then((res) => res.json())
-      .then((x) => {
-        setRelawan(x.relawan);
-        setTimses(x.timses);
-        setTps(x.tps);
-        setDpt(x.dpt);
       });
   };
 
@@ -218,4 +198,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default RealCount;

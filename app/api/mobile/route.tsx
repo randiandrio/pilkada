@@ -1280,52 +1280,48 @@ async function LoadPaslon(data: any) {
 }
 
 async function PostSuara(data: any) {
-  const paslon = await prisma.paslon.findMany({
-    where: {
-      appId: Number(data.appId),
-    },
-    orderBy: {
-      noUrut: "asc",
-    },
-  });
-
-  if (paslon.length == 0) return false;
-
-  for (let i = 0; i < paslon.length; i++) {
-    await prisma.realCount.upsert({
-      where: {
-        tpsId_paslonId: {
-          tpsId: Number(data.tpsId),
-          paslonId: Number(paslon[i].id),
-        },
-      },
-      create: {
-        appId: Number(data.appId),
-        tpsId: Number(data.tpsId),
-        paslonId: Number(paslon[i].id),
-        suara: Number(data.suara[i]),
-      },
-      update: {
-        suara: Number(data.suara[i]),
-      },
-    });
-  }
-
-  if (String(data.foto) != "") {
-    await prisma.realCount.updateMany({
-      where: {
-        tpsId: Number(data.tpsId),
-      },
-      data: {
-        foto: String(data.foto),
-      },
-    });
-  }
-
-  return {
-    error: false,
-    message: "Data suara telah disimpan",
-  };
+  // const paslon = await prisma.paslon.findMany({
+  //   where: {
+  //     appId: Number(data.appId),
+  //   },
+  //   orderBy: {
+  //     noUrut: "asc",
+  //   },
+  // });
+  // if (paslon.length == 0) return false;
+  // for (let i = 0; i < paslon.length; i++) {
+  //   await prisma.realCount.upsert({
+  //     where: {
+  //       tpsId_paslonId: {
+  //         tpsId: Number(data.tpsId),
+  //         paslonId: Number(paslon[i].id),
+  //       },
+  //     },
+  //     create: {
+  //       appId: Number(data.appId),
+  //       tpsId: Number(data.tpsId),
+  //       paslonId: Number(paslon[i].id),
+  //       suara: Number(data.suara[i]),
+  //     },
+  //     update: {
+  //       suara: Number(data.suara[i]),
+  //     },
+  //   });
+  // }
+  // if (String(data.foto) != "") {
+  //   await prisma.realCount.updateMany({
+  //     where: {
+  //       tpsId: Number(data.tpsId),
+  //     },
+  //     data: {
+  //       foto: String(data.foto),
+  //     },
+  //   });
+  // }
+  // return {
+  //   error: false,
+  //   message: "Data suara telah disimpan",
+  // };
 }
 
 async function LoadSuara(data: any) {

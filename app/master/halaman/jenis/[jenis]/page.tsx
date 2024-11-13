@@ -1,17 +1,12 @@
 "use client";
-import { tinymceKey, titleHalaman, ucwords } from "@/app/helper";
-import { Halaman } from "@prisma/client";
+import { tinymceKey, titleHalaman } from "@/app/helper";
 import { Editor } from "@tinymce/tinymce-react";
 import axios from "axios";
-import { AdminLogin, resData } from "next-auth";
-import { useSession } from "next-auth/react";
 import { SyntheticEvent, useEffect } from "react";
 import { useState } from "react";
 import Swal from "sweetalert2";
 
 export default function HalamanPage({ params }: { params: { jenis: string } }) {
-  const session = useSession();
-  const akun = session.data as unknown as AdminLogin;
   const [isLoading, setLoading] = useState(true);
   const [deskripsi, setDeskripsi] = useState("");
   const [initValue, setInitValue] = useState("");

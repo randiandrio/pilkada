@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { getToken } from "next-auth/jwt";
-import { AdminLogin } from "next-auth";
 import bcrypt from "bcryptjs";
+import { User } from "next-auth";
 
 const prisma = new PrismaClient();
 
@@ -15,7 +15,7 @@ export const GET = async (
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  const adminLogin = token as unknown as AdminLogin;
+  const adminLogin = token as unknown as User;
 
   if (params.slug[0] === "get") {
     const result = await Get(adminLogin.appId, params.slug);
@@ -74,7 +74,7 @@ export const PATCH = async (
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  const adminLogin = token as unknown as AdminLogin;
+  const adminLogin = token as unknown as User;
 
   const data = await request.formData();
 
@@ -138,7 +138,7 @@ async function Refferal(appId: Number, slug: String[]) {
   };
 }
 
-async function LoadKota(admin: AdminLogin) {
+async function LoadKota(admin: User) {
   const kode = await prisma.wilayah.findUnique({
     where: { id: Number(admin.provId) },
   });
@@ -160,7 +160,7 @@ async function LoadKota(admin: AdminLogin) {
   return x;
 }
 
-async function loadKecamatan(admin: AdminLogin, kabId: String) {
+async function loadKecamatan(admin: User, kabId: String) {
   const kode = await prisma.wilayah.findUnique({
     where: { id: Number(kabId) },
   });
@@ -185,7 +185,7 @@ async function loadKecamatan(admin: AdminLogin, kabId: String) {
   return x;
 }
 
-async function loadKelurahan(admin: AdminLogin, kecId: String) {
+async function loadKelurahan(admin: User, kecId: String) {
   const kode = await prisma.wilayah.findUnique({
     where: { id: Number(kecId) },
   });
@@ -211,7 +211,7 @@ async function loadKelurahan(admin: AdminLogin, kecId: String) {
   return x;
 }
 
-async function Post(data: any, admin: AdminLogin) {
+async function Post(data: any, admin: User) {
   if (String(data.get("method")) == "update") {
     const cek = await prisma.user.findMany({
       where: {

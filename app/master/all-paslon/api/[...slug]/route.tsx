@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { getToken } from "next-auth/jwt";
-import { AdminLogin } from "next-auth";
+import { User } from "next-auth";
 
 const prisma = new PrismaClient();
 
@@ -14,7 +14,7 @@ export const GET = async (
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  const adminLogin = token as unknown as AdminLogin;
+  const adminLogin = token as unknown as User;
 
   if (params.slug[0] === "data_paslon") {
     const result = await DataPaslon(adminLogin);
@@ -33,7 +33,7 @@ export const PATCH = async (
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  const adminLogin = token as unknown as AdminLogin;
+  const adminLogin = token as unknown as User;
 
   const data = await request.formData();
 
@@ -43,14 +43,14 @@ export const PATCH = async (
   }
 };
 
-async function DataPaslon(admin: AdminLogin) {
+async function DataPaslon(admin: User) {
   const paslon = await prisma.paslon.findMany({
     where: { appId: Number(admin.appId) },
   });
   return paslon;
 }
 
-async function Post(data: any, admin: AdminLogin) {
+async function Post(data: any, admin: User) {
   if (String(data.get("mode")) == "add") {
     await prisma.paslon.create({
       data: {

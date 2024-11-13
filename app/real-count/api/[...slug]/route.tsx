@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient, Wilayah } from "@prisma/client";
 import { getToken } from "next-auth/jwt";
-import { AdminLogin } from "next-auth";
+import { User } from "next-auth";
 
 const prisma = new PrismaClient();
 
@@ -14,7 +14,7 @@ export const GET = async (
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  const adminLogin = token as unknown as AdminLogin;
+  const adminLogin = token as unknown as User;
 
   if (params.slug[0] === "realcount") {
     const result = await RealCount(adminLogin, params.slug[1]);
@@ -24,7 +24,7 @@ export const GET = async (
   return NextResponse.json(false);
 };
 
-async function RealCount(admin: AdminLogin, wilayah: String) {
+async function RealCount(admin: User, wilayah: String) {
   let result: any[] = [];
   let namaWilayah = "";
   let firstName = "";

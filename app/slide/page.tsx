@@ -4,14 +4,10 @@ import Add from "./action/Add";
 import Delete from "./action/Delete";
 import { useEffect, useState } from "react";
 import Update from "./action/update";
-import { useSession } from "next-auth/react";
-import { AdminLogin } from "next-auth";
 import { Slide } from "@prisma/client";
 import { apiImg } from "../helper";
 
 export default function DataSlide() {
-  const session = useSession();
-  const akun = session.data as unknown as AdminLogin;
   const [isLoading, setLoading] = useState(true);
   const [slides, setSlides] = useState<Slide[]>([]);
 

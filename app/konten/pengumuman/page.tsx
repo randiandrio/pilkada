@@ -1,5 +1,5 @@
 "use client";
-import { Paslon, Pengumuman } from "@prisma/client";
+import { Pengumuman } from "@prisma/client";
 import { useEffect } from "react";
 import { useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { getToken } from "next-auth/jwt";
-import { AdminLogin } from "next-auth";
+import { User } from "next-auth";
 
 const prisma = new PrismaClient();
 
@@ -14,7 +14,7 @@ export const GET = async (
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  const adminLogin = token as unknown as AdminLogin;
+  const adminLogin = token as unknown as User;
 
   if (params.slug[0] === "data") {
     const result = await Data(adminLogin);
@@ -33,7 +33,7 @@ export const PATCH = async (
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  const adminLogin = token as unknown as AdminLogin;
+  const adminLogin = token as unknown as User;
 
   const data = await request.formData();
 
@@ -43,7 +43,7 @@ export const PATCH = async (
   }
 };
 
-async function Data(admin: AdminLogin) {
+async function Data(admin: User) {
   const berita = await prisma.berita.findMany({
     where: { appId: Number(admin.appId) },
     orderBy: {
@@ -53,7 +53,7 @@ async function Data(admin: AdminLogin) {
   return berita;
 }
 
-async function Post(data: any, admin: AdminLogin) {
+async function Post(data: any, admin: User) {
   if (String(data.get("mode")) == "add") {
     console.log(data);
     await prisma.berita.create({

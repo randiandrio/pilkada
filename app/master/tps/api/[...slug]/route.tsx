@@ -2,9 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { getToken } from "next-auth/jwt";
 import { User } from "next-auth";
-import { error } from "console";
 import { IDWilayah } from "@/app/helper";
-import { number } from "echarts";
 
 const prisma = new PrismaClient();
 

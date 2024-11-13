@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { getToken } from "next-auth/jwt";
-import { AdminLogin } from "next-auth";
+import { User } from "next-auth";
 
 const prisma = new PrismaClient();
 
@@ -14,7 +14,7 @@ export const GET = async (
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  const adminLogin = token as unknown as AdminLogin;
+  const adminLogin = token as unknown as User;
 
   const result = await Get(adminLogin.appId, params.jenis);
   return NextResponse.json(result, { status: 200 });
@@ -26,7 +26,7 @@ export const PATCH = async (request: NextRequest) => {
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  const adminLogin = token as unknown as AdminLogin;
+  const adminLogin = token as unknown as User;
 
   const data = await request.formData();
 

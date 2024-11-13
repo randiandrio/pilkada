@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient, Wilayah } from "@prisma/client";
 import { getToken } from "next-auth/jwt";
-import { AdminLogin } from "next-auth";
+import { User } from "next-auth";
 
 const prisma = new PrismaClient();
 
@@ -14,7 +14,7 @@ export const GET = async (
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  const adminLogin = token as unknown as AdminLogin;
+  const adminLogin = token as unknown as User;
 
   if (params.slug[0] === "simpatisan-wilayah") {
     const result = await SimpatisanWilayah(adminLogin, params.slug[1]);
@@ -39,7 +39,7 @@ export const GET = async (
   return NextResponse.json(false);
 };
 
-async function SimpatisanWilayah(admin: AdminLogin, wilayah: String) {
+async function SimpatisanWilayah(admin: User, wilayah: String) {
   let result: Wilayah[] = [];
 
   if (wilayah == "all") {
@@ -149,7 +149,7 @@ async function SimpatisanWilayah(admin: AdminLogin, wilayah: String) {
   };
 }
 
-async function Gender(admin: AdminLogin) {
+async function Gender(admin: User) {
   const l = await prisma.user.aggregate({
     where: {
       appId: Number(admin.appId),
@@ -174,7 +174,7 @@ async function Gender(admin: AdminLogin) {
   };
 }
 
-async function Umur(admin: AdminLogin) {
+async function Umur(admin: User) {
   const kurang21 = await prisma.user.aggregate({
     where: {
       appId: Number(admin.appId),
@@ -288,7 +288,7 @@ async function Umur(admin: AdminLogin) {
   };
 }
 
-async function Statistik(admin: AdminLogin) {
+async function Statistik(admin: User) {
   const relawan = await prisma.user.aggregate({
     where: {
       appId: Number(admin.appId),

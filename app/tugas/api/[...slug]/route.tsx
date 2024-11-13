@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { getToken } from "next-auth/jwt";
-import { AdminLogin } from "next-auth";
+import { User } from "next-auth";
 
 const prisma = new PrismaClient();
 
@@ -14,7 +14,7 @@ export const GET = async (
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  const adminLogin = token as unknown as AdminLogin;
+  const adminLogin = token as unknown as User;
 
   if (params.slug[0] === "data") {
     const result = await Data(adminLogin);
@@ -38,7 +38,7 @@ export const PATCH = async (
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  const adminLogin = token as unknown as AdminLogin;
+  const adminLogin = token as unknown as User;
 
   const data = await request.formData();
 
@@ -48,7 +48,7 @@ export const PATCH = async (
   }
 };
 
-async function CariUser(admin: AdminLogin, cari: String) {
+async function CariUser(admin: User, cari: String) {
   const users = await prisma.user.findMany({
     where: {
       appId: Number(admin.appId),
@@ -62,7 +62,7 @@ async function CariUser(admin: AdminLogin, cari: String) {
   return users;
 }
 
-async function Data(admin: AdminLogin) {
+async function Data(admin: User) {
   const tugas = await prisma.tugas.findMany({
     where: { appId: Number(admin.appId) },
     orderBy: { id: "desc" },
@@ -71,7 +71,7 @@ async function Data(admin: AdminLogin) {
   return tugas;
 }
 
-async function Post(data: any, admin: AdminLogin) {
+async function Post(data: any, admin: User) {
   if (String(data.get("mode")) == "add") {
     await prisma.tugas.create({
       data: {
@@ -82,7 +82,7 @@ async function Post(data: any, admin: AdminLogin) {
         jumlah: Number(data.get("jumlah")),
         deadline: String(data.get("deadline")),
         oleh: "Admin",
-        jabatan: "Admin"
+        jabatan: "Admin",
       },
     });
     return { error: false, message: "Data tugas berhasil ditambahkan" };

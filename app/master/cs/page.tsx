@@ -7,8 +7,7 @@ import DataTable, { TableColumn } from "react-data-table-component";
 import Update from "./action/update";
 import Image from "next/image";
 import { Cs } from "@prisma/client";
-import { useSession } from "next-auth/react";
-import { AdminLogin } from "next-auth";
+
 import { apiImg } from "@/app/helper";
 
 const customStyles = {
@@ -22,8 +21,6 @@ const customStyles = {
 };
 
 export default function InfoPage() {
-  const session = useSession();
-  const akun = session.data as unknown as AdminLogin;
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState<Cs[]>([]);
   const [filter, setFilter] = useState("");
@@ -76,12 +73,10 @@ export default function InfoPage() {
       button: true,
       cell: (row) => (
         <>
-        
-            <div className="d-flex">
-              <Update reload={reload} cs={row} />
-              <Delete reload={reload} cs={row} />
-            </div>
-          
+          <div className="d-flex">
+            <Update reload={reload} cs={row} />
+            <Delete reload={reload} cs={row} />
+          </div>
         </>
       ),
     },

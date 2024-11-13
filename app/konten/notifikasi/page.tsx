@@ -1,13 +1,8 @@
 "use client";
-import { useEffect } from "react";
 import { useState, SyntheticEvent } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { Setting, Wilayah } from "@prisma/client";
 import { resData } from "next-auth";
-import Image from "next/image";
-import { apiImg, uploadGambar } from "../../helper";
-import Select from "react-select";
 
 const NotifikasiPage = () => {
   const [isLoading, setLoading] = useState(true);

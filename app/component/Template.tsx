@@ -1,18 +1,14 @@
 import "material-icons/iconfont/material-icons.css";
 import "bootstrap-select/dist/css/bootstrap-select.min.css";
 import "../../public/template/css/style.css";
-
 import { signOut, useSession } from "next-auth/react";
 import Header from "./Header";
 import Swal from "sweetalert2";
 import Link from "next/link";
 import Image from "next/image";
-import { AdminLogin } from "next-auth";
-import Menu from "./Menu";
 
 export default function Template({ children }: { children: React.ReactNode }) {
-  const session = useSession();
-  const akun = session.data as unknown as AdminLogin;
+  const { data: session, status } = useSession();
 
   const logout = async () => {
     Swal.fire({
@@ -158,7 +154,87 @@ export default function Template({ children }: { children: React.ReactNode }) {
                 </ul>
               </li>
 
-              <Menu akses={Number(akun?.kotaId) > 0 ? "Bupati" : "Gubernur"} />
+              {Number(session?.user.kotaId) > 0 ? (
+                <li>
+                  <a
+                    className="has-arrow "
+                    href="javascript:void(0);"
+                    aria-expanded="false"
+                  >
+                    <div className="menu-icon">
+                      <Image
+                        src="/template/content.png"
+                        width={25}
+                        height={25}
+                        alt="database"
+                      />
+                    </div>
+                    <span className="nav-text">Koordinator</span>
+                  </a>
+
+                  <ul>
+                    <li className="mini-dashboard">Koordinator</li>
+
+                    <li>
+                      <Link href="/koordinator/tingkat/Kabupaten">
+                        Kota / Kabupaten
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href="/koordinator/tingkat/Kecamatan">
+                        Kecamatan
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href="/koordinator/tingkat/Kelurahan">
+                        Kelurahan / Desa
+                      </Link>
+                    </li>
+                  </ul>
+                </li>
+              ) : (
+                <li>
+                  <a
+                    className="has-arrow "
+                    href="javascript:void(0);"
+                    aria-expanded="false"
+                  >
+                    <div className="menu-icon">
+                      <Image
+                        src="/template/content.png"
+                        width={25}
+                        height={25}
+                        alt="database"
+                      />
+                    </div>
+                    <span className="nav-text">Koordinator</span>
+                  </a>
+
+                  <ul>
+                    <li className="mini-dashboard">Koordinator</li>
+
+                    <li>
+                      <Link href="/koordinator/tingkat/Provinsi">Provinsi</Link>
+                    </li>
+
+                    <li>
+                      <Link href="/koordinator/tingkat/Kabupaten">
+                        Kota / Kabupaten
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href="/koordinator/tingkat/Kecamatan">
+                        Kecamatan
+                      </Link>
+                    </li>
+                    <li>
+                      <Link href="/koordinator/tingkat/Kelurahan">
+                        Kelurahan / Desa
+                      </Link>
+                    </li>
+                  </ul>
+                </li>
+              )}
 
               <li>
                 <Link href={`/tugas`} className="" aria-expanded="false">
@@ -177,7 +253,9 @@ export default function Template({ children }: { children: React.ReactNode }) {
               <li>
                 <Link
                   href={`/peta-suara/filter/all/all/${
-                    Number(akun?.kotaId) > 0 ? akun.kotaId : "all-kabupaten"
+                    Number(session?.user.kotaId) > 0
+                      ? session?.user.kotaId
+                      : "all-kabupaten"
                   }/all-kecamatan/all-kelurahan`}
                   className=""
                   aria-expanded="false"

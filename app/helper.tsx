@@ -303,3 +303,36 @@ export async function cekKontakx(
     msg: "HP dan Email bisa digunakan",
   };
 }
+
+export async function IDWilayah(kelId: Number) {
+  const kel = await prisma.wilayah.findUnique({
+    where: { id: Number(kelId) },
+  });
+
+  const kode = kel?.kode.split(".");
+
+  const prov = await prisma.wilayah.findFirst({
+    where: {
+      kode: String(`${kode![0]}`),
+    },
+  });
+
+  const kab = await prisma.wilayah.findFirst({
+    where: {
+      kode: String(`${kode![0]}.${kode![1]}`),
+    },
+  });
+
+  const kec = await prisma.wilayah.findFirst({
+    where: {
+      kode: String(`${kode![0]}.${kode![1]}.${kode![2]}`),
+    },
+  });
+
+  return {
+    provId: prov?.id,
+    kabId: kab?.id,
+    kecId: kec?.id,
+    kelId: kelId,
+  };
+}

@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import Link from "next/link";
+import Generate from "./action/Generate";
 
 const customStyles = {
   headCells: {
@@ -67,7 +68,7 @@ const TpsPage = () => {
       cell: (row) => (
         <div>
           {row.tpsKel.length > 0 ? (
-            <Link href={``}>
+            <Link href={`/master/tps/wilayah/${row.id}`}>
               <button
                 type="button"
                 className="btn btn-outline-success btn-xs light"
@@ -76,12 +77,7 @@ const TpsPage = () => {
               </button>
             </Link>
           ) : (
-            <button
-              type="button"
-              className="btn btn-outline-success btn-xs light"
-            >
-              Generate TPS
-            </button>
+            <Generate reload={reload} wilayah={row} />
           )}
         </div>
       ),

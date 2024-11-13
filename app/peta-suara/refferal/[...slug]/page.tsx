@@ -41,6 +41,7 @@ export default function KonstituenPage({
 
   useEffect(() => {
     reload();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const reload = async () => {
@@ -205,6 +206,7 @@ export default function KonstituenPage({
                 }}
               />
             </div>
+
             <div className="card-body">
               <h3>Total Data : {data.length} Orang</h3>
             </div>

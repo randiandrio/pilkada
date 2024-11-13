@@ -1,4 +1,4 @@
-import { NextAuthOptions } from "next-auth";
+import { NextAuthOptions, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
@@ -51,7 +51,7 @@ export const authOption: NextAuthOptions = {
           provId: x.appData.setting?.provId ?? 0,
           kotaId: x.appData.setting?.kotaId ?? 0,
           appName: x.appData.nama,
-        } as any;
+        } as User;
       },
     }),
   ],
@@ -60,13 +60,32 @@ export const authOption: NextAuthOptions = {
 
   callbacks: {
     async jwt({ token, user }) {
-      return { ...token, ...user };
+      if (user) {
+        token.id = user.id;
+        token.appId = user.appId;
+        token.nama = user.nama;
+        token.role = user.role;
+        token.provId = user.provId;
+        token.kotaId = user.kotaId;
+        token.appName = user.appName;
+      }
+      return token;
     },
     async session({ session, token }) {
-      session = token as any;
+      session.user = {
+        ...session.user,
+        id: Number(token.id),
+        appId: Number(token.appId),
+        nama: String(token.nama),
+        role: String(token.role),
+        provId: Number(token.provId),
+        kotaId: Number(token.kotaId),
+        appName: String(token.appName),
+      };
       return session;
     },
   },
+
   jwt: {
     secret: process.env.NEXTAUTH_SECRET,
   },

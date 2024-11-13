@@ -1,10 +1,8 @@
-import { AdminLogin } from "next-auth";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 
 export default function Header() {
-  const session = useSession();
-  const akun = session.data as unknown as AdminLogin;
+  const { data: session, status } = useSession();
   return (
     <div>
       <div className="nav-header">
@@ -39,15 +37,17 @@ export default function Header() {
             <div className="collapse navbar-collapse justify-content-between">
               <div className="header-left">
                 <div className="px-3 pt-1">
-                  {session.status == "authenticated" ? (
+                  {status == "authenticated" ? (
                     <>
-                      <h4 style={{ lineHeight: "0px" }}>{akun.appName}</h4>
+                      <h4 style={{ lineHeight: "0px" }}>
+                        {session.user.appName}
+                      </h4>
                       <small style={{ lineHeight: "15px" }}>
-                        {akun.nama} - {akun.role}
+                        {session.user.nama} - {session.user.role}
                       </small>
                     </>
                   ) : (
-                    <h4 style={{ lineHeight: "0px" }}>AyoMenang</h4>
+                    <h4 style={{ lineHeight: "0px" }}>SISPOL</h4>
                   )}
                 </div>
               </div>

@@ -216,7 +216,7 @@ export default function KonstituenPage({
       <button
         onClick={() => exportExcel(`Data Refferal ${namaUser}`, "refferal")}
         type="button"
-        className="btn btn-info"
+        className="btn btn-info mb-5"
       >
         Export To Excel
       </button>

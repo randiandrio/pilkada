@@ -9,6 +9,7 @@ import Link from "next/link";
 import { tglIndo } from "@/app/helper";
 import Lihat from "../../action/Lihat";
 import Update from "../../action/Update";
+import * as XLSX from "xlsx";
 
 const customStyles = {
   headCells: {
@@ -368,6 +369,37 @@ export default function KonstituenPage({
     },
   ];
 
+  const exportExcel = async (title?: string, worksheetname?: string) => {
+    try {
+      if (data && Array.isArray(data)) {
+        const dataToExport = data.map((x: any, index: number) => ({
+          No: index + 1,
+          Nama: x.nama,
+          NIK: x.nik,
+          Jabatan: x.jabatan,
+          "No. HP": x.hp,
+          "No. WA": x.wa,
+          "Tempat/Tgl Lahir": `${x.tempatLahir}, ${x.tanggalLahir}`,
+          "Kota / Kabupaten": x.kab.nama,
+          Kecamagan: x.kec.nama,
+          "Kelurahan / Desa": x.kel.nama,
+        }));
+        const workbook = XLSX.utils.book_new();
+        const worksheet = XLSX.utils?.json_to_sheet(dataToExport);
+        XLSX.utils.book_append_sheet(workbook, worksheet, worksheetname);
+        XLSX.writeFile(workbook, `${title}.xlsx`);
+        console.log(`Exported data to ${title}.xlsx`);
+        setLoading(false);
+      } else {
+        setLoading(false);
+        console.log("#==================Export Error");
+      }
+    } catch (error: any) {
+      setLoading(false);
+      console.log("#==================Export Error", error.message);
+    }
+  };
+
   const filteredItems = data.filter(
     (item: any) =>
       (item.nama && item.nama.toLowerCase().includes(filter.toLowerCase())) ||
@@ -485,6 +517,13 @@ export default function KonstituenPage({
             <h3>Total Data : {data.length} Orang</h3>
           </div>
         </div>
+        <button
+          onClick={() => exportExcel(`Data Simpatisan`, "refferal")}
+          type="button"
+          className="btn btn-info mb-5"
+        >
+          Export To Excel
+        </button>
       </div>
     </div>
   );

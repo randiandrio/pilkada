@@ -329,6 +329,7 @@ model RealCount {
   appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)
   tps                 Tps             @relation(fields: [tpsId], references: [id], onDelete: Cascade)
   detail              DetailRealCount[]
+  @@unique([appId, tpsId], name: "appId_tpsId")
 }
 
 model DetailRealCount {
@@ -339,6 +340,7 @@ model DetailRealCount {
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
   realCount           RealCount       @relation(fields: [realCountId], references: [id], onDelete: Cascade)
+  @@unique([realCountId, paslonId], name: "realCountId_paslonId")
 }
 
 

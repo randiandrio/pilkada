@@ -6,18 +6,22 @@ import { NextRequest, NextResponse } from "next/server";
 const prisma = new PrismaClient();
 
 export const GET = async () => {
-  const users = await prisma.user.findMany();
+  // const users = await prisma.user.findMany();
 
-  for (let i = 0; i < users.length; i++) {
-    const u: any = users[i].tanggalLahir?.split("/");
-    const umur = 2024 - Number(u[2]);
-    await prisma.user.update({
-      where: { id: users[i].id },
-      data: {
-        umur: umur,
-      },
-    });
-  }
+  // for (let i = 0; i < users.length; i++) {
+  //   const u: any = users[i].tanggalLahir?.split("/");
+  //   const umur = 2024 - Number(u[2]);
+  //   await prisma.user.update({
+  //     where: { id: users[i].id },
+  //     data: {
+  //       umur: umur,
+  //     },
+  //   });
+  // }
+
+  // await prisma.wilayah.delete({
+  //   where: { id: 27336 },
+  // });
 
   return NextResponse.json("Update umur selesai", { status: 200 });
 };
@@ -1280,48 +1284,79 @@ async function LoadPaslon(data: any) {
 }
 
 async function PostSuara(data: any) {
-  // const paslon = await prisma.paslon.findMany({
-  //   where: {
-  //     appId: Number(data.appId),
-  //   },
-  //   orderBy: {
-  //     noUrut: "asc",
-  //   },
-  // });
-  // if (paslon.length == 0) return false;
-  // for (let i = 0; i < paslon.length; i++) {
-  //   await prisma.realCount.upsert({
-  //     where: {
-  //       tpsId_paslonId: {
-  //         tpsId: Number(data.tpsId),
-  //         paslonId: Number(paslon[i].id),
-  //       },
-  //     },
-  //     create: {
-  //       appId: Number(data.appId),
-  //       tpsId: Number(data.tpsId),
-  //       paslonId: Number(paslon[i].id),
-  //       suara: Number(data.suara[i]),
-  //     },
-  //     update: {
-  //       suara: Number(data.suara[i]),
-  //     },
-  //   });
-  // }
-  // if (String(data.foto) != "") {
-  //   await prisma.realCount.updateMany({
-  //     where: {
-  //       tpsId: Number(data.tpsId),
-  //     },
-  //     data: {
-  //       foto: String(data.foto),
-  //     },
-  //   });
-  // }
-  // return {
-  //   error: false,
-  //   message: "Data suara telah disimpan",
-  // };
+  const paslon = await prisma.paslon.findMany({
+    where: {
+      appId: Number(data.appId),
+    },
+    orderBy: {
+      noUrut: "asc",
+    },
+  });
+
+  if (paslon.length == 0) return false;
+
+  const rc = await prisma.realCount.upsert({
+    where: {
+      appId_tpsId: {
+        appId: Number(data.appId),
+        tpsId: Number(data.tpsId),
+      },
+    },
+    create: {
+      appId: Number(data.appId),
+      tpsId: Number(data.tpsId),
+      suaraSah: Number(data.sah),
+      suaraBatal: Number(data.batal),
+      suaraSisa: Number(data.sisa),
+      mulai: String(data.mulai),
+      selesai: String(data.selesai),
+      catatan: String(data.catatan),
+    },
+    update: {
+      suaraSah: Number(data.sah),
+      suaraBatal: Number(data.batal),
+      suaraSisa: Number(data.sisa),
+      mulai: String(data.mulai),
+      selesai: String(data.selesai),
+      catatan: String(data.catatan),
+    },
+  });
+
+  if (String(data.foto) != "") {
+    await prisma.realCount.updateMany({
+      where: {
+        appId: Number(data.appId),
+        tpsId: Number(data.tpsId),
+      },
+      data: {
+        foto: String(data.foto),
+      },
+    });
+  }
+
+  for (let i = 0; i < paslon.length; i++) {
+    await prisma.detailRealCount.upsert({
+      where: {
+        realCountId_paslonId: {
+          realCountId: Number(rc.id),
+          paslonId: Number(paslon[i].id),
+        },
+      },
+      create: {
+        realCountId: Number(data.tpsId),
+        paslonId: Number(paslon[i].id),
+        suara: Number(data.suara[i]),
+      },
+      update: {
+        suara: Number(data.suara[i]),
+      },
+    });
+  }
+
+  return {
+    error: false,
+    message: "Data suara telah disimpan",
+  };
 }
 
 async function LoadSuara(data: any) {

@@ -1343,7 +1343,7 @@ async function PostSuara(data: any) {
         },
       },
       create: {
-        realCountId: Number(data.tpsId),
+        realCountId: Number(rc.id),
         paslonId: Number(paslon[i].id),
         suara: Number(data.suara[i]),
       },

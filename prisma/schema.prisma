@@ -194,6 +194,7 @@ model Paslon {
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
   appData             AppData         @relation(fields: [appId], references: [id], onDelete: Cascade)
+  realCount           DetailRealCount[]
 } 
 
 model Pengumuman {
@@ -340,6 +341,7 @@ model DetailRealCount {
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
   realCount           RealCount       @relation(fields: [realCountId], references: [id], onDelete: Cascade)
+  paslon              Paslon          @relation(fields: [paslonId], references: [id], onDelete: Cascade)
   @@unique([realCountId, paslonId], name: "realCountId_paslonId")
 }
 

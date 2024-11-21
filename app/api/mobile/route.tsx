@@ -175,6 +175,11 @@ export const POST = async (request: NextRequest) => {
     return NextResponse.json(result, { status: 200 });
   }
 
+  if (mapData.jenis_req === "load_detail_suara") {
+    const result = await LoadDetailSuara(mapData);
+    return NextResponse.json(result, { status: 200 });
+  }
+
   if (mapData.jenis_req === "load_tugas_anggota") {
     const result = await LoadTugasAnggota(mapData);
     return NextResponse.json(result, { status: 200 });
@@ -1375,6 +1380,49 @@ async function LoadSuara(data: any) {
     where: {
       appId: Number(data.appId),
       tpsId: Number(data.tpsId),
+      updatedAt: {
+        gt: new Date(data.last),
+      },
+    },
+  });
+
+  var newId = newData.map(function (item) {
+    return item.id;
+  });
+
+  const result = {
+    allId: allId.toString(),
+    newId: newId.toString(),
+    newData: newData,
+  };
+
+  return result;
+}
+
+async function LoadDetailSuara(data: any) {
+  const xAllId = await prisma.detailRealCount.findMany({
+    where: {
+      paslon: {
+        appId: Number(data.appId),
+      },
+      realCount: {
+        tpsId: Number(data.tpsId),
+      },
+    },
+  });
+
+  var allId = xAllId.map(function (item) {
+    return item.id;
+  });
+
+  const newData = await prisma.detailRealCount.findMany({
+    where: {
+      paslon: {
+        appId: Number(data.appId),
+      },
+      realCount: {
+        tpsId: Number(data.tpsId),
+      },
       updatedAt: {
         gt: new Date(data.last),
       },

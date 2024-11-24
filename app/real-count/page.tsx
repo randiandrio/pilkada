@@ -186,7 +186,8 @@ function RealCount() {
     },
     {
       name: "Tanggal Data",
-      selector: (row) => tglJamIndo(row.create),
+      width: "200px",
+      selector: (row) => tglJamIndo(row.updatedAt),
       sortable: true,
     },
     {

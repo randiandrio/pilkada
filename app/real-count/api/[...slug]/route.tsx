@@ -306,6 +306,34 @@ async function RealCount(admin: User, wilayah: String) {
     }
   });
 
+  const realCount = await prisma.realCount.findMany({
+    where: {
+      appId: Number(admin.appId),
+    },
+    include: {
+      tps: {
+        include: {
+          kel: true,
+        },
+      },
+      detail: {
+        include: {
+          paslon: true,
+        },
+      },
+    },
+    orderBy: {
+      id: "desc",
+    },
+  });
+
+  const paslon = await prisma.paslon.findMany({
+    where: { appId: Number(admin.appId) },
+    orderBy: {
+      noUrut: "asc",
+    },
+  });
+
   return {
     wilayah: wil,
     series: series,
@@ -314,5 +342,7 @@ async function RealCount(admin: User, wilayah: String) {
     firstName: firstName,
     pie: pie,
     dataMasuk: dataMasuk,
+    realCount: realCount,
+    paslon: paslon,
   };
 }

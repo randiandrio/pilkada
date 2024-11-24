@@ -1,6 +1,21 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import { useEffect, useState } from "react";
 import ReactEcharts from "echarts-for-react";
+import DataTable, { TableColumn } from "react-data-table-component";
+import { tglJamIndo } from "../helper";
+import { Paslon } from "@prisma/client";
+import LihatC1 from "./action/Lihat";
+
+const customStyles = {
+  headCells: {
+    style: {
+      background: "#53d0b3",
+      fontSize: "14px",
+      fontWeight: "500",
+    },
+  },
+};
 
 function RealCount() {
   const [isLoading, setLoading] = useState(true);
@@ -11,6 +26,10 @@ function RealCount() {
   const [option1, setOption1] = useState({});
   const [option2, setOption2] = useState({});
   const [option3, setOption3] = useState({});
+  const [data, setData] = useState([]);
+  const [page, setPage] = useState(1);
+  const [perPage, setPerpage] = useState(10);
+  const [columns, setColomns] = useState<TableColumn<any>[]>([]);
 
   useEffect(() => {
     setLoading(false);
@@ -24,8 +43,11 @@ function RealCount() {
       .then((res) => res.json())
       .then((x) => {
         console.log(x);
+
         setNamaWilayah(x.namaWilayah);
         setFirstName(x.firstName);
+
+        // Konfigurasi chart
         const opt1 = {
           tooltip: {
             trigger: "axis",
@@ -113,6 +135,34 @@ function RealCount() {
           ],
         };
         setOption3(opt3);
+
+        // Kolom dinamis
+        const dynamicCols = x.paslon.map((item: Paslon, index: number) => ({
+          name: `${item.calon} / ${item.wakil}`,
+          selector: (row: any) => String(row.detail[index].suara),
+          cell: (row: any) => (
+            <div
+              style={{
+                backgroundColor: "#D4EDDA",
+                color: "#155724",
+                width: "100%",
+                height: "100%",
+                textAlign: "center", // Horizontal centering
+                display: "flex", // Activate flexbox
+                justifyContent: "center", // Center horizontally
+                alignItems: "center",
+              }}
+            >
+              {String(row.detail[index].suara)}
+            </div>
+          ),
+        }));
+
+        // Gabungkan kolom statis dan dinamis
+        setColomns([...columnsStatic, ...dynamicCols, ...columnsStatic2]);
+
+        // Set data tabel
+        setData(x.realCount);
       });
   };
 
@@ -127,10 +177,78 @@ function RealCount() {
     load1("all");
   };
 
+  const columnsStatic: TableColumn<any>[] = [
+    {
+      name: "No.",
+      width: "60px",
+      center: true,
+      cell: (row, index) => (page - 1) * perPage + (index + 1),
+    },
+    {
+      name: "Tanggal Data",
+      selector: (row) => tglJamIndo(row.create),
+      sortable: true,
+    },
+    {
+      name: "TPS",
+      selector: (row) => `TPS ${String(row.tps.tpsNo).padStart(2, "0")}`,
+      sortable: true,
+    },
+    {
+      name: "Desa / Kelurahan",
+      selector: (row) => String(row.tps.kel.nama),
+      sortable: true,
+    },
+    {
+      name: "Kecamatan",
+      selector: (row) => String(row.tps.kel.kecamatan),
+      sortable: true,
+    },
+  ];
+
+  const columnsStatic2: TableColumn<any>[] = [
+    {
+      name: "Mulai",
+      selector: (row) => row.mulai,
+      sortable: true,
+    },
+    {
+      name: "Selesai",
+      selector: (row) => row.selesai,
+      sortable: true,
+    },
+    {
+      name: "Suara Sah",
+      selector: (row) => row.suaraSah,
+      sortable: true,
+    },
+    {
+      name: "Suara Batal",
+      selector: (row) => row.suaraBatal,
+      sortable: true,
+    },
+    {
+      name: "Sisa Suara",
+      selector: (row) => row.suaraSisa,
+      sortable: true,
+    },
+    {
+      name: "Catatan",
+      selector: (row) => row.catatan,
+      sortable: true,
+    },
+    {
+      name: "Form C1",
+      width: "160px",
+      cell: (row) => <LihatC1 realcount={row} />,
+    },
+  ];
+
   // Objek event handler
   const onEvents = {
     click: onChartClick,
   };
+
   if (isLoading) return <p>Loading...</p>;
 
   return (
@@ -190,6 +308,35 @@ function RealCount() {
                   <ReactEcharts style={{ height: "300px" }} option={option3} />
                 )}
               </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-xl-12 col-lg-12">
+          <div className="card">
+            <div className="card-header flex-wrap" id="default-tab">
+              <div>
+                <h4 className="card-title">Data Form C1</h4>
+              </div>
+            </div>
+
+            <div className="table-responsive pb-1">
+              <DataTable
+                responsive
+                highlightOnHover={true}
+                persistTableHead={true}
+                columns={columns}
+                data={data}
+                pagination
+                customStyles={customStyles}
+                onChangePage={(page) => {
+                  setPage(page);
+                }}
+                onChangeRowsPerPage={(page) => {
+                  setPage(1);
+                  setPerpage(page);
+                }}
+              />
             </div>
           </div>
         </div>

@@ -45,7 +45,7 @@ const TpsPage = ({ params }: { params: { slug: string[] } }) => {
     {
       name: "Nomor TPS",
       width: "150px",
-      selector: (row) => String(row.tpsNo),
+      selector: (row) => String(row.tpsNo).padStart(2, "0"),
       sortable: true,
     },
     {

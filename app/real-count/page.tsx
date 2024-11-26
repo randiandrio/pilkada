@@ -3,9 +3,10 @@
 import { useEffect, useState } from "react";
 import ReactEcharts from "echarts-for-react";
 import DataTable, { TableColumn } from "react-data-table-component";
-import { tglJamIndo } from "../helper";
+import { className, noRupiah, rupiah, tglJamIndo } from "../helper";
 import { Paslon } from "@prisma/client";
 import LihatC1 from "./action/Lihat";
+import Image from "next/image";
 
 const customStyles = {
   headCells: {
@@ -23,6 +24,9 @@ function RealCount() {
   const [firstName, setFirstName] = useState("");
   const [namaWilayah, setNamaWilayah] = useState("");
   const [load1Load, setLoad1Load] = useState(true);
+  const [paslons, setPaslons] = useState([]);
+  const [suaras, setSuaras] = useState<any[]>([]);
+
   const [option1, setOption1] = useState({});
   const [option2, setOption2] = useState({});
   const [option3, setOption3] = useState({});
@@ -43,7 +47,7 @@ function RealCount() {
       .then((res) => res.json())
       .then((x) => {
         console.log(x);
-
+        setSuaras(x.suara);
         setNamaWilayah(x.namaWilayah);
         setFirstName(x.firstName);
 
@@ -136,6 +140,7 @@ function RealCount() {
         };
         setOption3(opt3);
 
+        setPaslons(x.paslon);
         // Kolom dinamis
         const dynamicCols = x.paslon.map((item: Paslon, index: number) => ({
           name: `${item.calon} / ${item.wakil}`,
@@ -168,6 +173,7 @@ function RealCount() {
 
   const onChartClick = (params: any): void => {
     if (click) {
+      console.log(params);
       load1(params.name);
       // console.log(params.name);
     }
@@ -255,6 +261,31 @@ function RealCount() {
   return (
     <>
       <div className="row">
+        <div className="col-12">
+          <div className="row">
+            {paslons.map((x: Paslon, index: number) => (
+              <div
+                key={x.id}
+                className={`${className(paslons.length)}  col-lg-6 col-sm-6`}
+              >
+                <div className="card bg-success overflow-hidden">
+                  <div className="card-body">
+                    <div className="students d-flex align-items-center justify-content-between flex-wrap">
+                      <div>
+                        <h4>{x.calon}</h4>
+                        <h5>{x.wakil}</h5>
+                      </div>
+                      <div>
+                        <h1>{noRupiah(suaras[index].suara)}</h1>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <div className="col-xl-8 col-lg-8">
           <div className="card">
             <div className="card-header">
@@ -322,22 +353,26 @@ function RealCount() {
             </div>
 
             <div className="table-responsive pb-1">
-              <DataTable
-                responsive
-                highlightOnHover={true}
-                persistTableHead={true}
-                columns={columns}
-                data={data}
-                pagination
-                customStyles={customStyles}
-                onChangePage={(page) => {
-                  setPage(page);
-                }}
-                onChangeRowsPerPage={(page) => {
-                  setPage(1);
-                  setPerpage(page);
-                }}
-              />
+              {load1Load ? (
+                <p className="px-2 py-2">Loading ... </p>
+              ) : (
+                <DataTable
+                  responsive
+                  highlightOnHover={true}
+                  persistTableHead={true}
+                  columns={columns}
+                  data={data}
+                  pagination
+                  customStyles={customStyles}
+                  onChangePage={(page) => {
+                    setPage(page);
+                  }}
+                  onChangeRowsPerPage={(page) => {
+                    setPage(1);
+                    setPerpage(page);
+                  }}
+                />
+              )}
             </div>
           </div>
         </div>

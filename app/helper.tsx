@@ -336,3 +336,15 @@ export async function IDWilayah(kelId: Number) {
     kelId: kelId,
   };
 }
+
+export async function className(jumlah: number) {
+  if (jumlah == 2) {
+    return "col-xl-6";
+  }
+  if (jumlah == 3) {
+    return "col-xl-4";
+  }
+  if (jumlah > 3) {
+    return "col-xl-3";
+  }
+}

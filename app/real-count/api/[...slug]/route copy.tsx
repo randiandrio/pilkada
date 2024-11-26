@@ -30,9 +30,8 @@ async function RealCount(admin: User, wilayah: String) {
   let firstName = "";
   let isProv = false;
   let isTPS = false;
+  let wid = 0;
   let dataMasuk = 0;
-  let kode;
-  let realCount;
 
   if (wilayah == "all") {
     const all = await prisma.tps.aggregate({
@@ -59,9 +58,11 @@ async function RealCount(admin: User, wilayah: String) {
     if (admin.kotaId != 0) {
       wilayahId = admin.kotaId;
     }
-    kode = await prisma.wilayah.findUnique({
+    const kode = await prisma.wilayah.findUnique({
       where: { id: Number(wilayahId) },
     });
+
+    wid = Number(wilayahId);
 
     namaWilayah = String(kode?.nama);
 
@@ -82,35 +83,15 @@ async function RealCount(admin: User, wilayah: String) {
         AND kabupaten = ${kode?.kabupaten} 
         ORDER BY nama DESC`;
     }
+  }
 
-    realCount = await prisma.realCount.findMany({
-      where: {
-        appId: Number(admin.appId),
-      },
-      include: {
-        tps: {
-          include: {
-            kel: true,
-          },
-        },
-        detail: {
-          include: {
-            paslon: true,
-          },
-        },
-      },
-      orderBy: {
-        id: "desc",
-      },
-    });
-  } else {
-    kode = await prisma.wilayah.findFirst({
-      where: { nama: String(wilayah) },
-    });
+  const kode = await prisma.wilayah.findFirst({
+    where: { nama: String(wilayah) },
+  });
+
+  if (wilayah != "all") {
+    wid = Number(kode?.id);
     namaWilayah = String(kode?.nama);
-    kode = await prisma.wilayah.findFirst({
-      where: { id: kode?.id },
-    });
   }
 
   if (kode?.kode.length == 5) {
@@ -120,30 +101,6 @@ async function RealCount(admin: User, wilayah: String) {
         AND provinsi = ${kode?.provinsi} 
         AND kabupaten = ${kode?.kabupaten} 
         ORDER BY nama DESC`;
-
-    realCount = await prisma.realCount.findMany({
-      where: {
-        appId: Number(admin.appId),
-        tps: {
-          kotaId: kode.id,
-        },
-      },
-      include: {
-        tps: {
-          include: {
-            kel: true,
-          },
-        },
-        detail: {
-          include: {
-            paslon: true,
-          },
-        },
-      },
-      orderBy: {
-        id: "desc",
-      },
-    });
 
     const all = await prisma.tps.aggregate({
       where: {
@@ -155,54 +112,33 @@ async function RealCount(admin: User, wilayah: String) {
       },
     });
 
-    const masuk = await prisma.realCount.aggregate({
+    const masuk = await prisma.detailRealCount.aggregate({
       where: {
-        appId: Number(admin.appId),
-        tps: {
-          kotaId: kode.id,
+        realCount: {
+          appId: Number(admin.appId),
+          tps: {
+            kotaId: kode.id,
+          },
         },
       },
       _count: {
-        tpsId: true,
+        id: true,
       },
     });
 
-    dataMasuk = Math.ceil((masuk._count.tpsId / all._count.id) * 100);
+    dataMasuk = Math.ceil((masuk._count.id / all._count.id) * 100);
   }
 
   if (kode?.kode.length == 8) {
-    namaWilayah = `Kec. ${namaWilayah}`;
-
-    result = await prisma.$queryRaw`SELECT * FROM "public"."Wilayah" 
-        WHERE LENGTH(kode) = 13
-        AND provinsi = ${kode?.provinsi} 
-        AND kabupaten = ${kode?.kabupaten} 
-        AND kecamatan = ${kode?.kecamatan} 
-        ORDER BY nama DESC`;
-
-    realCount = await prisma.realCount.findMany({
+    result = await prisma.tps.findMany({
       where: {
         appId: Number(admin.appId),
-        tps: {
-          kecId: kode.id,
-        },
+        kecId: Number(kode.id),
       },
-      include: {
-        tps: {
-          include: {
-            kel: true,
-          },
-        },
-        detail: {
-          include: {
-            paslon: true,
-          },
-        },
-      },
-      orderBy: {
-        id: "desc",
-      },
+      orderBy: { tpsNo: "desc" },
     });
+
+    firstName = "Kec. ";
 
     const all = await prisma.tps.aggregate({
       where: {
@@ -214,81 +150,21 @@ async function RealCount(admin: User, wilayah: String) {
       },
     });
 
-    const masuk = await prisma.realCount.aggregate({
+    const masuk = await prisma.detailRealCount.aggregate({
       where: {
-        appId: Number(admin.appId),
-        tps: {
-          kecId: kode.id,
-        },
-      },
-      _count: {
-        tpsId: true,
-      },
-    });
-
-    dataMasuk = Math.ceil((masuk._count.tpsId / all._count.id) * 100);
-  }
-
-  if (kode?.kode.length == 13) {
-    namaWilayah = `Kel/Desa. ${namaWilayah}`;
-    isTPS = true;
-
-    result = await prisma.tps.findMany({
-      where: {
-        kelId: kode.id,
-      },
-      orderBy: {
-        tpsNo: "desc",
-      },
-    });
-
-    realCount = await prisma.realCount.findMany({
-      where: {
-        appId: Number(admin.appId),
-        tps: {
-          kelId: kode.id,
-        },
-      },
-      include: {
-        tps: {
-          include: {
-            kel: true,
+        realCount: {
+          appId: Number(admin.appId),
+          tps: {
+            kecId: kode.id,
           },
         },
-        detail: {
-          include: {
-            paslon: true,
-          },
-        },
-      },
-      orderBy: {
-        id: "desc",
-      },
-    });
-
-    const all = await prisma.tps.aggregate({
-      where: {
-        appId: Number(admin.appId),
-        kelId: kode.id,
       },
       _count: {
         id: true,
       },
     });
 
-    const masuk = await prisma.realCount.aggregate({
-      where: {
-        appId: Number(admin.appId),
-        tps: {
-          kelId: kode.id,
-        },
-      },
-      _count: {
-        tpsId: true,
-      },
-    });
-
-    dataMasuk = Math.ceil((masuk._count.tpsId / all._count.id) * 100);
+    dataMasuk = Math.ceil((masuk._count.id / all._count.id) * 100);
   }
 
   const pcs = await prisma.paslon.findMany({
@@ -325,7 +201,7 @@ async function RealCount(admin: User, wilayah: String) {
             realCount: {
               appId: Number(admin.appId),
               tps: {
-                kotaId: Number(kode.id),
+                kotaId: Number(wid),
               },
             },
           },
@@ -344,26 +220,7 @@ async function RealCount(admin: User, wilayah: String) {
             realCount: {
               appId: Number(admin.appId),
               tps: {
-                kecId: Number(kode.id),
-              },
-            },
-          },
-          _sum: { suara: true },
-        });
-
-        pie.push({
-          value: j._sum.suara ?? 0,
-          name: `${pcs[ii].calon} & ${pcs[ii].wakil}`,
-        });
-      }
-      if (kode?.kode.length == 13) {
-        const j = await prisma.detailRealCount.aggregate({
-          where: {
-            paslonId: pcs[ii].id,
-            realCount: {
-              appId: Number(admin.appId),
-              tps: {
-                kelId: Number(kode.id),
+                kecId: Number(wid),
               },
             },
           },
@@ -407,43 +264,24 @@ async function RealCount(admin: User, wilayah: String) {
               suara: true,
             },
           });
-          s.push(j._sum.suara ?? 0);
         } else {
-          if (kode?.kode.length == 5) {
-            j = await prisma.detailRealCount.aggregate({
-              where: {
-                paslonId: pcs[ii].id,
-                realCount: {
-                  appId: Number(admin.appId),
-                  tps: {
-                    kecId: Number(result[i].id),
-                  },
+          j = await prisma.detailRealCount.aggregate({
+            where: {
+              paslonId: pcs[ii].id,
+              realCount: {
+                appId: Number(admin.appId),
+                tps: {
+                  kecId: Number(result[i].id),
                 },
               },
-              _sum: {
-                suara: true,
-              },
-            });
-            s.push(j._sum.suara ?? 0);
-          }
-          if (kode?.kode.length == 8) {
-            j = await prisma.detailRealCount.aggregate({
-              where: {
-                paslonId: pcs[ii].id,
-                realCount: {
-                  appId: Number(admin.appId),
-                  tps: {
-                    kelId: Number(result[i].id),
-                  },
-                },
-              },
-              _sum: {
-                suara: true,
-              },
-            });
-            s.push(j._sum.suara ?? 0);
-          }
+            },
+            _sum: {
+              suara: true,
+            },
+          });
         }
+
+        s.push(j._sum.suara ?? 0);
       }
     }
 
@@ -467,32 +305,33 @@ async function RealCount(admin: User, wilayah: String) {
     }
   });
 
+  const realCount = await prisma.realCount.findMany({
+    where: {
+      appId: Number(admin.appId),
+    },
+    include: {
+      tps: {
+        include: {
+          kel: true,
+        },
+      },
+      detail: {
+        include: {
+          paslon: true,
+        },
+      },
+    },
+    orderBy: {
+      id: "desc",
+    },
+  });
+
   const paslon = await prisma.paslon.findMany({
     where: { appId: Number(admin.appId) },
     orderBy: {
       noUrut: "asc",
     },
   });
-
-  let suara: any[] = [];
-  for (let i = 0; i < paslon.length; i++) {
-    const s = await prisma.detailRealCount.aggregate({
-      where: {
-        paslonId: paslon[i].id,
-      },
-      _sum: {
-        suara: true,
-      },
-    });
-
-    const x = {
-      paslonId: paslon[i].id,
-      noUrut: paslon[i].noUrut,
-      suara: s._sum.suara,
-    };
-
-    suara.push(x);
-  }
 
   return {
     wilayah: wil,
@@ -504,6 +343,5 @@ async function RealCount(admin: User, wilayah: String) {
     dataMasuk: dataMasuk,
     realCount: realCount,
     paslon: paslon,
-    suara: suara,
   };
 }

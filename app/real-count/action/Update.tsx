@@ -57,6 +57,7 @@ function Update({
     const pesan = (await x.data) as resData;
     if (!pesan.error) {
       handleClose();
+      reload();
     }
     setPost(false);
     Swal.fire({

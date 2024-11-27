@@ -168,7 +168,7 @@ function RealCount() {
         const dynamicCols = x.paslon.map((item: Paslon, index: number) => ({
           name: `${item.calon} / ${item.wakil}`,
           selector: (row: any) => {
-            row.detail != undefined ? String(row.detail[index].suara) : "0";
+            row.detail.length > 0 ? String(row.detail[index].suara) : "0";
           },
           cell: (row: any) => (
             <div
@@ -183,7 +183,7 @@ function RealCount() {
                 alignItems: "center",
               }}
             >
-              {row.detail != undefined ? String(row.detail[index].suara) : "0"}
+              {row.detail.length > 0 ? String(row.detail[index].suara) : "0"}
             </div>
           ),
         }));

@@ -21,6 +21,11 @@ export const GET = async (
     return NextResponse.json(result, { status: 200 });
   }
 
+  if (params.slug[0] === "load_kota") {
+    const result = await LoadKota(adminLogin);
+    return NextResponse.json(result, { status: 200 });
+  }
+
   return NextResponse.json(false);
 };
 
@@ -506,4 +511,21 @@ async function RealCount(admin: User, wilayah: String) {
     paslon: paslon,
     suara: suara,
   };
+}
+
+async function LoadKota(admin: User) {
+  const kode = await prisma.wilayah.findUnique({
+    where: { id: Number(admin.provId) },
+  });
+  const result: any[] =
+    await prisma.$queryRaw`SELECT * FROM "public"."Wilayah" WHERE LENGTH(kode) = 5 AND provinsi = ${kode?.provinsi} ORDER BY nama ASC`;
+
+  let x = [];
+  for (let i = 0; i < result.length; i++) {
+    x.push({
+      value: result[i].id,
+      nama: result[i].nama,
+    });
+  }
+  return x;
 }

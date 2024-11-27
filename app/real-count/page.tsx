@@ -7,6 +7,7 @@ import { className, noRupiah, rupiah, tglJamIndo } from "../helper";
 import { Paslon } from "@prisma/client";
 import LihatC1 from "./action/Lihat";
 import Image from "next/image";
+import Add from "./action/Add";
 
 const customStyles = {
   headCells: {
@@ -35,10 +36,31 @@ function RealCount() {
   const [perPage, setPerpage] = useState(10);
   const [columns, setColomns] = useState<TableColumn<any>[]>([]);
 
+  const [listKota, setListKota] = useState<any[]>([]);
+  const [selectedKota, setSelectedKota] = useState({
+    value: "",
+    label: "Pilih Kota / Kabupaten",
+  });
+
   useEffect(() => {
     setLoading(false);
+    loadKota();
     load1("all");
   }, []);
+
+  const loadKota = async () => {
+    fetch(`/real-count/api/load_kota`)
+      .then((res) => res.json())
+      .then((x) => {
+        var a = x.map(function (item: any) {
+          return {
+            value: item.value,
+            label: item.nama,
+          };
+        });
+        setListKota(a);
+      });
+  };
 
   const load1 = async (name: String) => {
     setLoad1Load(true);
@@ -276,7 +298,7 @@ function RealCount() {
                         <h5>{x.wakil}</h5>
                       </div>
                       <div>
-                        <h1>{noRupiah(suaras[index].suara)}</h1>
+                        <h1>{noRupiah(suaras[index].suara ?? 0)}</h1>
                       </div>
                     </div>
                   </div>

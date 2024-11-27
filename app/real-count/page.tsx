@@ -8,6 +8,7 @@ import { Paslon } from "@prisma/client";
 import LihatC1 from "./action/Lihat";
 import Image from "next/image";
 import Add from "./action/Add";
+import Delete from "./action/Delete";
 
 const customStyles = {
   headCells: {
@@ -37,16 +38,16 @@ function RealCount() {
   const [columns, setColomns] = useState<TableColumn<any>[]>([]);
 
   const [listKota, setListKota] = useState<any[]>([]);
-  const [selectedKota, setSelectedKota] = useState({
-    value: "",
-    label: "Pilih Kota / Kabupaten",
-  });
 
   useEffect(() => {
     setLoading(false);
     loadKota();
     load1("all");
   }, []);
+
+  const reload = async () => {
+    load1("all");
+  };
 
   const loadKota = async () => {
     fetch(`/real-count/api/load_kota`)
@@ -268,8 +269,15 @@ function RealCount() {
     },
     {
       name: "Form C1",
-      width: "160px",
-      cell: (row) => <LihatC1 realcount={row} />,
+      width: "200px",
+      cell: (row) => (
+        <>
+          <div className="d-flex">
+            <LihatC1 realcount={row} />,
+            <Delete reload={onReset} cId={row.id} />
+          </div>
+        </>
+      ),
     },
   ];
 
@@ -398,6 +406,11 @@ function RealCount() {
             </div>
           </div>
         </div>
+        {load1Load ? (
+          <p className="px-2 py-2">Loading ... </p>
+        ) : (
+          <Add listKota={listKota} reload={onReset} paslon={paslons} />
+        )}
       </div>
     </>
   );

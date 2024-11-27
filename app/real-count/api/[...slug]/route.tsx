@@ -26,7 +26,46 @@ export const GET = async (
     return NextResponse.json(result, { status: 200 });
   }
 
+  if (params.slug[0] === "load_kecamatan") {
+    const result = await loadKecamatan(params.slug[1]);
+    return NextResponse.json(result, { status: 200 });
+  }
+
+  if (params.slug[0] === "load_kelurahan") {
+    const result = await loadKelurahan(params.slug[1]);
+    return NextResponse.json(result, { status: 200 });
+  }
+
+  if (params.slug[0] === "load_tps") {
+    const result = await loadTPS(params.slug[1]);
+    return NextResponse.json(result, { status: 200 });
+  }
+
   return NextResponse.json(false);
+};
+
+export const PATCH = async (
+  request: NextRequest,
+  { params }: { params: { slug: string[] } }
+) => {
+  const token = await getToken({
+    req: request,
+    secret: process.env.NEXTAUTH_SECRET,
+  });
+
+  const adminLogin = token as unknown as User;
+
+  const data = await request.formData();
+
+  if (params.slug[0] == "post_c1") {
+    const result = await PostC1(data, adminLogin);
+    return NextResponse.json(result, { status: 200 });
+  }
+
+  if (params.slug[0] == "delete") {
+    const result = await Delete(data);
+    return NextResponse.json(result, { status: 200 });
+  }
 };
 
 async function RealCount(admin: User, wilayah: String) {
@@ -528,4 +567,157 @@ async function LoadKota(admin: User) {
     });
   }
   return x;
+}
+
+async function loadKecamatan(kabId: String) {
+  const kode = await prisma.wilayah.findUnique({
+    where: { id: Number(kabId) },
+  });
+  const result: any[] = await prisma.$queryRaw`SELECT * FROM "public"."Wilayah" 
+    WHERE LENGTH(kode) = 8
+    AND provinsi = ${kode?.provinsi} 
+    AND kabupaten = ${kode?.kabupaten} 
+    ORDER BY nama ASC`;
+
+  let x = [];
+
+  for (let i = 0; i < result.length; i++) {
+    x.push({
+      value: result[i].id,
+      nama: result[i].nama,
+    });
+  }
+  return x;
+}
+
+async function loadKelurahan(kecId: String) {
+  const kode = await prisma.wilayah.findUnique({
+    where: { id: Number(kecId) },
+  });
+  const result: any[] = await prisma.$queryRaw`SELECT * FROM "public"."Wilayah" 
+    WHERE LENGTH(kode) = 13
+    AND provinsi = ${kode?.provinsi} 
+    AND kabupaten = ${kode?.kabupaten} 
+    AND kecamatan = ${kode?.kecamatan} 
+    ORDER BY nama ASC`;
+
+  let x = [];
+
+  for (let i = 0; i < result.length; i++) {
+    x.push({
+      value: result[i].id,
+      nama: result[i].nama,
+    });
+  }
+  return x;
+}
+
+async function loadTPS(kelId: String) {
+  const tps = await prisma.tps.findMany({
+    where: {
+      kelId: Number(kelId),
+    },
+    orderBy: {
+      tpsNo: "asc",
+    },
+  });
+
+  let x = [];
+
+  for (let i = 0; i < tps.length; i++) {
+    x.push({
+      value: tps[i].id,
+      nama: String(tps[i].tpsNo).padStart(2, "0"),
+    });
+  }
+  return x;
+}
+
+async function PostC1(data: any, admin: User) {
+  const cek = await prisma.realCount.findMany({
+    where: {
+      appId: Number(admin.appId),
+      tpsId: Number(data.get("tpsId")),
+    },
+  });
+
+  console.log(cek);
+
+  let id;
+  if (cek.length > 0) {
+    id = cek[0].id;
+    prisma.realCount.update({
+      where: { id: id },
+      data: {
+        appId: Number(admin.appId),
+        tpsId: Number(data.get("tpsId")),
+        suaraSah: Number(data.get("suaraSah")),
+        suaraBatal: Number(data.get("suaraBatal")),
+        suaraSisa: Number(data.get("suaraSisa")),
+        mulai: String(data.get("mulai")),
+        selesai: String(data.get("selesai")),
+        catatan: String(data.get("catatan")),
+        foto: String(data.get("foto")),
+      },
+    });
+  } else {
+    const rc = await prisma.realCount.create({
+      data: {
+        appId: Number(admin.appId),
+        tpsId: Number(data.get("tpsId")),
+        suaraSah: Number(data.get("suaraSah")),
+        suaraBatal: Number(data.get("suaraBatal")),
+        suaraSisa: Number(data.get("suaraSisa")),
+        mulai: String(data.get("mulai")),
+        selesai: String(data.get("selesai")),
+        catatan: String(data.get("catatan")),
+        foto: String(data.get("foto")),
+      },
+    });
+    id = rc.id;
+    console.log(rc);
+  }
+
+  const cd = await prisma.detailRealCount.findMany({
+    where: {
+      realCountId: id,
+    },
+  });
+
+  if (cd.length > 0) {
+    await prisma.detailRealCount.deleteMany();
+  }
+
+  const paslons = await prisma.paslon.findMany({
+    where: { appId: Number(admin.appId) },
+    orderBy: { noUrut: "asc" },
+  });
+
+  let details = [];
+  const suaras = JSON.parse(data.get("suaras"));
+  for (let i = 0; i < paslons.length; i++) {
+    details.push({
+      realCountId: id,
+      paslonId: paslons[i].id,
+      suara: suaras[i],
+    });
+  }
+
+  await prisma.detailRealCount.createMany({
+    data: details,
+  });
+
+  return {
+    error: false,
+    message: "Data form C1 berhasil di input",
+  };
+}
+
+async function Delete(data: any) {
+  const result = await prisma.realCount.delete({
+    where: {
+      id: Number(data.get("id")),
+    },
+  });
+  return result;
 }

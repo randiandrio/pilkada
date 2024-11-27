@@ -1302,7 +1302,7 @@ async function PostSuara(data: any) {
 
   let sah = 0;
   for (let i = 0; i < paslon.length; i++) {
-    sah += data.suara[i];
+    sah += Number(data.suara[i]);
   }
 
   const rc = await prisma.realCount.upsert({

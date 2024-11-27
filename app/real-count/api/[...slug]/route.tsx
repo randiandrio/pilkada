@@ -62,6 +62,11 @@ export const PATCH = async (
     return NextResponse.json(result, { status: 200 });
   }
 
+  if (params.slug[0] == "perbaikan") {
+    const result = await Perbaikan(data, adminLogin);
+    return NextResponse.json(result, { status: 200 });
+  }
+
   if (params.slug[0] == "delete") {
     const result = await Delete(data);
     return NextResponse.json(result, { status: 200 });
@@ -702,6 +707,46 @@ async function PostC1(data: any, admin: User) {
   for (let i = 0; i < paslons.length; i++) {
     details.push({
       realCountId: id,
+      paslonId: paslons[i].id,
+      suara: suaras[i],
+    });
+  }
+
+  await prisma.detailRealCount.createMany({
+    data: details,
+  });
+
+  return {
+    error: false,
+    message: "Data form C1 berhasil di input",
+  };
+}
+
+async function Perbaikan(data: any, admin: User) {
+  const cd = await prisma.detailRealCount.findMany({
+    where: {
+      realCountId: Number(data.get("realcountId")),
+    },
+  });
+
+  if (cd.length > 0) {
+    await prisma.detailRealCount.deleteMany({
+      where: {
+        realCountId: Number(data.get("realcountId")),
+      },
+    });
+  }
+
+  const paslons = await prisma.paslon.findMany({
+    where: { appId: Number(admin.appId) },
+    orderBy: { noUrut: "asc" },
+  });
+
+  let details = [];
+  const suaras = JSON.parse(data.get("suaras"));
+  for (let i = 0; i < paslons.length; i++) {
+    details.push({
+      realCountId: Number(data.get("realcountId")),
       paslonId: paslons[i].id,
       suara: suaras[i],
     });

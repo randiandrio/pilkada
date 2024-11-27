@@ -9,6 +9,7 @@ import LihatC1 from "./action/Lihat";
 import Image from "next/image";
 import Add from "./action/Add";
 import Delete from "./action/Delete";
+import Update from "./action/Update";
 
 const customStyles = {
   headCells: {
@@ -277,6 +278,7 @@ function RealCount() {
           <div className="d-flex">
             <LihatC1 realcount={row} />,
             <Delete reload={onReset} cId={row.id} />
+            <Update realcountId={row.id} reload={onReset} paslon={paslons} />
           </div>
         </>
       ),

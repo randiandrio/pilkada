@@ -22,6 +22,7 @@ const customStyles = {
 };
 
 function RealCount() {
+  const [filter, setFilter] = useState("");
   const [isLoading, setLoading] = useState(true);
   const [click, setClick] = useState(true);
   const [firstName, setFirstName] = useState("");
@@ -219,7 +220,7 @@ function RealCount() {
     {
       name: "Tanggal Data",
       width: "200px",
-      selector: (row) => `${tglJamIndo(row.updatedAt)} - ${row.id}`,
+      selector: (row) => tglJamIndo(row.updatedAt),
       sortable: true,
     },
     {
@@ -272,18 +273,18 @@ function RealCount() {
     },
     {
       name: "Form C1",
-      width: "250px",
+      width: "200px",
       cell: (row) => (
         <>
           <div className="d-flex">
-            <LihatC1 realcount={row} />,
+            <LihatC1 realcount={row} />
             <Delete reload={onReset} cId={row.id} />
-            <Update
+            {/* <Update
               realcountId={row.id}
               reload={onReset}
               paslon={paslons}
               foto={row.foto}
-            />
+            /> */}
           </div>
         </>
       ),
@@ -294,6 +295,12 @@ function RealCount() {
   const onEvents = {
     click: onChartClick,
   };
+
+  const filteredItems = data.filter(
+    (item: any) =>
+      item.tps.kel.nama &&
+      item.tps.kel.nama.toLowerCase().includes(filter.toLowerCase())
+  );
 
   if (isLoading) return <p>Loading...</p>;
 
@@ -389,6 +396,14 @@ function RealCount() {
               <div>
                 <h4 className="card-title">Data Form C1</h4>
               </div>
+              <div className="col-sm-3 mt-2">
+                <input
+                  onChange={(e) => setFilter(e.target.value)}
+                  type="text"
+                  className="form-control"
+                  placeholder="Cari Desa / Keluarahan"
+                />
+              </div>
             </div>
 
             <div className="table-responsive pb-1">
@@ -400,7 +415,7 @@ function RealCount() {
                   highlightOnHover={true}
                   persistTableHead={true}
                   columns={columns}
-                  data={data}
+                  data={filteredItems}
                   pagination
                   customStyles={customStyles}
                   onChangePage={(page) => {

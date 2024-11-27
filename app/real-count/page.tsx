@@ -101,6 +101,7 @@ function RealCount() {
           series: x.series,
         };
         setClick(x.click);
+        setPaslons(x.paslon);
         setLoad1Load(false);
         setOption1(opt1);
 
@@ -164,7 +165,6 @@ function RealCount() {
         };
         setOption3(opt3);
 
-        setPaslons(x.paslon);
         // Kolom dinamis
         const dynamicCols = x.paslon.map((item: Paslon, index: number) => ({
           name: `${item.calon} / ${item.wakil}`,
@@ -272,13 +272,18 @@ function RealCount() {
     },
     {
       name: "Form C1",
-      width: "200px",
+      width: "250px",
       cell: (row) => (
         <>
           <div className="d-flex">
             <LihatC1 realcount={row} />,
             <Delete reload={onReset} cId={row.id} />
-            <Update realcountId={row.id} reload={onReset} paslon={paslons} />
+            <Update
+              realcountId={row.id}
+              reload={onReset}
+              paslon={paslons}
+              foto={row.foto}
+            />
           </div>
         </>
       ),

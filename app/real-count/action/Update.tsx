@@ -6,17 +6,19 @@ import Swal from "sweetalert2";
 import { resData } from "next-auth";
 import Select from "react-select";
 import { Paslon } from "@prisma/client";
-import { uploadGambar } from "@/app/helper";
+import { apiImg, uploadGambar } from "@/app/helper";
 import Image from "next/image";
 
 function Update({
   reload,
   realcountId,
   paslon,
+  foto,
 }: {
   reload: Function;
   realcountId: Number;
   paslon: Paslon[];
+  foto: String;
 }) {
   let s = [];
   for (let i = 0; i < paslon.length; i++) {
@@ -54,9 +56,7 @@ function Update({
     const x = await axios.patch("/real-count/api/perbaikan", formData);
     const pesan = (await x.data) as resData;
     if (!pesan.error) {
-      clearForm();
       handleClose();
-      reload();
     }
     setPost(false);
     Swal.fire({
@@ -68,7 +68,7 @@ function Update({
     });
   };
 
-  function clearForm() {}
+  console.log(paslon);
 
   return (
     <div>
@@ -88,9 +88,19 @@ function Update({
       >
         <form onSubmit={handleSubmit}>
           <Modal.Header closeButton>
-            <Modal.Title>perbaikan RealCount</Modal.Title>
+            <Modal.Title>Perbaikan RealCount</Modal.Title>
           </Modal.Header>
           <Modal.Body>
+            <div className="col-12">
+              <Image
+                src={`${apiImg}/${foto}`}
+                layout="responsive"
+                width={100}
+                height={30}
+                alt=""
+              />
+            </div>
+
             <div className="my-3 row">
               {paslon.map((x: Paslon, index: number) => (
                 <div key={x.id} className="col-md-12">
@@ -102,11 +112,16 @@ function Update({
                       required
                       type="number"
                       className="form-control"
-                      value={suaras[index]} // Pastikan nilai defaultnya tidak undefined
                       onChange={(e) => {
                         let s = suaras;
                         s[index] = Number(e.target.value);
                         setSuaras(s);
+
+                        let total = 0;
+
+                        for (let i = 0; i < s.length; i++) {
+                          total += s[i];
+                        }
                       }}
                     />
                   </div>

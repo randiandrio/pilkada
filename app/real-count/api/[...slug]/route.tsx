@@ -685,7 +685,11 @@ async function PostC1(data: any, admin: User) {
   });
 
   if (cd.length > 0) {
-    await prisma.detailRealCount.deleteMany();
+    await prisma.detailRealCount.deleteMany({
+      where: {
+        realCountId: id,
+      },
+    });
   }
 
   const paslons = await prisma.paslon.findMany({

@@ -1300,6 +1300,11 @@ async function PostSuara(data: any) {
 
   if (paslon.length == 0) return false;
 
+  let sah = 0;
+  for (let i = 0; i < paslon.length; i++) {
+    sah += data.suara[i];
+  }
+
   const rc = await prisma.realCount.upsert({
     where: {
       appId_tpsId: {
@@ -1310,7 +1315,7 @@ async function PostSuara(data: any) {
     create: {
       appId: Number(data.appId),
       tpsId: Number(data.tpsId),
-      suaraSah: Number(data.sah),
+      suaraSah: Number(sah),
       suaraBatal: Number(data.batal),
       suaraSisa: Number(data.sisa),
       mulai: String(data.mulai),

@@ -218,7 +218,7 @@ function RealCount() {
     {
       name: "Tanggal Data",
       width: "200px",
-      selector: (row) => `${tglJamIndo(row.updatedAt)} - ${row.tps.id}`,
+      selector: (row) => `${tglJamIndo(row.updatedAt)} - ${row.id}`,
       sortable: true,
     },
     {

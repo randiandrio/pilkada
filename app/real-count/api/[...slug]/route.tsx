@@ -153,9 +153,33 @@ async function RealCount(admin: User, wilayah: String) {
       },
     });
   } else {
-    kode = await prisma.wilayah.findFirst({
-      where: { nama: String(wilayah) },
+    let wilayahId = admin.provId;
+    let pilkada = "gub";
+    if (admin.kotaId != 0) {
+      wilayahId = admin.kotaId;
+      pilkada = "bup";
+    }
+
+    const wilAdmin = await prisma.wilayah.findUnique({
+      where: { id: Number(wilayahId) },
     });
+
+    if (pilkada == "gub") {
+      kode = await prisma.wilayah.findFirst({
+        where: {
+          nama: String(wilayah),
+          provinsi: wilAdmin?.nama,
+        },
+      });
+    } else {
+      kode = await prisma.wilayah.findFirst({
+        where: {
+          nama: String(wilayah),
+          kabupaten: wilAdmin?.nama,
+        },
+      });
+    }
+
     namaWilayah = String(kode?.nama);
     kode = await prisma.wilayah.findFirst({
       where: { id: kode?.id },

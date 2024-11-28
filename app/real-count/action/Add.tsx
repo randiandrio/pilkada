@@ -188,7 +188,7 @@ function Add({
       <button
         onClick={handleShow}
         type="button"
-        className="btn btn-primary light mb-5"
+        className="btn btn-primary light"
       >
         Tambah Data Real Count
       </button>

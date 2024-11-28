@@ -3,13 +3,11 @@
 import { useEffect, useState } from "react";
 import ReactEcharts from "echarts-for-react";
 import DataTable, { TableColumn } from "react-data-table-component";
-import { className, noRupiah, rupiah, tglJamIndo } from "../helper";
+import { className, noRupiah, tglJamIndo } from "../helper";
 import { Paslon } from "@prisma/client";
 import LihatC1 from "./action/Lihat";
-import Image from "next/image";
 import Add from "./action/Add";
-import Delete from "./action/Delete";
-import Update from "./action/Update";
+import * as XLSX from "xlsx";
 
 const customStyles = {
   headCells: {
@@ -30,7 +28,6 @@ function RealCount() {
   const [load1Load, setLoad1Load] = useState(true);
   const [paslons, setPaslons] = useState([]);
   const [suaras, setSuaras] = useState<any[]>([]);
-
   const [option1, setOption1] = useState({});
   const [option2, setOption2] = useState({});
   const [option3, setOption3] = useState({});
@@ -38,7 +35,6 @@ function RealCount() {
   const [page, setPage] = useState(1);
   const [perPage, setPerpage] = useState(10);
   const [columns, setColomns] = useState<TableColumn<any>[]>([]);
-
   const [listKota, setListKota] = useState<any[]>([]);
 
   useEffect(() => {
@@ -200,9 +196,7 @@ function RealCount() {
 
   const onChartClick = (params: any): void => {
     if (click) {
-      console.log(params);
       load1(params.name);
-      // console.log(params.name);
     }
   };
 
@@ -278,7 +272,7 @@ function RealCount() {
         <>
           <div className="d-flex">
             <LihatC1 realcount={row} />
-            <Delete reload={onReset} cId={row.id} />
+            {/* <Delete reload={onReset} cId={row.id} /> */}
             {/* <Update
               realcountId={row.id}
               reload={onReset}
@@ -294,6 +288,73 @@ function RealCount() {
   // Objek event handler
   const onEvents = {
     click: onChartClick,
+  };
+
+  const exportExcel = async (worksheetname = "Sheet1") => {
+    try {
+      if (data && Array.isArray(data)) {
+        // Ambil header dari tabel statis dan dinamis
+        const tableHeaders = [
+          { header: "No", key: "No" },
+          ...columnsStatic.map((col) => ({
+            header: col.name,
+            key: col.selector || col.name,
+          })),
+          ...columns.map((col) => ({
+            header: col.name,
+            key: col.selector || col.name,
+          })),
+          ...columnsStatic2.map((col) => ({
+            header: col.name,
+            key: col.selector || col.name,
+          })),
+        ];
+
+        // Buat array string untuk header
+        const headers = tableHeaders.map((h) => h.header);
+
+        // Buat data untuk ekspor
+        const dataToExport = data.map((row: any, index: number) => {
+          const rowData: any = {
+            No: (page - 1) * perPage + (index + 1),
+          };
+
+          // Tambahkan data statis
+          columnsStatic.forEach((col: any) => {
+            const value =
+              typeof col.selector === "function" ? col.selector(row) : "";
+            rowData[col.name] = value;
+          });
+
+          // Tambahkan data dinamis (Paslon)
+          paslons.forEach((paslon: Paslon, idx) => {
+            const suara = row.detail.length > idx ? row.detail[idx].suara : "0";
+            rowData[`${paslon.calon} / ${paslon.wakil}`] = suara;
+          });
+
+          // Tambahkan data statis bagian kedua
+          columnsStatic2.forEach((col: any) => {
+            const value =
+              typeof col.selector === "function" ? col.selector(row) : "";
+            rowData[col.name] = value;
+          });
+
+          return rowData;
+        });
+
+        const workbook = XLSX.utils.book_new();
+        const worksheet = XLSX.utils?.json_to_sheet(dataToExport);
+        XLSX.utils.book_append_sheet(workbook, worksheet, worksheetname);
+        XLSX.writeFile(workbook, `RealCount ${firstName}${namaWilayah}.xlsx`);
+        console.log(
+          `Exported data to RealCount ${firstName}${namaWilayah}.xlsx`
+        );
+      } else {
+        console.log("No data available for export.");
+      }
+    } catch (error: any) {
+      console.error("Export Error:", error.message);
+    }
   };
 
   const filteredItems = data.filter(
@@ -430,10 +491,21 @@ function RealCount() {
             </div>
           </div>
         </div>
+
         {load1Load ? (
           <p className="px-2 py-2">Loading ... </p>
         ) : (
-          <Add listKota={listKota} reload={onReset} paslon={paslons} />
+          <div className="students d-flex align-items-center justify-content-between flex-wrap mb-5">
+            <Add listKota={listKota} reload={onReset} paslon={paslons} />
+
+            <button
+              onClick={() => exportExcel()}
+              type="button"
+              className="btn btn-primary light"
+            >
+              Export to Excel
+            </button>
+          </div>
         )}
       </div>
     </>

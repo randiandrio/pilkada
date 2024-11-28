@@ -36,6 +36,8 @@ function RealCount() {
   const [perPage, setPerpage] = useState(10);
   const [columns, setColomns] = useState<TableColumn<any>[]>([]);
   const [listKota, setListKota] = useState<any[]>([]);
+  const [finals, setFinals] = useState<any[]>([]);
+  const [cFinal, setCFinal] = useState<TableColumn<any>[]>([]);
 
   useEffect(() => {
     setLoading(false);
@@ -97,6 +99,16 @@ function RealCount() {
           },
           series: x.series,
         };
+
+        let f = [];
+        for (let i = 0; i < x.wilayah.length; i++) {
+          let obj: { [key: string]: any } = {};
+          obj.nama = x.wilayah[i];
+          f.push(obj);
+        }
+
+        setFinals(f);
+
         setClick(x.click);
         setPaslons(x.paslon);
         setLoad1Load(false);
@@ -186,8 +198,20 @@ function RealCount() {
           ),
         }));
 
+        const dynamicFinal = x.paslon.map((item: Paslon, index: number) => {
+          return {
+            name: `${item.calon} / ${item.wakil}`,
+            width: "300px",
+            center: true,
+            selector: (row: any, i: number) =>
+              noRupiah(x.series[index].data[i]),
+          };
+        });
+
         // Gabungkan kolom statis dan dinamis
         setColomns([...columnsStatic, ...dynamicCols, ...columnsStatic2]);
+
+        setCFinal([...columnsHasil, ...dynamicFinal]);
 
         // Set data tabel
         setData(x.realCount);
@@ -203,6 +227,19 @@ function RealCount() {
   const onReset = (): void => {
     load1("all");
   };
+
+  const columnsHasil: TableColumn<any>[] = [
+    {
+      name: "No.",
+      width: "60px",
+      center: true,
+      cell: (row, index) => (page - 1) * perPage + (index + 1),
+    },
+    {
+      name: "Nama",
+      selector: (row) => row.nama,
+    },
+  ];
 
   const columnsStatic: TableColumn<any>[] = [
     {
@@ -447,6 +484,31 @@ function RealCount() {
                   <ReactEcharts style={{ height: "300px" }} option={option3} />
                 )}
               </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-xl-12 col-lg-12">
+          <div className="card">
+            <div className="card-header flex-wrap" id="default-tab">
+              <div>
+                <h4 className="card-title">Data Hasil Suara</h4>
+              </div>
+            </div>
+
+            <div className="table-responsive pb-1">
+              {load1Load ? (
+                <p className="px-2 py-2">Loading ... </p>
+              ) : (
+                <DataTable
+                  responsive
+                  highlightOnHover={true}
+                  persistTableHead={true}
+                  columns={cFinal}
+                  data={finals}
+                  customStyles={customStyles}
+                />
+              )}
             </div>
           </div>
         </div>
